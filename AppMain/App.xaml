@@ -1,8 +1,8 @@
 ﻿<Application
-    x:Class="AppMain.App"
+    x:Class="JacobC.Xiami.App.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:AppMain"
+    xmlns:local="using:JacobC.Xiami"
     RequestedTheme="Light">
 
 </Application>
