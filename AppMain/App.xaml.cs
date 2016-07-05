@@ -11,6 +11,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -80,6 +81,7 @@ namespace JacobC.Xiami.App
                     // 并通过将所需信息作为导航参数传入来配置
                     // 参数
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    this.SetTitleColor();
                 }
                 // 确保当前窗口处于活动状态
                 Window.Current.Activate();
@@ -108,6 +110,32 @@ namespace JacobC.Xiami.App
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: 保存应用程序状态并停止任何后台活动
             deferral.Complete();
+        }
+
+        /// <summary>
+        /// 设置窗口标题栏的样式
+        /// <!--此段代码为自定义-->
+        /// </summary>
+        public void SetTitleColor()
+        {
+            var titlebar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
+            Color theme = (Color)(Resources["ThemeColor"]);
+            Color inactive = (Color)(Resources["InactiveThemeColor"]);
+            Color hover = (Color)(Resources["HighlightThemeColor"]);
+            //活动色
+            titlebar.BackgroundColor = theme;
+            titlebar.ForegroundColor = Colors.White;
+            titlebar.ButtonBackgroundColor = theme;
+            titlebar.ButtonForegroundColor = Colors.White;
+            //非活动色
+            titlebar.InactiveBackgroundColor = inactive;
+            titlebar.InactiveForegroundColor = Colors.White;
+            titlebar.ButtonInactiveBackgroundColor = inactive;
+            titlebar.ButtonInactiveForegroundColor = Colors.White;
+            //事件色
+            titlebar.ButtonHoverBackgroundColor = hover;
+            titlebar.ButtonHoverForegroundColor = Colors.White;
+            titlebar.ButtonPressedBackgroundColor = inactive;
         }
     }
 }

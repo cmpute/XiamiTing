@@ -26,5 +26,6 @@ namespace JacobC.Xiami.App
         {
             this.InitializeComponent();
         }
+ 
     }
 }
