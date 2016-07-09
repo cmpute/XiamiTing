@@ -1,0 +1,99 @@
+﻿<UserControl
+    x:Class="JacobC.Controls.HamburgerMenu"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JacobC.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="400"
+    d:DesignWidth="400">
+
+    <RelativePanel x:Name="root">
+
+        <SplitView x:Name="ShellSplitView"
+                   DisplayMode="{x:Bind DisplayMode, Mode=TwoWay}"
+                   IsPaneOpen="{x:Bind IsOpen, Mode=TwoWay}"
+                   IsTabStop="False"
+                   OpenPaneLength="{x:Bind PaneWidth, Mode=OneWay}"
+                   PaneBackground="Transparent"
+                   RelativePanel.AlignBottomWithPanel="True"
+                   RelativePanel.AlignLeftWithPanel="True"
+                   RelativePanel.AlignRightWithPanel="True"
+                   RelativePanel.AlignTopWithPanel="True">
+            <SplitView.Pane>
+                <Grid x:Name="PaneContent"
+                      Background="{x:Bind NavAreaBackground, Mode=OneWay}"
+                      BorderBrush="{x:Bind PaneBorderBrush, Mode=OneWay}"
+                      BorderThickness="{x:Bind PaneBorderThickness, Mode=OneWay}"
+                      ManipulationDelta="PaneContent_ManipulationDelta"
+                      ManipulationMode="TranslateX"
+                      Tapped="PaneContent_Tapped">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ScrollViewer Grid.Row="0"
+                                  AutomationProperties.AccessibilityView="Raw"
+                                  TabIndex="2"
+                                  VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="PrimaryButtonContainer"
+                                      IsTabStop="False"
+                                      ItemsSource="{Binding PrimaryButtons, ElementName=ThisPage}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <ItemsControl x:Name="SecondaryButtonContainer"
+                                  Grid.Row="1"
+                                  IsTabStop="False"
+                                  ItemsSource="{Binding SecondaryButtons, ElementName=ThisPage}"
+                                  TabIndex="3">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel BorderBrush="{Binding SecondarySeparator, ElementName=ThisPage, FallbackValue=White}"
+                                            BorderThickness="0,1,0,0"
+                                            Loaded="SecondaryButtonStackPanel_Loaded" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </Grid>
+            </SplitView.Pane>
+        </SplitView>
+
+        <Rectangle x:Name="HeaderBackground"
+                   Width="{x:Bind HamburgerButtonGridWidth, Mode=OneWay}"
+                   Height="48"
+                   Canvas.ZIndex="-1"
+                   Fill="{x:Bind HamburgerBackground, FallbackValue=DarkRed, Mode=OneWay}"
+                   RelativePanel.AlignLeftWithPanel="True"
+                   RelativePanel.AlignTopWithPanel="True" />
+
+        <Button x:Name="HamburgerButton"
+                AutomationProperties.Name="Hamburger Menu Button"
+                Background="{x:Bind HamburgerBackground, FallbackValue=DarkRed, Mode=OneWay}"
+                Canvas.ZIndex="2"
+                Command="{x:Bind HamburgerCommand, Mode=OneWay}"
+                Foreground="{x:Bind HamburgerForeground, FallbackValue=White, Mode=OneWay}"
+                RenderTransformOrigin="0.5,0.5"
+                Style="{StaticResource HamburgerButtonStyle}"
+                TabIndex="1"
+                Visibility="{x:Bind HamburgerButtonVisibility, Mode=OneWay}">
+            <FontIcon FontSize="20" Glyph="&#xE700;" />
+        </Button>
+
+        <ContentControl x:Name="Header"
+                        Height="48"
+                        HorizontalContentAlignment="Left"
+                        VerticalContentAlignment="Center"
+                        Canvas.ZIndex="2"
+                        Content="{Binding HeaderContent, ElementName=ThisPage}"
+                        IsTabStop="False"
+                        RelativePanel.AlignRightWith="HeaderBackground"
+                        RelativePanel.AlignTopWith="HamburgerButton"
+                        RelativePanel.RightOf="HamburgerButton" />
+    </RelativePanel>
+</UserControl>
