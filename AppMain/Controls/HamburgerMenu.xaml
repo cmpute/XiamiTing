@@ -9,6 +9,63 @@
     d:DesignHeight="400"
     d:DesignWidth="400">
 
+    <UserControl.Resources>
+
+        <Style x:Key="HamburgerButtonStyle" TargetType="Button">
+            <Setter Property="TabIndex" Value="1" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Width" Value="48" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="RootGrid"
+                                  Width="{TemplateBinding Width}"
+                                  Height="{TemplateBinding Height}"
+                                  Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <!--<Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                            </Storyboard>-->
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="HoverOverlay.Visibility" Value="Visible" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="PressedOverlay.Visibility" Value="Visible" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="PressedOverlay"
+                                           Fill="White"
+                                           Opacity=".4"
+                                           Visibility="Collapsed" />
+                            <Rectangle x:Name="HoverOverlay"
+                                           Fill="White"
+                                           Opacity=".2"
+                                           Visibility="Collapsed" />
+                            <FontIcon x:Name="ContentPresenter"
+                                          FontSize="20"
+                                          Foreground="{TemplateBinding Foreground}"
+                                          Glyph="&#xE700;" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Width" Value="48" />
+        </Style>
+        
+    </UserControl.Resources>
+    
     <RelativePanel x:Name="root">
 
         <SplitView x:Name="ShellSplitView"
@@ -23,7 +80,7 @@
                    RelativePanel.AlignTopWithPanel="True">
             <SplitView.Pane>
                 <Grid x:Name="PaneContent"
-                      Background="{x:Bind NavAreaBackground, Mode=OneWay}"
+                      Background="{StaticResource BackColorBrush}"
                       BorderBrush="{x:Bind PaneBorderBrush, Mode=OneWay}"
                       BorderThickness="{x:Bind PaneBorderThickness, Mode=OneWay}"
                       ManipulationDelta="PaneContent_ManipulationDelta"
@@ -65,7 +122,7 @@
         </SplitView>
 
         <Rectangle x:Name="HeaderBackground"
-                   Width="{x:Bind HamburgerButtonGridWidth, Mode=OneWay}"
+                   Width="48"
                    Height="48"
                    Canvas.ZIndex="-1"
                    Fill="{x:Bind HamburgerBackground, FallbackValue=DarkRed, Mode=OneWay}"

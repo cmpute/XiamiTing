@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -12,6 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Command;
 using JacobC;
 
 namespace JacobC.Controls
@@ -21,10 +25,16 @@ namespace JacobC.Controls
 
         #region Private Members
 
-        private static void WriteDebug(string v, DependencyPropertyChangedEventArgs e)
+        private static void DebugWrite(string text, DependencyPropertyChangedEventArgs e)
         {
-#if Debug
-            System.Diagnostics.Debug.WriteLine($"{DateTime.Now.TimeOfDay.ToString()} OldValue: {e.OldValue} NewValue: {e.NewValue}");
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now.TimeOfDay.ToString()} OldValue: {e.OldValue} NewValue: {e.NewValue}] {text}");
+#endif
+        }
+        private static void DebugWrite(string text = null, [CallerMemberName]string caller = null)
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now.TimeOfDay.ToString()} Caller: {caller}] {text}");
 #endif
         }
 
@@ -47,7 +57,7 @@ namespace JacobC.Controls
             DependencyProperty.Register(nameof(DisplayMode), typeof(SplitViewDisplayMode),
                 typeof(HamburgerMenu), new PropertyMetadata(null, (d, e) =>
                 {
-                    WriteDebug(nameof(DisplayMode), e);
+                    DebugWrite(nameof(DisplayMode), e);
                     (d as HamburgerMenu).DisplayModeChanged?.Invoke(d, e.ToChangedEventArgs<SplitViewDisplayMode>());
                     (d as HamburgerMenu).InternalDisplayModeChanged(e.ToChangedEventArgs<SplitViewDisplayMode>());
                 }));
@@ -70,7 +80,7 @@ namespace JacobC.Controls
             DependencyProperty.Register(nameof(IsOpen), typeof(bool),
                 typeof(HamburgerMenu), new PropertyMetadata(false, (d, e) =>
                 {
-                    WriteDebug(nameof(IsOpen), e);
+                    DebugWrite(nameof(IsOpen), e);
                     (d as HamburgerMenu).IsOpenChanged?.Invoke(d, e.ToChangedEventArgs<bool>());
                     (d as HamburgerMenu).InternalIsOpenChanged(e.ToChangedEventArgs<bool>());
                 }));
@@ -93,7 +103,7 @@ namespace JacobC.Controls
             DependencyProperty.Register(nameof(PaneWidth), typeof(double),
                 typeof(HamburgerMenu), new PropertyMetadata(220d, (d, e) =>
                 {
-                    WriteDebug(nameof(PaneWidth), e);
+                    DebugWrite(nameof(PaneWidth), e);
                     (d as HamburgerMenu).PaneWidthChanged?.Invoke(d, e.ToChangedEventArgs<double>());
                     (d as HamburgerMenu).InternalPaneWidthChanged(e.ToChangedEventArgs<double>());
                 }));
@@ -136,10 +146,13 @@ namespace JacobC.Controls
             DependencyProperty.Register(nameof(OpenCloseMode), typeof(OpenCloseModes),
                 typeof(HamburgerMenu), new PropertyMetadata(OpenCloseModes.Auto, (d, e) =>
                 {
-                    WriteDebug(nameof(OpenCloseMode), e);
+                    DebugWrite(nameof(OpenCloseMode), e);
                     (d as HamburgerMenu).OpenCloseModeChanged?.Invoke(d, e.ToChangedEventArgs<OpenCloseModes>());
                     (d as HamburgerMenu).InternalOpenCloseModeChanged(e.ToChangedEventArgs<OpenCloseModes>());
                 }));
+        /// <summary>
+        /// 在汉堡菜单导航栏展开的操作方法发生变化时发生
+        /// </summary>
         public event EventHandler<ChangedEventArgs<OpenCloseModes>> OpenCloseModeChanged;
         partial void InternalOpenCloseModeChanged(ChangedEventArgs<OpenCloseModes> e);
 
@@ -159,10 +172,13 @@ namespace JacobC.Controls
             DependencyProperty.Register(nameof(IsFullScreen), typeof(bool),
                 typeof(HamburgerMenu), new PropertyMetadata(false, (d, e) =>
                 {
-                    WriteDebug(nameof(IsFullScreen), e);
+                    DebugWrite(nameof(IsFullScreen), e);
                     (d as HamburgerMenu).IsFullScreenChanged?.Invoke(d, e.ToChangedEventArgs<bool>());
                     (d as HamburgerMenu).InternalIsFullScreenChanged(e.ToChangedEventArgs<bool>());
                 }));
+        /// <summary>
+        /// 在汉堡菜单进入或退出FullScreen时发生
+        /// </summary>
         public event EventHandler<ChangedEventArgs<bool>> IsFullScreenChanged;
         partial void InternalIsFullScreenChanged(ChangedEventArgs<bool> e);
 
@@ -183,12 +199,16 @@ namespace JacobC.Controls
                 typeof(HamburgerMenu), new PropertyMetadata(Orientation.Vertical, (d, e) =>
                 {
                     (d as HamburgerMenu).UpdateSecondaryButtonOrientation();
-                    WriteDebug(nameof(SecondaryButtonOrientation), e);
+                    DebugWrite(nameof(SecondaryButtonOrientation), e);
                     (d as HamburgerMenu).SecondaryButtonOrientationChanged?.Invoke(d, e.ToChangedEventArgs<Orientation>());
                     (d as HamburgerMenu).InternalSecondaryButtonOrientationChanged(e.ToChangedEventArgs<Orientation>());
                 }));
+        /// <summary>
+        /// 在二级按钮排列方向改变时发生
+        /// </summary>
         public event EventHandler<ChangedEventArgs<Orientation>> SecondaryButtonOrientationChanged;
         partial void InternalSecondaryButtonOrientationChanged(ChangedEventArgs<Orientation> e);
+
 
         /// <summary>
         /// 获取或设置当前高亮的导航栏中的按钮，设置该属性会触发导航行为
@@ -202,14 +222,220 @@ namespace JacobC.Controls
             DependencyProperty.Register(nameof(Selected), typeof(HamburgerButtonInfo),
                 typeof(HamburgerMenu), new PropertyMetadata(null, (d, e) =>
                 {
-                    WriteDebug(nameof(Selected), e);
+                    DebugWrite(nameof(Selected), e);
                     (d as HamburgerMenu).SelectedChanged?.Invoke(d, e.ToChangedEventArgs<HamburgerButtonInfo>());
                     (d as HamburgerMenu).InternalSelectedChanged(e.ToChangedEventArgs<HamburgerButtonInfo>());
                 }));
+        /// <summary>
+        /// 在更改选中高亮的导航按钮时发生
+        /// </summary>
         public event EventHandler<ChangedEventArgs<HamburgerButtonInfo>> SelectedChanged;
         partial void InternalSelectedChanged(ChangedEventArgs<HamburgerButtonInfo> e);
 
+
+        /// <summary>
+        /// 获取或设置导航栏和内容页面间边框的厚度
+        /// </summary>
+        public Thickness PaneBorderThickness
+        {
+            get { return (Thickness)GetValue(PaneBorderThicknessProperty); }
+            set { SetValue(PaneBorderThicknessProperty, value); }
+        }
+        public static readonly DependencyProperty PaneBorderThicknessProperty =
+            DependencyProperty.Register(nameof(PaneBorderThickness), typeof(Thickness),
+                typeof(HamburgerMenu), new PropertyMetadata(new Thickness(0, 0, 1, 0), (d, e) =>
+                {
+                    DebugWrite(nameof(PaneBorderThickness), e);
+                    (d as HamburgerMenu).PaneBorderThicknessChanged?.Invoke(d, e.ToChangedEventArgs<Thickness>());
+                    (d as HamburgerMenu).InternalPaneBorderThicknessChanged(e.ToChangedEventArgs<Thickness>());
+                }));
+        /// <summary>
+        /// 在导航栏边框厚度变更时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<Thickness>> PaneBorderThicknessChanged;
+        partial void InternalPaneBorderThicknessChanged(ChangedEventArgs<Thickness> e);
+
+
+        /// <summary>
+        /// 获取或设置汉堡导航按钮的可见性
+        /// </summary>
+        public Visibility HamburgerButtonVisibility
+        {
+            get { return (Visibility)GetValue(HamburgerButtonVisibilityProperty); }
+            set { SetValue(HamburgerButtonVisibilityProperty, value); }
+        }
+        public static readonly DependencyProperty HamburgerButtonVisibilityProperty =
+            DependencyProperty.Register(nameof(HamburgerButtonVisibility), typeof(Visibility),
+                typeof(HamburgerMenu), new PropertyMetadata(Visibility.Visible, (d, e) =>
+                {
+                    DebugWrite(nameof(HamburgerButtonVisibility), e);
+                    (d as HamburgerMenu).HamburgerButtonVisibilityChanged?.Invoke(d, e.ToChangedEventArgs<Visibility>());
+                    (d as HamburgerMenu).InternalHamburgerButtonVisibilityChanged(e.ToChangedEventArgs<Visibility>());
+                }));
+        public event EventHandler<ChangedEventArgs<Visibility>> HamburgerButtonVisibilityChanged;
+        partial void InternalHamburgerButtonVisibilityChanged(ChangedEventArgs<Visibility> e);
+
+
+        /// <summary>
+        /// 获取或设置标题栏的内容元素
+        /// </summary>
+        public UIElement HeaderContent
+        {
+            get { return (UIElement)GetValue(HeaderContentProperty); }
+            set { SetValue(HeaderContentProperty, value); }
+        }
+        public static readonly DependencyProperty HeaderContentProperty =
+            DependencyProperty.Register(nameof(HeaderContent), typeof(UIElement),
+         typeof(HamburgerMenu), new PropertyMetadata(null, (d, e) =>
+         {
+             DebugWrite(nameof(HeaderContent), e);
+             (d as HamburgerMenu).HeaderContentChanged?.Invoke(d, e.ToChangedEventArgs<UIElement>());
+             (d as HamburgerMenu).InternalHeaderContentChanged(e.ToChangedEventArgs<UIElement>());
+         }));
+        /// <summary>
+        /// 在标题栏的内容元素更改时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<UIElement>> HeaderContentChanged;
+        partial void InternalHeaderContentChanged(ChangedEventArgs<UIElement> e);
+
+
+        /// <summary>
+        /// 获取或设置导航栏的一级按钮（顶端）
+        /// SecondaryButtons are the button at the top of the HamburgerMenu
+        /// </summary>
+        public ObservableCollection<HamburgerButtonInfo> PrimaryButtons
+        {
+            get { return (ObservableCollection<HamburgerButtonInfo>)base.GetValue(PrimaryButtonsProperty); }
+            set { SetValue(PrimaryButtonsProperty, value); }
+        }
+        public static readonly DependencyProperty PrimaryButtonsProperty =
+            DependencyProperty.Register(nameof(PrimaryButtons), typeof(ObservableCollection<HamburgerButtonInfo>),
+                typeof(HamburgerMenu), new PropertyMetadata(null, (d, e) =>
+                {
+                    DebugWrite(nameof(PrimaryButtons), e);
+                }));
+
+
+        /// <summary>
+        /// 获取或设置导航栏的二级按钮（底端）
+        /// </summary>
+        public ObservableCollection<HamburgerButtonInfo> SecondaryButtons
+        {
+            get { return (ObservableCollection<HamburgerButtonInfo>)base.GetValue(SecondaryButtonsProperty); }
+            set { SetValue(SecondaryButtonsProperty, value); }
+        }
+        public static readonly DependencyProperty SecondaryButtonsProperty =
+            DependencyProperty.Register(nameof(SecondaryButtons), typeof(ObservableCollection<HamburgerButtonInfo>),
+                typeof(HamburgerMenu), new PropertyMetadata(null, (d, e) =>
+                {
+                    DebugWrite(nameof(SecondaryButtons), e);
+                }));
+
+
         #endregion
 
+        #region Style Properties
+
+        /// <summary>
+        /// 获取或设置导航栏边框的画笔
+        /// </summary>
+        public Brush PaneBorderBrush
+        {
+            get { return GetValue(PaneBorderBrushProperty) as Brush; }
+            set { SetValue(PaneBorderBrushProperty, value); }
+        }
+        public static readonly DependencyProperty PaneBorderBrushProperty =
+              DependencyProperty.Register(nameof(PaneBorderBrush), typeof(Brush),
+                  typeof(HamburgerMenu), new PropertyMetadata(null, (d, e) =>
+                  {
+                      DebugWrite(nameof(PaneBorderBrush), e);
+                      (d as HamburgerMenu).PaneBorderBrushChanged?.Invoke(d, e.ToChangedEventArgs<Brush>());
+                      (d as HamburgerMenu).InternalPaneBorderBrushChanged(e.ToChangedEventArgs<Brush>());
+                  }));
+        /// <summary>
+        /// 在导航栏边框画笔改变时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<Brush>> PaneBorderBrushChanged;
+        partial void InternalPaneBorderBrushChanged(ChangedEventArgs<Brush> e);
+
+
+        /// <summary>
+        /// 获取或设置二级按钮分割线的画笔
+        /// </summary>
+        public Brush SecondarySeparator
+        {
+            get { return GetValue(SecondarySeparatorProperty) as Brush; }
+            set { SetValue(SecondarySeparatorProperty, value); }
+        }
+        public static readonly DependencyProperty SecondarySeparatorProperty =
+              DependencyProperty.Register(nameof(SecondarySeparator), typeof(Brush),
+                  typeof(HamburgerMenu), new PropertyMetadata(null, (d, e) =>
+                  {
+                      DebugWrite(nameof(SecondarySeparator), e);
+                      (d as HamburgerMenu).SecondarySeparatorChanged?.Invoke(d, e.ToChangedEventArgs<Brush>());
+                      (d as HamburgerMenu).InternalSecondarySeparatorChanged(e.ToChangedEventArgs<Brush>());
+                  }));
+        /// <summary>
+        /// 在<see cref="SecondarySeparator"/>属性发生更改时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<Brush>> SecondarySeparatorChanged;
+        partial void InternalSecondarySeparatorChanged(ChangedEventArgs<Brush> e);
+
+        /// <summary>
+        /// 获取或设置汉堡菜单的前景色
+        /// </summary>
+        public Brush HamburgerForeground
+        {
+            get { return GetValue(HamburgerForegroundProperty) as Brush; }
+            set { SetValue(HamburgerForegroundProperty, value); }
+        }
+        private static readonly Brush _defaultHamburgerForeground = Colors.White.ToSolidColorBrush();
+        public static readonly DependencyProperty HamburgerForegroundProperty =
+              DependencyProperty.Register(nameof(HamburgerForeground), typeof(Brush),
+                  typeof(HamburgerMenu), new PropertyMetadata(_defaultHamburgerForeground, (d, e) =>
+                  {
+                      DebugWrite(nameof(HamburgerForeground), e);
+                      (d as HamburgerMenu).HamburgerForegroundChanged?.Invoke(d, e.ToChangedEventArgs<Brush>());
+                      (d as HamburgerMenu).InternalHamburgerForegroundChanged(e.ToChangedEventArgs<Brush>());
+                  }));
+        /// <summary>
+        /// 在<see cref="HamburgerForeground"/>属性发生更改时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<Brush>> HamburgerForegroundChanged;
+        partial void InternalHamburgerForegroundChanged(ChangedEventArgs<Brush> e);
+
+
+        /// <summary>
+        /// 获取或设置汉堡菜单的背景色
+        /// </summary>
+        public Brush HamburgerBackground
+        {
+            get { return GetValue(HamburgerBackgroundProperty) as Brush; }
+            set { SetValue(HamburgerBackgroundProperty, value); }
+        }
+        private static readonly Brush _defaultHamburgerBackground = Colors.SteelBlue.ToSolidColorBrush();
+        public static readonly DependencyProperty HamburgerBackgroundProperty =
+            DependencyProperty.Register(nameof(HamburgerBackground), typeof(Brush),
+                typeof(HamburgerMenu), new PropertyMetadata(_defaultHamburgerBackground, (d, e) =>
+                {
+                    DebugWrite(nameof(HamburgerBackground), e);
+                    (d as HamburgerMenu).HamburgerBackgroundChanged?.Invoke(d, e.ToChangedEventArgs<Brush>());
+                    (d as HamburgerMenu).InternalHamburgerBackgroundChanged(e.ToChangedEventArgs<Brush>());
+                }));
+        /// <summary>
+        /// 在<see cref="HamburgerBackground"/>属性发生更改时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<Brush>> HamburgerBackgroundChanged;
+        partial void InternalHamburgerBackgroundChanged(ChangedEventArgs<Brush> e);
+
+
+        #endregion
+
+        #region Command
+        RelayCommand _hamburgerCommand;
+        internal RelayCommand HamburgerCommand => _hamburgerCommand ?? (_hamburgerCommand = new RelayCommand(ExecuteHamburger));
+
+
+        #endregion
     }
 }
