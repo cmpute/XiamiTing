@@ -17,5 +17,4 @@
     <Color x:Key="ContrastColor">#1ABC9C</Color>
     <Color x:Key="IconColor">#FF5E00</Color>
     
-
 </ResourceDictionary>
