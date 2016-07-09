@@ -54,8 +54,8 @@ namespace JacobC.Controls
             IsOpen = !IsOpen;
         }
 
-        //TODO: 待读懂
-        public class InfoElement
+        //按键信息包装类
+        internal class InfoElement
         {
             public InfoElement(object sender)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,12 +9,12 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media.Animation;
-using GalaSoft.MvvmLight;
+using JacobC.MVVM;
 
 namespace JacobC.Controls
 {
     [ContentProperty(Name = nameof(Content))]
-    public class HamburgerButtonInfo : DependencyObject
+    public class HamburgerButtonInfo : DependencyBindableBase
     {
         public enum ButtonTypes { Toggle, Command, Literal }
 
