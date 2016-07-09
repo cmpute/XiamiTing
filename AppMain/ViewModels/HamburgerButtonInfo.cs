@@ -204,6 +204,6 @@ namespace JacobC.Controls
         public event HoldingEventHandler Holding;
         internal void RaiseHolding(HoldingRoutedEventArgs args) => Holding?.Invoke(this, args);
 
-        //#endregion
+        #endregion
     }
 }
