@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
@@ -31,6 +32,19 @@ namespace JacobC
                 list.AddRange(AllChildren(child));
             }
             return list;
+        }
+
+        public static void DebugWrite(string text, DependencyPropertyChangedEventArgs e)
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now.TimeOfDay.ToString()} OldValue: {e.OldValue} NewValue: {e.NewValue}] {text}");
+#endif
+        }
+        public static void DebugWrite(string text = null, [CallerMemberName]string caller = null)
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now.TimeOfDay.ToString()} Caller: {caller}] {text}");
+#endif
         }
     }
 }

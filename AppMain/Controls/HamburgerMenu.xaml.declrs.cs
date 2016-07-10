@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using GalaSoft.MvvmLight.Command;
 using JacobC;
+using static JacobC.ExtensionMethods;
 
 namespace JacobC.Controls
 {
@@ -25,18 +26,6 @@ namespace JacobC.Controls
 
         #region Private Members
 
-        private static void DebugWrite(string text, DependencyPropertyChangedEventArgs e)
-        {
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now.TimeOfDay.ToString()} OldValue: {e.OldValue} NewValue: {e.NewValue}] {text}");
-#endif
-        }
-        private static void DebugWrite(string text = null, [CallerMemberName]string caller = null)
-        {
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now.TimeOfDay.ToString()} Caller: {caller}] {text}");
-#endif
-        }
 
         #endregion
 
@@ -301,7 +290,6 @@ namespace JacobC.Controls
 
         /// <summary>
         /// 获取或设置导航栏的一级按钮（顶端）
-        /// SecondaryButtons are the button at the top of the HamburgerMenu
         /// </summary>
         public ObservableCollection<HamburgerButtonInfo> PrimaryButtons
         {
@@ -330,6 +318,75 @@ namespace JacobC.Controls
                 {
                     DebugWrite(nameof(SecondaryButtons), e);
                 }));
+
+
+        /// <summary>
+        /// 获取或设置普通视图模式的触发宽度
+        /// </summary>
+        public double VisualStateNormalMinWidth
+        {
+            get { return (double)GetValue(VisualStateNormalMinWidthProperty); }
+            set { SetValue(VisualStateNormalMinWidthProperty, value); }
+        }
+        public static readonly DependencyProperty VisualStateNormalMinWidthProperty =
+            DependencyProperty.Register(nameof(VisualStateNormalMinWidth), typeof(double),
+                typeof(HamburgerMenu), new PropertyMetadata((double)-1, (d, e) =>
+                {
+                    DebugWrite(nameof(VisualStateNormalMinWidth), e);
+                    (d as HamburgerMenu).VisualStateNormalMinWidthChanged?.Invoke(d, e.ToChangedEventArgs<double>());
+                    (d as HamburgerMenu).InternalVisualStateNormalMinWidthChanged(e.ToChangedEventArgs<double>());
+                }));
+        /// <summary>
+        /// 在<see cref="VisualStateNormalMinWidth"/>属性发生更改时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<double>> VisualStateNormalMinWidthChanged;
+        partial void InternalVisualStateNormalMinWidthChanged(ChangedEventArgs<double> e);
+
+
+        /// <summary>
+        /// 获取或设置宽视图模式的触发宽度
+        /// </summary>
+        public double VisualStateWideMinWidth
+        {
+            get { return (double)GetValue(VisualStateWideMinWidthProperty); }
+            set { SetValue(VisualStateWideMinWidthProperty, value); }
+        }
+        public static readonly DependencyProperty VisualStateWideMinWidthProperty =
+            DependencyProperty.Register(nameof(VisualStateWideMinWidth), typeof(double),
+                typeof(HamburgerMenu), new PropertyMetadata((double)-1, (d, e) =>
+                {
+                    DebugWrite(nameof(VisualStateWideMinWidth), e);
+                    (d as HamburgerMenu).VisualStateWideMinWidthChanged?.Invoke(d, e.ToChangedEventArgs<double>());
+                    (d as HamburgerMenu).InternalVisualStateWideMinWidthChanged(e.ToChangedEventArgs<double>());
+                }));
+        /// <summary>
+        /// 在<see cref="VisualStateWideMinWidth"/>属性发生更改时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<double>> VisualStateWideMinWidthChanged;
+        partial void InternalVisualStateWideMinWidthChanged(ChangedEventArgs<double> e);
+
+
+        /// <summary>
+        /// 获取或设置窄视图模式的触发宽度
+        /// </summary>
+        public double VisualStateNarrowMinWidth
+        {
+            get { return (double)GetValue(VisualStateNarrowMinWidthProperty); }
+            set { SetValue(VisualStateNarrowMinWidthProperty, value); }
+        }
+        public static readonly DependencyProperty VisualStateNarrowMinWidthProperty =
+            DependencyProperty.Register(nameof(VisualStateNarrowMinWidth), typeof(double),
+                typeof(HamburgerMenu), new PropertyMetadata((double)-1, (d, e) =>
+                {
+                    DebugWrite(nameof(VisualStateNarrowMinWidth), e);
+                    (d as HamburgerMenu).VisualStateNarrowMinWidthChanged?.Invoke(d, e.ToChangedEventArgs<double>());
+                    (d as HamburgerMenu).InternalVisualStateNarrowMinWidthChanged(e.ToChangedEventArgs<double>());
+                }));
+        /// <summary>
+        /// 在<see cref="VisualStateNarrowMinWidth"/>属性发生更改时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<double>> VisualStateNarrowMinWidthChanged;
+        partial void InternalVisualStateNarrowMinWidthChanged(ChangedEventArgs<double> e);
 
 
         #endregion
@@ -428,6 +485,27 @@ namespace JacobC.Controls
         public event EventHandler<ChangedEventArgs<Brush>> HamburgerBackgroundChanged;
         partial void InternalHamburgerBackgroundChanged(ChangedEventArgs<Brush> e);
 
+        /// <summary>
+        /// 获取或设置汉堡按键的宽度
+        /// </summary>
+        public double HamburgerButtonGridWidth
+        {
+            get { return (double)GetValue(HamburgerButtonGridWidthProperty); }
+            set { SetValue(HamburgerButtonGridWidthProperty, value); }
+        }
+        public static readonly DependencyProperty HamburgerButtonGridWidthProperty =
+            DependencyProperty.Register(nameof(HamburgerButtonGridWidth), typeof(double),
+               typeof(HamburgerMenu), new PropertyMetadata(48d, (d, e) =>
+               {
+                   DebugWrite(nameof(HamburgerButtonGridWidth), e);
+                   (d as HamburgerMenu).HamburgerButtonGridWidthChanged?.Invoke(d, e.ToChangedEventArgs<double>());
+                   (d as HamburgerMenu).InternalHamburgerButtonGridWidthChanged(e.ToChangedEventArgs<double>());
+               }));
+        /// <summary>
+        /// 在<see cref="HamburgerBackgroundHamburgerButtonGridWidth"/>属性发生更改时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<double>> HamburgerButtonGridWidthChanged;
+        partial void InternalHamburgerButtonGridWidthChanged(ChangedEventArgs<double> e);
 
         #endregion
 
@@ -435,6 +513,8 @@ namespace JacobC.Controls
         RelayCommand _hamburgerCommand;
         internal RelayCommand HamburgerCommand => _hamburgerCommand ?? (_hamburgerCommand = new RelayCommand(ExecuteHamburger));
 
+        RelayCommand<HamburgerButtonInfo> _navCommand;
+        public RelayCommand<HamburgerButtonInfo> NavCommand => _navCommand ?? (_navCommand = new RelayCommand<HamburgerButtonInfo>(ExecuteNav));
 
         #endregion
     }

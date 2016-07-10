@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 
 namespace JacobC.MVVM
@@ -139,6 +140,18 @@ namespace JacobC.MVVM
             var handler = PropertyChanged;
             if (handler != null)
             {
+                var args = new PropertyChangedEventArgs(propertyName);
+                if (Dispatcher.HasThreadAccess)
+                    try
+                    {
+                        handler.Invoke(this, args);
+                    }
+                    catch
+                    {
+                        Dispatch(Dispatcher, () => handler.Invoke(this, args));
+                    }
+                else
+                    Dispatch(Dispatcher, () => handler.Invoke(this, args));
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
@@ -157,6 +170,30 @@ namespace JacobC.MVVM
                     RaisePropertyChanged(propertyName);
                 }
             }
+        }
+
+        private async void Dispatch(CoreDispatcher dispatcher, Action action, int delayms = 0, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        {
+            if (delayms > 0)
+                await Task.Delay(delayms).ConfigureAwait(false);
+
+            if (dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
+            {
+                action();
+            }
+            else
+            {
+                dispatcher.RunAsync(priority, () =>
+                {
+                    try
+                    { action(); }
+                    catch (Exception e)
+                    {
+                        System.Diagnostics.Debug.WriteLine(e.StackTrace);
+                    }
+                }).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
+            }
+
         }
 
     }
