@@ -101,13 +101,6 @@
     <Compile Include="Common\ChangedEventArgs.cs" />
     <Compile Include="Common\ExtensionMethods.cs" />
     <Compile Include="Common\MVVM\DependencyBindableBase.cs" />
-    <Compile Include="Controls\HamburgerMenu.xaml.cs">
-      <DependentUpon>HamburgerMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\HamburgerMenu.xaml.declrs.cs">
-      <DependentUpon>HamburgerMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModels\Behavior\MessageDialogAction.cs" />
     <Compile Include="ViewModels\HamburgerButtonInfo.cs" />
     <Compile Include="Views\IndexPage.xaml.cs">
       <DependentUpon>IndexPage.xaml</DependentUpon>
@@ -138,10 +131,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\HamburgerMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Styles\ControlStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -167,7 +156,9 @@
       <Name>XiamiNetInterface</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Controls\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
