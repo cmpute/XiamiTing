@@ -1,6 +1,7 @@
 using System;
 using Template10.Common;
 using Template10.Utils;
+using Template10.Services.SettingsService;
 using Windows.UI.Xaml;
 
 namespace JacobC.Xiami.Services
@@ -8,10 +9,15 @@ namespace JacobC.Xiami.Services
     public class SettingsService
     {
         public static SettingsService Instance { get; } = new SettingsService();
-        Template10.Services.SettingsService.ISettingsHelper _helper;
+        SettingsHelper _helper;
         private SettingsService()
         {
             _helper = new Template10.Services.SettingsService.SettingsHelper();
+        }
+
+        public SettingsHelper Helper
+        {
+            get { return _helper; }
         }
 
         public bool UseShellBackButton
