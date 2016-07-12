@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Services.SettingsService;
 
-namespace JacobC.Xiami.Services
+namespace JacobC.Xiami
 {
     public static class ExtensionMethods
     {

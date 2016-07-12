@@ -12,7 +12,7 @@ namespace JacobC.Xiami.Services
         SettingsHelper _helper;
         private SettingsService()
         {
-            _helper = new Template10.Services.SettingsService.SettingsHelper();
+            _helper = new SettingsHelper();
         }
 
         public SettingsHelper Helper
