@@ -18,6 +18,9 @@ namespace JacobC.Xiami.Views
         {
             Instance = this;
             InitializeComponent();
+
+            JacobC.Xiami.Services.SettingsService.Instance.AppThemeChanged += (value) =>
+                  HamburgerMenu.RefreshStyles(value);
         }
 
         public Shell(INavigationService navigationService) : this()

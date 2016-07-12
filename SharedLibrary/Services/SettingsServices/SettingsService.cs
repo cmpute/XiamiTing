@@ -47,9 +47,10 @@ namespace JacobC.Xiami.Services
             {
                 _helper.Write(nameof(AppTheme), value.ToString());
                 (Window.Current.Content as FrameworkElement).RequestedTheme = value.ToElementTheme();
-                Views.Shell.HamburgerMenu.RefreshStyles(value);
+                AppThemeChanged?.Invoke(value);
             }
         }
+        public event Action<ApplicationTheme> AppThemeChanged;
 
         public TimeSpan CacheMaxDuration
         {
