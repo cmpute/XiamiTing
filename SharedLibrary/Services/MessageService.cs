@@ -15,12 +15,16 @@ namespace JacobC.Xiami.Services
     /// </summary>
     public static class MessageService
     {
-        // The underlying BMP methods can pass a ValueSet. MessageService
-        // relies on this to pass a type and body payload.
         const string MessageType = "MessageType";
         const string MessageBody = "MessageBody";
         static ISerializationService serializeService = SerializationService.Json;
 
+        /// <summary>
+        /// 向前台发送媒体带参消息
+        /// </summary>
+        /// <typeparam name="T">消息参数的类型</typeparam>
+        /// <param name="type">媒体消息的类型</param>
+        /// <param name="message">消息参数</param>
         public static void SendMediaMessageToForeground<T>(MediaMessageTypes type, T message)
         {
             var payload = new ValueSet();
@@ -28,11 +32,17 @@ namespace JacobC.Xiami.Services
             payload.Add(MessageService.MessageBody, serializeService.Serialize(message));
             BackgroundMediaPlayer.SendMessageToForeground(payload);
         }
-        public static void SendMediaMessageToForeground(MediaMessageTypes type)
-        {
-            SendMediaMessageToForeground<string>(type, null);
-        }
-
+        /// <summary>
+        /// 向前台发送媒体消息
+        /// </summary>
+        /// <param name="type">媒体消息的类型</param>
+        public static void SendMediaMessageToForeground(MediaMessageTypes type) => SendMediaMessageToForeground<string>(type, null);
+        /// <summary>
+        /// 向后台发送媒体带参消息
+        /// </summary>
+        /// <typeparam name="T">消息参数的类型</typeparam>
+        /// <param name="type">媒体消息的类型</param>
+        /// <param name="message">消息参数</param>
         public static void SendMediaMessageToBackground<T>(MediaMessageTypes type, T message)
         {
             var payload = new ValueSet();
@@ -40,20 +50,24 @@ namespace JacobC.Xiami.Services
             payload.Add(MessageService.MessageBody, serializeService.Serialize(message));
             BackgroundMediaPlayer.SendMessageToBackground(payload);
         }
-        public static void SendMediaMessageToBackground(MediaMessageTypes type)
-        {
-            SendMediaMessageToBackground<string>(type, null);
-        }
+        /// <summary>
+        /// 向后台发送媒体消息
+        /// </summary>
+        /// <param name="type">媒体消息的类型</param>
+        public static void SendMediaMessageToBackground(MediaMessageTypes type) => SendMediaMessageToBackground<string>(type, null);
 
-        public static MediaMessageTypes GetTypeOfMessage(ValueSet data)
-        {
-            return (MediaMessageTypes)Enum.Parse(typeof(MediaMessageTypes), data[MessageType].ToString());
-        }
-
-        public static T GetMessage<T>(ValueSet data)
-        {
-            return serializeService.Deserialize<T>(data[MessageBody].ToString());
-            
-        }
+        /// <summary>
+        /// 获取媒体消息的类型
+        /// </summary>
+        /// <param name="data">存储在<see cref="MediaPlayerDataReceivedEventArgs"/>中的<see cref="ValueSet"/>数据</param>
+        public static MediaMessageTypes GetTypeOfMediaMessage(ValueSet data) =>
+            (MediaMessageTypes)Enum.Parse(typeof(MediaMessageTypes), data[MessageType].ToString());
+        /// <summary>
+        /// 获取媒体消息的参数（即消息主体）
+        /// </summary>
+        /// <typeparam name="T">参数类型</typeparam>
+        /// <param name="data">存储在<see cref="MediaPlayerDataReceivedEventArgs"/>中的<see cref="ValueSet"/>数据</param>
+        public static T GetMediaMessage<T>(ValueSet data) =>
+            serializeService.Deserialize<T>(data[MessageBody].ToString());
     }
 }

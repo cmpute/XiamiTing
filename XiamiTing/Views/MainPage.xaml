@@ -47,7 +47,7 @@
 
         <controls:PageHeader x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
                              RelativePanel.AlignRightWithPanel="True"
-                             RelativePanel.AlignTopWithPanel="True" Text="Main Page">
+                             RelativePanel.AlignTopWithPanel="True" Text="Discovering">
 
             <!--  secondary commands  -->
             <controls:PageHeader.SecondaryCommands>
@@ -57,7 +57,8 @@
             </controls:PageHeader.SecondaryCommands>
 
         </controls:PageHeader>
-
+        <Button>
+        </Button>
     </RelativePanel>
 </Page>
 

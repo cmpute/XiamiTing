@@ -18,5 +18,9 @@ namespace JacobC.Xiami
             setting.Remove(key, strategy);
             return val;
         }
+        /// <summary>
+        /// 将对象转换成枚举类型
+        /// </summary>
+        public static T ParseEnum<T>(object value) => (T)(Enum.Parse(typeof(T), value.ToString()));
     }
 }
