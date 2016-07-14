@@ -28,8 +28,8 @@
             <Grid Grid.Row="1" Background="{StaticResource ForeColorBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition />
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <!--插入一个控制栏背景层-->
@@ -44,6 +44,14 @@
                     <Button x:Name="next" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" Margin="4,0">
                         <FontIcon FontSize="28" Glyph="&#xE101;" />
                     </Button>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <RelativePanel Margin="8,4">
+                        <TextBlock x:Name="trackTitle" Text="Track" Foreground="{StaticResource BackColorBrush}"/>
+                        <TextBlock x:Name="split" Margin="8,0" Text="/" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="trackTitle" />
+                        <TextBlock x:Name="artistName" Text="Artist" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="split"/>
+                    </RelativePanel>
+                    <Slider></Slider>
                 </StackPanel>
             </Grid>
         </Grid>
