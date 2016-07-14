@@ -11,6 +11,7 @@ using System.Diagnostics;
 using Windows.UI.Xaml.Media.Imaging;
 using System.Threading;
 using Windows.Foundation;
+using JacobC.Xiami.Models;
 
 namespace JacobC.Xiami.ViewModels
 {
@@ -63,7 +64,7 @@ namespace JacobC.Xiami.ViewModels
         /***********************播放功能的代码*************************/
 
         //private MainPage rootPage;
-        private AutoResetEvent backgroundAudioTaskStarted;
+        private AutoResetEvent backgroundAudioTaskStarted = new AutoResetEvent(false);
         private bool _isMyBackgroundTaskRunning = false;
         private Dictionary<string, BitmapImage> albumArtCache = new Dictionary<string, BitmapImage>();
         const int RPC_S_SERVER_UNAVAILABLE = -2147023174; // 0x800706BA
@@ -92,7 +93,7 @@ namespace JacobC.Xiami.ViewModels
                 {
                     StartBackgroundAudioTask();
                 }
-            }, () => !string.IsNullOrEmpty(BusyText)));
+            }));
 
         private bool _isBackgroundTaskRunning = false;
         private bool IsMyBackgroundTaskRunning
@@ -184,21 +185,29 @@ namespace JacobC.Xiami.ViewModels
         {
             AddMediaPlayerEventHandlers();
 
-            var startResult = this.Dispatcher.DispatchAsync(() =>
+            this.Dispatcher.DispatchAsync(() =>
             {
                 bool result = backgroundAudioTaskStarted.WaitOne(10000);
                 //Send message to initiate playback
                 if (result == true)
                 {
-                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, playlistView.Songs.ToList());
+                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, new List<SongModel>() { new SongModel() {Name = "test", Title="testtitle", MediaUri=new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/8f7092393283190ebc7033197eb07311/5787123c/resource/a3/73/65/3736166827.aac")  } });
                     MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartPlayback);
                 }
                 else
                 {
                     throw new Exception("Background Audio Task didn't start in expected time");
                 }
+            }).ContinueWith((task) => {
+                if (task.IsCompleted)
+                {
+                    Debug.WriteLine("Background Audio Task initialized");
+                }
+                else
+                {
+                    Debug.WriteLine("Background Audio Task could not initialized due to an error ::" + task.Exception.ToString());
+                }
             });
-            startResult.Completed = new AsyncActionCompletedHandler(BackgroundTaskInitializationCompleted);
         }
         private void AddMediaPlayerEventHandlers()
         {
@@ -213,6 +222,7 @@ namespace JacobC.Xiami.ViewModels
                 if (ex.HResult == RPC_S_SERVER_UNAVAILABLE)
                 {
                     // Internally MessageReceivedFromBackground calls Current which can throw RPC_S_SERVER_UNAVAILABLE
+                    ExtensionMethods.ConsoleLog(ex.Message);
                     ResetAfterLostBackground();
                 }
                 else
@@ -221,46 +231,44 @@ namespace JacobC.Xiami.ViewModels
                 }
             }
         }
-        async void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
+        private async void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
         {
-            TrackChangedMessage trackChangedMessage;
-            if (MessageService.TryParseMessage(e.Data, out trackChangedMessage))
+            if (MessageService.GetTypeOfMediaMessage(e.Data)==MediaMessageTypes.TrackChanged)
             {
                 // When foreground app is active change track based on background message
-                await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    // If playback stopped then clear the UI
-                    if (trackChangedMessage.TrackId == null)
-                    {
-                        playlistView.SelectedIndex = -1;
-                        albumArt.Source = null;
-                        txtCurrentTrack.Text = string.Empty;
-                        prevButton.IsEnabled = false;
-                        nextButton.IsEnabled = false;
-                        return;
-                    }
+                //await this.Dispatcher.Dispatch(() =>
+                //{
+                //    // If playback stopped then clear the UI
+                //    if (trackChangedMessage.TrackId == null)
+                //    {
+                //        playlistView.SelectedIndex = -1;
+                //        albumArt.Source = null;
+                //        txtCurrentTrack.Text = string.Empty;
+                //        prevButton.IsEnabled = false;
+                //        nextButton.IsEnabled = false;
+                //        return;
+                //    }
 
-                    var songIndex = playlistView.GetSongIndexById(trackChangedMessage.TrackId);
-                    var song = playlistView.Songs[songIndex];
+                //    var songIndex = playlistView.GetSongIndexById(trackChangedMessage.TrackId);
+                //    var song = playlistView.Songs[songIndex];
 
-                    // Update list UI
-                    playlistView.SelectedIndex = songIndex;
+                //    // Update list UI
+                //    playlistView.SelectedIndex = songIndex;
 
-                    // Update the album art
-                    albumArt.Source = albumArtCache[song.AlbumArtUri.ToString()];
+                //    // Update the album art
+                //    albumArt.Source = albumArtCache[song.AlbumArtUri.ToString()];
 
-                    // Update song title
-                    txtCurrentTrack.Text = song.Title;
+                //    // Update song title
+                //    txtCurrentTrack.Text = song.Title;
 
-                    // Ensure track buttons are re-enabled since they are disabled when pressed
-                    prevButton.IsEnabled = true;
-                    nextButton.IsEnabled = true;
-                });
+                //    // Ensure track buttons are re-enabled since they are disabled when pressed
+                //    prevButton.IsEnabled = true;
+                //    nextButton.IsEnabled = true;
+                //});
                 return;
             }
 
-            BackgroundAudioTaskStartedMessage backgroundAudioTaskStartedMessage;
-            if (MessageService.TryParseMessage(e.Data, out backgroundAudioTaskStartedMessage))
+            if (MessageService.GetTypeOfMediaMessage(e.Data) == MediaMessageTypes.BackgroundAudioTaskStarted)
             {
                 // StartBackgroundAudioTask is waiting for this signal to know when the task is up and running
                 // and ready to receive messages
@@ -268,6 +276,18 @@ namespace JacobC.Xiami.ViewModels
                 backgroundAudioTaskStarted.Set();
                 return;
             }
+        }
+        async void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args)
+        {
+            //var currentState = sender.CurrentState; // cache outside of completion or you might get a different value
+            //await this.Dispatcher.Dispatch(() =>
+            //{
+            //    // Update state label
+            //    txtCurrentState.Text = currentState.ToString();
+
+            //    // Update controls
+            //    UpdateTransportControls(currentState);
+            //});
         }
     }
 }

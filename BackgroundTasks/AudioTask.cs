@@ -236,6 +236,7 @@ namespace JacobC.Xiami.Services
                     if (currentTrackId != null)
                     {
                         // Find the index of the item by name
+                        ExtensionMethods.ConsoleLog("No current track");
                         var index = playbackList.Items.ToList().FindIndex(item =>
                             GetTrackId(item).ToString() == currentTrackId);
                         if (currentTrackPosition == null)
@@ -335,6 +336,7 @@ namespace JacobC.Xiami.Services
 
         private void BackgroundMediaPlayer_MessageReceivedFromForeground(object sender, MediaPlayerDataReceivedEventArgs e)
         {
+            ExtensionMethods.ConsoleLog($"Message {e.Data["MessageType"]} get");
             switch(MessageService.GetTypeOfMediaMessage(e.Data))
             {
                 case MediaMessageTypes.AppSuspended:
@@ -389,6 +391,7 @@ namespace JacobC.Xiami.Services
                 source.CustomProperties[TitleKey] = song.Title;
                 source.CustomProperties[AlbumArtKey] = song.AlbumArtUri;
                 playbackList.Items.Add(new MediaPlaybackItem(source));
+                ExtensionMethods.ConsoleLog($"song added length {source.Duration}");
             }
             BackgroundMediaPlayer.Current.AutoPlay = false;// 关闭自动播放
             BackgroundMediaPlayer.Current.Source = playbackList;

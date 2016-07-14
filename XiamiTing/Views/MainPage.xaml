@@ -57,7 +57,7 @@
             </controls:PageHeader.SecondaryCommands>
 
         </controls:PageHeader>
-        <Button>
+        <Button Command="{x:Bind ViewModel.PlayCommand}">
         </Button>
     </RelativePanel>
 </Page>

@@ -175,6 +175,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\BackgroundTasks\BackgroundTasks.csproj">
+      <Project>{f2048935-b853-4f7a-ac91-ca10ba0128b3}</Project>
+      <Name>BackgroundTasks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj">
       <Project>{e94e3312-8c4b-42b1-b05c-201591a0c9be}</Project>
       <Name>SharedLibrary</Name>
