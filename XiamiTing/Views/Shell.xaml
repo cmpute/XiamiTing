@@ -6,7 +6,7 @@
       xmlns:Controls="using:Template10.Controls"
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
       xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
-      xmlns:local="using:JacobC.Xiami.Views"
+      xmlns:local="using:JacobC.Xiami.Controls"
       xmlns:views="using:JacobC.Xiami.Views"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
       mc:Ignorable="d">
@@ -50,8 +50,8 @@
             </Controls:HamburgerMenu.SecondaryButtons>
 
         </Controls:HamburgerMenu>
-
-
+        
+        <local:MusicController Grid.Row="1"/>
     </Grid>
 </Page>
 

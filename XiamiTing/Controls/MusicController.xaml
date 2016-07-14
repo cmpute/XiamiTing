@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="300"
+    d:DesignHeight="60"
     d:DesignWidth="400">
     <Control.Resources>
         <Style TargetType="MediaTransportControls">
@@ -17,5 +17,35 @@
             <Setter Property="IsTextScaleFactorEnabled" Value="False"/>
         </Style>
     </Control.Resources>
-    <MediaTransportControls x:Name="rootController" />
+    <Grid x:Name="root">
+        <!--TODO: 此处插入播放详情界面的控件-->
+        <Grid x:Name="controlGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <!--TODO: 第一行插入拖动控制条-->
+            <Grid Grid.Row="1" Background="{StaticResource ForeColorBrush}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <!--插入一个控制栏背景层-->
+                <Image Source="{x:Bind AlbumArt, Mode=OneWay}" Height="60" Width="60" Stretch="UniformToFill"/>
+                <StackPanel x:Name="controlButtons" Grid.Column="1" Orientation="Horizontal">
+                    <Button x:Name="previous" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" Margin="4,0">
+                        <FontIcon FontSize="28" Glyph="&#xE100;" />
+                    </Button>
+                    <Button x:Name="play" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" Margin="4,0">
+                        <FontIcon FontSize="40" Glyph="&#xE102;" />
+                    </Button>
+                    <Button x:Name="next" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" Margin="4,0">
+                        <FontIcon FontSize="28" Glyph="&#xE101;" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
 </UserControl>
