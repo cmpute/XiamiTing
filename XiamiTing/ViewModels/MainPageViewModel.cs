@@ -191,7 +191,7 @@ namespace JacobC.Xiami.ViewModels
                 //Send message to initiate playback
                 if (result == true)
                 {
-                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, new List<SongModel>() { new SongModel() {Name = "test", Title="testtitle", MediaUri=new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/8f7092393283190ebc7033197eb07311/5787123c/resource/a3/73/65/3736166827.aac")  } });
+                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, new List<SongModel>() { new SongModel() { Title="testtitle", MediaUri=new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/8f7092393283190ebc7033197eb07311/5787123c/resource/a3/73/65/3736166827.aac")  } });
                     MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartPlayback);
                 }
                 else

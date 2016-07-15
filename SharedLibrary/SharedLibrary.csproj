@@ -107,12 +107,15 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\AlbumModel.cs" />
+    <Compile Include="Models\ArtistModel.cs" />
     <Compile Include="Models\SongModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\MediaMessageTypes.cs" />
     <Compile Include="Services\NotificationService.cs" />
+    <Compile Include="Services\PlaylistService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\StateEnum.cs" />
     <EmbeddedResource Include="Properties\SharedLibrary.rd.xml" />

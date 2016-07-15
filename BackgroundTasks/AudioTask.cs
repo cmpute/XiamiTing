@@ -389,7 +389,7 @@ namespace JacobC.Xiami.Services
                 var source = MediaSource.CreateFromUri(song.MediaUri);
                 source.CustomProperties[TrackIdKey] = song.MediaUri;
                 source.CustomProperties[TitleKey] = song.Title;
-                source.CustomProperties[AlbumArtKey] = song.AlbumArtUri;
+                source.CustomProperties[AlbumArtKey] = song.Album.AlbumArtUri;
                 playbackList.Items.Add(new MediaPlaybackItem(source));
                 ExtensionMethods.ConsoleLog($"song added length {source.Duration}");
             }

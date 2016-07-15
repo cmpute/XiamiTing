@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using JacobC.Xiami.Models;
 
 namespace JacobC.Xiami.Controls
 {
@@ -21,23 +22,34 @@ namespace JacobC.Xiami.Controls
         /// </summary>
         public ImageSource AlbumArt
         {
-            get { return GetValue(AlbumArtProperty) as ImageSource; }
-            set { SetValue(AlbumArtProperty, value); }
+            get;
         }
         private static readonly ImageSource _defaultAlbumArt = new BitmapImage(new Uri(@"ms-appx:///Assets/Pictures/cd100.gif"));
-        public static readonly DependencyProperty AlbumArtProperty =
-              DependencyProperty.Register(nameof(AlbumArt), typeof(ImageSource),
-                  typeof(MusicController), new PropertyMetadata(_defaultAlbumArt, (d, e) =>
+
+        /// <summary>
+        /// 获取或设置当前播放的歌曲
+        /// </summary>
+        public SongModel CurrentSong
+        {
+            get { return GetValue(CurrentSongProperty) as SongModel; }
+            set { SetValue(CurrentSongProperty, value); }
+        }
+        private static readonly SongModel _defaultCurrentSong = new SongModel { Album = new AlbumModel() };
+        /// <summary>
+        /// 标识<see cref="CurrentSong"/>依赖属性
+        /// </summary>
+        public static readonly DependencyProperty CurrentSongProperty =
+              DependencyProperty.Register(nameof(CurrentSong), typeof(SongModel),
+                  typeof(MusicController), new PropertyMetadata(_defaultCurrentSong, (d, e) =>
                   {
-                      (d as MusicController).AlbumArtChanged?.Invoke(d, e.ToChangedEventArgs<ImageSource>());
-                      (d as MusicController).InternalAlbumArtChanged(e.ToChangedEventArgs<ImageSource>());
+                      (d as MusicController).CurrentSongChanged?.Invoke(d, e.ToChangedEventArgs<SongModel>());
+                      (d as MusicController).InternalCurrentSongChanged(e.ToChangedEventArgs<SongModel>());
                   }));
         /// <summary>
-        /// 在<see cref="AlbumArt"/>属性发生变更时发生
+        /// 在<see cref="CurrentSong"/>属性发生变更时发生
         /// </summary>
-        public event EventHandler<ChangedEventArgs<ImageSource>> AlbumArtChanged;
-        partial void InternalAlbumArtChanged(ChangedEventArgs<ImageSource> e);
-
+        public event EventHandler<ChangedEventArgs<SongModel>> CurrentSongChanged;
+        partial void InternalCurrentSongChanged(ChangedEventArgs<SongModel> e);
 
         #endregion
 

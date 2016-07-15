@@ -33,7 +33,11 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <!--插入一个控制栏背景层-->
-                <Image Source="{x:Bind AlbumArt, Mode=OneWay}" Height="60" Width="60" Stretch="UniformToFill"/>
+                <Image Height="60" Width="60" Stretch="UniformToFill">
+                    <Image.Source>
+                        <BitmapImage UriSource="{x:Bind CurrentSong.Album.AlbumArtCacheUri, Mode=OneWay}" />
+                    </Image.Source>
+                </Image>
                 <StackPanel x:Name="controlButtons" Grid.Column="1" Orientation="Horizontal">
                     <Button x:Name="previous" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" Margin="4,0">
                         <FontIcon FontSize="28" Glyph="&#xE100;" />
@@ -47,11 +51,16 @@
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <RelativePanel Margin="8,4">
-                        <TextBlock x:Name="trackTitle" Text="Track" Foreground="{StaticResource BackColorBrush}"/>
+                        <TextBlock x:Name="trackTitle" Text="{x:Bind CurrentSong.Title}" Foreground="{StaticResource BackColorBrush}"/>
                         <TextBlock x:Name="split" Margin="8,0" Text="/" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="trackTitle" />
-                        <TextBlock x:Name="artistName" Text="Artist" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="split"/>
+                        <TextBlock x:Name="artistName" Text="{x:Bind CurrentSong.Artist.Name}" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="split"/>
                     </RelativePanel>
                     <Slider></Slider>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Orientation="Horizontal">
+                    <Button x:Name="list" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center">
+                        <FontIcon FontSize="20" Glyph="&#xE142;" />
+                    </Button>
                 </StackPanel>
             </Grid>
         </Grid>
