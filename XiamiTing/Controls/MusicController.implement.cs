@@ -21,7 +21,6 @@ namespace JacobC.Xiami.Controls
 
         //private MainPage rootPage;
         private AutoResetEvent backgroundAudioTaskStarted = new AutoResetEvent(false);
-        private bool _isMyBackgroundTaskRunning = false;
         private Dictionary<string, BitmapImage> albumArtCache = new Dictionary<string, BitmapImage>();
         const int RPC_S_SERVER_UNAVAILABLE = -2147023174; // 0x800706BA
 
@@ -29,7 +28,7 @@ namespace JacobC.Xiami.Controls
         public DelegateCommand PlayCommand => _PlayCommand ?? (_PlayCommand = new DelegateCommand(() =>
             {
                 Debug.WriteLine("Play button pressed from App");
-                if (IsMyBackgroundTaskRunning)
+                if (IsBackgroundTaskRunning)
                 {
                     if (MediaPlayerState.Playing == CurrentPlayer.CurrentState)
                     {
@@ -51,7 +50,7 @@ namespace JacobC.Xiami.Controls
             }));
 
         private bool _isBackgroundTaskRunning = false;
-        private bool IsMyBackgroundTaskRunning
+        private bool IsBackgroundTaskRunning
         {
             get
             {
@@ -113,7 +112,7 @@ namespace JacobC.Xiami.Controls
         private void ResetAfterLostBackground()
         {
             BackgroundMediaPlayer.Shutdown();
-            _isMyBackgroundTaskRunning = false;
+            _isBackgroundTaskRunning = false;
             backgroundAudioTaskStarted.Reset();
             //prevButton.IsEnabled = true;
             //nextButton.IsEnabled = true;
