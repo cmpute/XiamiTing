@@ -18,15 +18,6 @@ namespace JacobC.Xiami.Controls
         #region Binding Properties
 
         /// <summary>
-        /// 获取或设置播放界面的专辑封面
-        /// </summary>
-        public ImageSource AlbumArt
-        {
-            get;
-        }
-        private static readonly ImageSource _defaultAlbumArt = new BitmapImage(new Uri(@"ms-appx:///Assets/Pictures/cd100.gif"));
-
-        /// <summary>
         /// 获取或设置当前播放的歌曲
         /// </summary>
         public SongModel CurrentSong

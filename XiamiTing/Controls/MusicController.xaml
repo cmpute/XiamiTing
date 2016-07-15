@@ -5,9 +5,11 @@
     xmlns:local="using:JacobC.Xiami.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:JacobC.Xiami.ViewModels"
     mc:Ignorable="d"
     d:DesignHeight="60"
     d:DesignWidth="400">
+
     <Control.Resources>
         <Style TargetType="MediaTransportControls">
             <Setter Property="IsTabStop" Value="False"/>
@@ -42,7 +44,11 @@
                     <Button x:Name="previous" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" Margin="4,0">
                         <FontIcon FontSize="28" Glyph="&#xE100;" />
                     </Button>
-                    <Button x:Name="play" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" Margin="4,0">
+                    <Button x:Name="play" Foreground="{StaticResource BackColorBrush}"
+                            Background="Transparent"
+                            VerticalAlignment="Center"
+                            Margin="4,0"
+                            Command="{x:Bind PlayCommand}">
                         <FontIcon FontSize="40" Glyph="&#xE102;" />
                     </Button>
                     <Button x:Name="next" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" Margin="4,0">

@@ -226,6 +226,7 @@ namespace JacobC.Xiami.Services
         {
             try
             {
+                Debug.WriteLine("into Start method");
                 // 如果播放已经开始过一次，则只需要继续播放
                 if (!playbackStartedPreviously)
                 {
@@ -235,8 +236,8 @@ namespace JacobC.Xiami.Services
                     var currentTrackPosition = settinghelper.ReadAndReset<string>(nameof(BackgroundMediaPlayer.Current.Position));
                     if (currentTrackId != null)
                     {
-                        // Find the index of the item by name
-                        ExtensionMethods.ConsoleLog("No current track");
+                        ExtensionMethods.ConsoleLog("has current track");
+                        // 通过名称找到索引
                         var index = playbackList.Items.ToList().FindIndex(item =>
                             GetTrackId(item).ToString() == currentTrackId);
                         if (currentTrackPosition == null)
@@ -256,11 +257,11 @@ namespace JacobC.Xiami.Services
                                 {
                                     // 删除订阅，因为对当前项只需要运行一次
                                     playbackList.CurrentItemChanged -= handler;
-                                    
+
                                     var position = TimeSpan.Parse((string)currentTrackPosition);
                                     Debug.WriteLine("StartPlayback: Setting Position " + position);
                                     BackgroundMediaPlayer.Current.Position = position;
-                                    
+
                                     BackgroundMediaPlayer.Current.Play();
                                 }
                             };
@@ -271,10 +272,16 @@ namespace JacobC.Xiami.Services
                         }
                     }
                     else
+                    {
+                        Debug.WriteLine("No current track");
                         BackgroundMediaPlayer.Current.Play();
+                    }
                 }
                 else
+                {
+                    Debug.WriteLine("started previously");
                     BackgroundMediaPlayer.Current.Play();
+                }
             }
             catch (Exception ex)
             {
@@ -389,9 +396,9 @@ namespace JacobC.Xiami.Services
                 var source = MediaSource.CreateFromUri(song.MediaUri);
                 source.CustomProperties[TrackIdKey] = song.MediaUri;
                 source.CustomProperties[TitleKey] = song.Title;
-                source.CustomProperties[AlbumArtKey] = song.Album.AlbumArtUri;
+                source.CustomProperties[AlbumArtKey] = song.Album.AlbumArtCacheUri;
                 playbackList.Items.Add(new MediaPlaybackItem(source));
-                ExtensionMethods.ConsoleLog($"song added length {source.Duration}");
+                ExtensionMethods.ConsoleLog($"song added {song.MediaUri.ToString()}");
             }
             BackgroundMediaPlayer.Current.AutoPlay = false;// 关闭自动播放
             BackgroundMediaPlayer.Current.Source = playbackList;

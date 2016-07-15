@@ -24,5 +24,5 @@ namespace JacobC.Xiami.Controls
         {
             this.InitializeComponent();
         }
-    }
+    }   
 }
