@@ -1,16 +1,18 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
 
 namespace JacobC.Xiami.Models
 {
+    [DataContract]
     public class AlbumModel : BindableBase
     {
-
         Uri _AlbumArtUri = default(Uri);
         /// <summary>
         /// 获取或设置专辑封面的链接
@@ -28,6 +30,7 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取专辑封面的本地缓存
         /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Uri AlbumArtCacheUri { get; private set; } = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");
 
         protected async void GetAlbumArtCache()
@@ -63,10 +66,7 @@ namespace JacobC.Xiami.Models
                 }
             }
         }
-        private void _Artist_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            this.RaisePropertyChanged(nameof(Artist));
-        }
+        private void _Artist_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Artist));
 
         /// <summary>
         /// 获取或设置专辑的虾米ID

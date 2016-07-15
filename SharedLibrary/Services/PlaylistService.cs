@@ -9,6 +9,9 @@ using Template10.Utils;
 
 namespace JacobC.Xiami.Services
 {
+    /// <summary>
+    /// 维护全局的播放列表集合
+    /// </summary>
     public class PlaylistService
     {
         private ObservableCollection<SongModel> _Playlist;
@@ -17,11 +20,11 @@ namespace JacobC.Xiami.Services
         /// </summary>
         public ObservableCollection<SongModel> Playlist
         {
-            get { 
-            if (_Playlist != null)
-                return _Playlist;
-            return _Playlist = _Playlist
-                ?? InitPlaylist().ToObservableCollection();
+            get
+            {
+                //if (_Playlist != null)
+                //    return _Playlist;
+                return _Playlist = _Playlist ?? InitPlaylist().ToObservableCollection();
             }
         }
         /// <summary>
