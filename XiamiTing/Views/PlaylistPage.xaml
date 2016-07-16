@@ -36,41 +36,103 @@
             </Grid.RowDefinitions>
             <Grid Margin="12,4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="48"/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="72"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="1" Text="Title" Style="{StaticResource TitleText}"/>
                 <TextBlock Grid.Column="2" Text="Performer" Style="{StaticResource TitleText}"/>
                 <TextBlock Grid.Column="3" Text="Album" Style="{StaticResource TitleText}"/>
             </Grid>
-            <ScrollViewer Grid.Row="1" VerticalScrollMode="Auto">
-                <ListView x:Name="listView" IsItemClickEnabled="True" ItemsSource="{x:Bind ViewModel.Playlist}" SelectedIndex="{x:Bind ViewModel.CurrentIndex}">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="m:SongModel">
-                            <Grid>
-                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="1" Text="{x:Bind Title}"/>
-                                <TextBlock Grid.Column="2" Text="{x:Bind Artist.Name}"/>
-                                <TextBlock Grid.Column="3" Text="{x:Bind Album.Name}"/>
+            <ListView Grid.Row="1" x:Name="listView" IsItemClickEnabled="True" ItemsSource="{x:Bind ViewModel.Playlist}" SelectedIndex="{x:Bind ViewModel.CurrentIndex}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Grid Background="{TemplateBinding Background}">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup>
+                                                <!--缺省样式-->
+                                                <VisualState x:Name="Normal" />
+                                                <!--设置鼠标悬停样式-->
+                                                <VisualState x:Name="PointerOver">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames 
+                        Storyboard.TargetName="ContentBackground"
+                        Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Red" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                        <Grid x:Name="ContentBackground">
+                                            <!--ContentPresenter中包含的是Datatemplate-->
+                                            <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.Template>
+                    <ControlTemplate>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" >
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ListView.Template>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="m:SongModel">
+                        <!--TODO: ListView点击=Checkbox的check事件-->
+                        <!--TODO: 点击Textblck可以链接到对应的专辑/歌曲界面（可以先链接到网页链接）-->
+                        <!--TODO: 响应拖拽行为-->
+                        <ContentPresenter>
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup>
+                                    <!--缺省样式-->
+                                    <VisualState x:Name="Normal" />
+                                    <!--设置鼠标悬停样式-->
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames 
+                        Storyboard.TargetName="ContentBackground"
+                        Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Red" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="48"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="72"/>
+                            </Grid.ColumnDefinitions>
+                            <!--用Fonticon做CheckBox-->
+                            <FontIcon Glyph="&#xE739;" FontSize="16" HorizontalAlignment="Left"/>
+                            <Grid Margin="20,0,0,0" Padding="0" HorizontalAlignment="Left">
+                                <TextBlock Text="{x:Bind ListIndex}" HorizontalAlignment="Center"/>
+                                <FontIcon HorizontalAlignment="Left" Glyph="&#xE7F6;" FontSize="24" />
                             </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </ScrollViewer>
+                            <TextBlock Grid.Column="1" Text="{x:Bind Title}"/>
+                            <TextBlock Grid.Column="2" Text="{x:Bind Artist.Name}"/>
+                            <TextBlock Grid.Column="3" Text="{x:Bind Album.Name}"/>
+                            <FontIcon HorizontalAlignment="Left" Grid.Column="4" Glyph="&#xE006;" Margin="4,0,0,0"/>
+                            <FontIcon HorizontalAlignment="Left" Grid.Column="4" Glyph="&#xE169;" Margin="28,0,0,0"/>
+                            <FontIcon HorizontalAlignment="Left" Grid.Column="4" Glyph="&#xE711;" Margin="52,0,0,0"/>
+                            </Grid>
+                        </ContentPresenter>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
     </Grid>
 </Page>

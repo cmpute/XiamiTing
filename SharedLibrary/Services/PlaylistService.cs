@@ -49,8 +49,8 @@ namespace JacobC.Xiami.Services
             ArtistModel mitis = new ArtistModel() { Name = "MitiS" };
             for (int i = 0; i < 6; i++)
             {
-                yield return new SongModel() { Title = "Give My Regards", Artist = mitis, Album = new AlbumModel() { Name = "Give My Regards" }, MediaUri = new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/4450c3aa50371db1f4cd52953039cd58/5789ab7d/resource/a3/73/65/3736166827.aac") };
-                yield return new SongModel() { Title = "Foundations", Artist = mitis, Album = new AlbumModel() { Name = "Foundations" }, MediaUri = new Uri(@"http://win.web.rh03.sycdn.kuwo.cn/9cde1835bc61fe36d11291d29b43ae2e/5788f9ab/resource/a2/21/1/314466624.aac") };
+                yield return new SongModel() { Title = "Give My Regards", Artist = mitis, Album = new AlbumModel() { Name = "Give My Regards" }, MediaUri = new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/4450c3aa50371db1f4cd52953039cd58/5789ab7d/resource/a3/73/65/3736166827.aac"), ListIndex = i };
+                yield return new SongModel() { Title = "Foundations", Artist = mitis, Album = new AlbumModel() { Name = "Foundations" }, MediaUri = new Uri(@"http://win.web.rh03.sycdn.kuwo.cn/9cde1835bc61fe36d11291d29b43ae2e/5788f9ab/resource/a2/21/1/314466624.aac") ,ListIndex = i };
             }
         }
 

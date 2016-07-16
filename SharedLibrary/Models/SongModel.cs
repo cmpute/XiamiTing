@@ -76,5 +76,9 @@ namespace JacobC.Xiami.Models
         #endregion
 
         public int XiamiID { get; set; }
+        /// <summary>
+        /// 获取或设置在列表中的位置，非必须成员
+        /// </summary>
+        public int ListIndex { get; set; }
     }
 }

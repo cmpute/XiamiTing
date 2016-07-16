@@ -25,6 +25,7 @@ namespace JacobC.Xiami.Views
         public PlaylistPage()
         {
             this.InitializeComponent();
+            
         }
     }
 }
