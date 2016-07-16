@@ -57,9 +57,9 @@
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <RelativePanel Margin="8,4">
-                        <TextBlock x:Name="trackTitle" Text="{x:Bind CurrentSong.Title}" Foreground="{StaticResource BackColorBrush}"/>
+                        <TextBlock x:Name="trackTitle" Text="{x:Bind CurrentSong.Title, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}"/>
                         <TextBlock x:Name="split" Margin="8,0" Text="/" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="trackTitle" />
-                        <TextBlock x:Name="artistName" Text="{x:Bind CurrentSong.Artist.Name}" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="split"/>
+                        <TextBlock x:Name="artistName" Text="{x:Bind CurrentSong.Artist.Name, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="split"/>
                     </RelativePanel>
                     <Slider></Slider>
                 </StackPanel>

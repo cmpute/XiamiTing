@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using JacobC.Xiami.Services;
 
 namespace JacobC.Xiami.Controls
 {
@@ -20,9 +21,13 @@ namespace JacobC.Xiami.Controls
     /// </summary>
     public sealed partial class MusicController : UserControl
     {
+        public static MusicController Instance;
+
         public MusicController()
         {
             this.InitializeComponent();
+            Instance = this;
+            PlaylistService.Instance.CurrentIndexChanging += (sender, e) => CurrentSong = PlaylistService.Instance.Playlist[e.NewValue];
         }
     }   
 }

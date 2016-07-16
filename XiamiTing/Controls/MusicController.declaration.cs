@@ -23,7 +23,7 @@ namespace JacobC.Xiami.Controls
         public SongModel CurrentSong
         {
             get { return GetValue(CurrentSongProperty) as SongModel; }
-            set { SetValue(CurrentSongProperty, value); }
+            private set { SetValue(CurrentSongProperty, value); }
         }
         private static readonly SongModel _defaultCurrentSong = new SongModel { Album = new AlbumModel() };
         /// <summary>

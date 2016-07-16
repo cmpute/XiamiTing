@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace JacobC.Xiami.Controls
 {
+    //MusicController不负责列表切歌的功能
     public sealed partial class MusicController : UserControl
     {
         #region Codes for Playback
@@ -145,7 +146,7 @@ namespace JacobC.Xiami.Controls
                 //Send message to initiate playback
                 if (result == true)
                 {
-                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, new List<SongModel>() { new SongModel() { Title = "testtitle", MediaUri = new Uri(@"http://win.web.rh03.sycdn.kuwo.cn/9cde1835bc61fe36d11291d29b43ae2e/5788f9ab/resource/a2/21/1/314466624.aac"),Album=new AlbumModel()} });
+                MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, PlaylistService.Instance.Playlist);
                     MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartPlayback);
                 }
                 else
@@ -244,6 +245,7 @@ namespace JacobC.Xiami.Controls
                 //UpdateTransportControls(currentState);
             });
         }
+
 
         #endregion
     }
