@@ -9,6 +9,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:service="using:JacobC.Xiami.Services"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:t10c="using:Template10.Converters"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d">
 
     <Page.DataContext>
@@ -20,6 +23,33 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontStyle" Value="Italic"/>
         </Style>
+        <Style x:Key="sFontIcon" TargetType="FontIcon">
+            <Setter Property="Foreground" Value="{StaticResource DisableColorBrush}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+        <t10c:ValueWhenConverter x:Key="ReverseVisibilityConverter">
+            <t10c:ValueWhenConverter.When>
+                <x:Boolean>False</x:Boolean>
+            </t10c:ValueWhenConverter.When>
+            <t10c:ValueWhenConverter.Value>
+                <Visibility>Visible</Visibility>
+            </t10c:ValueWhenConverter.Value>
+            <t10c:ValueWhenConverter.Otherwise>
+                <Visibility>Collapsed</Visibility>
+            </t10c:ValueWhenConverter.Otherwise>
+        </t10c:ValueWhenConverter>
+        <t10c:ValueWhenConverter x:Key="VisibilityConverter">
+            <t10c:ValueWhenConverter.When>
+                <x:Boolean>True</x:Boolean>
+            </t10c:ValueWhenConverter.When>
+            <t10c:ValueWhenConverter.Value>
+                <Visibility>Visible</Visibility>
+            </t10c:ValueWhenConverter.Value>
+            <t10c:ValueWhenConverter.Otherwise>
+                <Visibility>Collapsed</Visibility>
+            </t10c:ValueWhenConverter.Otherwise>
+        </t10c:ValueWhenConverter>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -35,6 +65,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid Margin="12,4">
+                <!--TODO: 响应按下标题进行排序-->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="48"/>
                     <ColumnDefinition/>
@@ -46,7 +77,14 @@
                 <TextBlock Grid.Column="2" Text="Performer" Style="{StaticResource TitleText}"/>
                 <TextBlock Grid.Column="3" Text="Album" Style="{StaticResource TitleText}"/>
             </Grid>
-            <ListView Grid.Row="1" x:Name="listView" IsItemClickEnabled="True" ItemsSource="{x:Bind ViewModel.Playlist}" SelectedIndex="{x:Bind ViewModel.CurrentIndex}">
+            <ListView Grid.Row="1"
+                      x:Name="listView"
+                      IsItemClickEnabled="True"
+                      ItemsSource="{x:Bind ViewModel.Playlist}"
+                      SelectedIndex="{x:Bind ViewModel.CurrentPlayingIndex}"
+                      SelectionMode="Multiple"
+                      >
+                <!--相当于ListViewItem的Style-->
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="Template">
@@ -56,22 +94,36 @@
                                         <VisualStateManager.VisualStateGroups>
                                             <VisualStateGroup>
                                                 <!--缺省样式-->
-                                                <VisualState x:Name="Normal" />
+                                                <VisualState x:Name="Normal">
+                                                    <Storyboard>
+                                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                                    </Storyboard>
+                                                </VisualState>
                                                 <!--设置鼠标悬停样式-->
                                                 <VisualState x:Name="PointerOver">
                                                     <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames 
-                        Storyboard.TargetName="ContentBackground"
-                        Storyboard.TargetProperty="Background">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Red" />
+                                                        <DoubleAnimation Storyboard.TargetName="BorderBackground"
+                                                                         Storyboard.TargetProperty="Opacity"
+                                                                         Duration="0"
+                                                                         To="1"/>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
                                                         </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                     </Storyboard>
                                                 </VisualState>
                                             </VisualStateGroup>
                                         </VisualStateManager.VisualStateGroups>
+                                        <Rectangle x:Name="BorderBackground"
+                                                   IsHitTestVisible="False"
+                                                   Opacity="0"
+                                                   Control.IsTemplateFocusTarget="True"/>
                                         <Grid x:Name="ContentBackground">
-                                            <!--ContentPresenter中包含的是Datatemplate-->
-                                            <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                                            <!--ContentPresenter中包含的是DataTemplate-->
+                                            <ContentPresenter Grid.Column="1" x:Name="ContentPresenter" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
                                         </Grid>
                                     </Grid>
                                 </ControlTemplate>
@@ -86,29 +138,21 @@
                         </ScrollViewer>
                     </ControlTemplate>
                 </ListView.Template>
+                <!--包含在ListViewItem的ContentPresenter中的内容-->
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="m:SongModel">
                         <!--TODO: ListView点击=Checkbox的check事件-->
                         <!--TODO: 点击Textblck可以链接到对应的专辑/歌曲界面（可以先链接到网页链接）-->
                         <!--TODO: 响应拖拽行为-->
-                        <ContentPresenter>
                         <Grid>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup>
-                                    <!--缺省样式-->
-                                    <VisualState x:Name="Normal" />
-                                    <!--设置鼠标悬停样式-->
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames 
-                        Storyboard.TargetName="ContentBackground"
-                        Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Red" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
+                            <i:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="PointerEntered">
+                                    <core:InvokeCommandAction Command="{x:Bind PointerInCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+                                </core:EventTriggerBehavior>
+                                <core:EventTriggerBehavior EventName="PointerExited">
+                                    <core:InvokeCommandAction Command="{x:Bind PointerOutCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+                                </core:EventTriggerBehavior>
+                            </i:Interaction.Behaviors>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="48"/>
                                 <ColumnDefinition/>
@@ -117,19 +161,36 @@
                                 <ColumnDefinition Width="72"/>
                             </Grid.ColumnDefinitions>
                             <!--用Fonticon做CheckBox-->
-                            <FontIcon Glyph="&#xE739;" FontSize="16" HorizontalAlignment="Left"/>
+                            <FontIcon Foreground="{StaticResource DisableColorBrush}" Glyph="&#xE739;" FontSize="16" HorizontalAlignment="Left"/>
                             <Grid Margin="20,0,0,0" Padding="0" HorizontalAlignment="Left">
-                                <TextBlock Text="{x:Bind ListIndex}" HorizontalAlignment="Center"/>
-                                <FontIcon HorizontalAlignment="Left" Glyph="&#xE7F6;" FontSize="24" />
+                                <TextBlock Margin="4,0" 
+                                           VerticalAlignment="Center"
+                                           Foreground="{StaticResource DisableColorBrush}"
+                                           Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource ReverseVisibilityConverter}, Mode=OneWay}"
+                                           Text="{x:Bind ListIndex}" HorizontalAlignment="Center"/>
+                                <FontIcon HorizontalAlignment="Left" Glyph="&#xE7F6;" FontSize="24"
+                                          Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
                             </Grid>
                             <TextBlock Grid.Column="1" Text="{x:Bind Title}"/>
                             <TextBlock Grid.Column="2" Text="{x:Bind Artist.Name}"/>
                             <TextBlock Grid.Column="3" Text="{x:Bind Album.Name}"/>
-                            <FontIcon HorizontalAlignment="Left" Grid.Column="4" Glyph="&#xE006;" Margin="4,0,0,0"/>
-                            <FontIcon HorizontalAlignment="Left" Grid.Column="4" Glyph="&#xE169;" Margin="28,0,0,0"/>
-                            <FontIcon HorizontalAlignment="Left" Grid.Column="4" Glyph="&#xE711;" Margin="52,0,0,0"/>
-                            </Grid>
-                        </ContentPresenter>
+                            <FontIcon x:Name="setLove" Style="{StaticResource sFontIcon}" Grid.Column="4" Glyph="&#xE006;" Margin="4,0,0,0"/>
+                            <FontIcon Style="{StaticResource sFontIcon}" 
+                                      Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
+                                      Grid.Column="4" Glyph="&#xE169;" 
+                                      Margin="28,0,0,0"/>
+                            <FontIcon x:Name="deleteButton"
+                                      Style="{StaticResource sFontIcon}"
+                                      Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
+                                      Grid.Column="4" Glyph="&#xE711;"
+                                      Margin="52,0,0,0">
+                                <i:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Tapped">
+                                        <core:InvokeCommandAction Command="{x:Bind DeleteCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+                                    </core:EventTriggerBehavior>
+                                </i:Interaction.Behaviors>
+                            </FontIcon>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

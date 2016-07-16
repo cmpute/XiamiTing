@@ -6,17 +6,18 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Template10.Mvvm;
+using Windows.UI.Xaml.Controls;
 
 namespace JacobC.Xiami.Models
 {
     /// <summary>
-    /// 歌曲的MVVM模型
+    /// 歌曲的MVVM的Model兼ViewModel模型
     /// </summary>
     [DataContract]
     public class SongModel : BindableBase
     {
-        //Json序列化时需要传递的信息
-        #region Playback Needed
+        #region Binding Needed
+
         string _Title = default(string);
         /// <summary>
         /// 获取或设置歌曲的标题
@@ -45,13 +46,6 @@ namespace JacobC.Xiami.Models
         }
         private void _Artist_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Artist));
 
-        Uri _MediaUri = default(Uri);
-        /// <summary>
-        /// 获取或设置音乐文件的链接
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public Uri MediaUri { get { return _MediaUri; } set { Set(ref _MediaUri, value); } }
-
         AlbumModel _Album = default(AlbumModel);
         /// <summary>
         /// 获取或设置音轨所属的的专辑
@@ -73,12 +67,54 @@ namespace JacobC.Xiami.Models
         }
         private void _Album_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Album));
 
-        #endregion
-
-        public int XiamiID { get; set; }
         /// <summary>
         /// 获取或设置在列表中的位置，非必须成员
         /// </summary>
         public int ListIndex { get; set; }
+
+        bool _IsSelected = false;
+        /// <summary>
+        /// 获取或设置是否选中
+        /// </summary>
+        public bool IsSelected { get { return _IsSelected; } set { Set(ref _IsSelected, value); } }
+
+        bool _IsSelectedOrHovered = default(bool);
+        /// <summary>
+        /// 获取或设置是否选中或悬浮
+        /// </summary>
+        public bool IsSelectedOrHovered { get { return _IsSelectedOrHovered; } set { Set(ref _IsSelectedOrHovered, value); } }
+
+
+        private DelegateCommand<object> _DeleteCommand;
+        public DelegateCommand<object> DeleteCommand => _DeleteCommand ?? (_DeleteCommand = new DelegateCommand<object>((model) =>
+        {
+            Services.PlaylistService.Instance.Playlist.Remove(this);
+        }));
+
+        private DelegateCommand<object> _PointerInCommand;
+        public DelegateCommand<object> PointerInCommand => _PointerInCommand ?? (_PointerInCommand = new DelegateCommand<object>((model) =>
+        {
+            System.Diagnostics.Debug.WriteLine("Pointer Area Entered");
+            IsSelectedOrHovered = IsSelected || true;
+        }));
+
+        private DelegateCommand<object> _PointerOutCommand;
+        public DelegateCommand<object> PointerOutCommand => _PointerOutCommand ?? (_PointerOutCommand = new DelegateCommand<object>((model) =>
+        {
+            System.Diagnostics.Debug.WriteLine("Pointer Area Leaved");
+            IsSelectedOrHovered = IsSelected || false;
+        }));
+
+
+        #endregion
+
+        /// <summary>
+        /// 获取或设置音乐文件的链接
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public Uri MediaUri { get; set; }
+
+        public int XiamiID { get; set; }
+
     }
 }

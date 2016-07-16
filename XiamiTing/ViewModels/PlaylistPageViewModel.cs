@@ -7,7 +7,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI;
 using Template10.Mvvm;
+using Windows.UI.Xaml.Controls;
 
 namespace JacobC.Xiami.ViewModels
 {
@@ -15,7 +17,7 @@ namespace JacobC.Xiami.ViewModels
     {
         public PlaylistPageViewModel()
         {
-            PlaylistService.Instance.CurrentIndexChanging += (sender, e) => this.Set(ref _CurrentIndex, e.NewValue, nameof(CurrentIndex));
+            PlaylistService.Instance.CurrentIndexChanging += (sender, e) => this.Set(ref _CurrentPlayingIndex, e.NewValue, nameof(CurrentPlayingIndex));
         }
 
         public ObservableCollection<SongModel> Playlist
@@ -23,11 +25,11 @@ namespace JacobC.Xiami.ViewModels
             get { return PlaylistService.Instance.Playlist; }
         }
 
-        int _CurrentIndex = default(int);
+        int _CurrentPlayingIndex = default(int);
         /// <summary>
-        /// 获取或设置当前选中的音轨属性
+        /// 获取或设置当前播放的音轨属性
         /// </summary>
-        public int CurrentIndex { get { return PlaylistService.Instance.CurrentIndex; } set { PlaylistService.Instance.CurrentIndex = value; } }
+        public int CurrentPlayingIndex { get { return PlaylistService.Instance.CurrentIndex; } set { PlaylistService.Instance.CurrentIndex = value; } }
 
     }
 }

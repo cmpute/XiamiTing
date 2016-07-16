@@ -33,6 +33,7 @@
     <SolidColorBrush x:Key="DarkColorBrush" Color="{StaticResource DarkColor}" />
     <SolidColorBrush x:Key="ForeColorBrush" Color="{StaticResource ForeColor}" />
     <SolidColorBrush x:Key="BackColorBrush" Color="{StaticResource BackColor}" />
+    <SolidColorBrush x:Key="DisableColorBrush" Color="{StaticResource DisableColor}" />
     <SolidColorBrush x:Key="ContrastColorBrush" Color="{StaticResource ContrastColor}" />
 
 
