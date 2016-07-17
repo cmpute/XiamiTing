@@ -41,18 +41,26 @@
                     </Image.Source>
                 </Image>
                 <StackPanel x:Name="controlButtons" Grid.Column="1" Orientation="Horizontal">
-                    <Button x:Name="previous" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" Margin="4,0">
-                        <FontIcon FontSize="28" Glyph="&#xE100;" />
+                    <Button x:Name="previous" Style="{StaticResource EmptyButtonForIcon}"
+                            Background="Transparent"
+                            VerticalAlignment="Center"
+                            Command="{x:Bind PreviousCommand}"
+                            Margin="4,0">
+                        <FontIcon FontSize="28" Glyph="&#xE100;" Foreground="{StaticResource BackColorBrush}" />
                     </Button>
-                    <Button x:Name="play" Foreground="{StaticResource BackColorBrush}"
+                    <Button x:Name="play" Style="{StaticResource EmptyButtonForIcon}"
                             Background="Transparent"
                             VerticalAlignment="Center"
                             Margin="4,0"
                             Command="{x:Bind PlayCommand}">
-                        <FontIcon FontSize="40" Glyph="&#xE102;" />
+                        <FontIcon FontSize="40" Glyph="&#xE102;" Foreground="{StaticResource BackColorBrush}" />
                     </Button>
-                    <Button x:Name="next" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" Margin="4,0">
-                        <FontIcon FontSize="28" Glyph="&#xE101;" />
+                    <Button x:Name="next" Style="{StaticResource EmptyButtonForIcon}"
+                            Background="Transparent"
+                            VerticalAlignment="Center"
+                            Command="{x:Bind NextCommand}"
+                            Margin="4,0">
+                        <FontIcon FontSize="28" Glyph="&#xE101;" Foreground="{StaticResource BackColorBrush}"/>
                     </Button>
                 </StackPanel>
                 <StackPanel Grid.Column="2">

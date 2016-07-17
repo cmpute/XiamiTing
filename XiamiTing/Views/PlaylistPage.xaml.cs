@@ -1,5 +1,6 @@
 ﻿using JacobC.Xiami.Models;
 using JacobC.Xiami.Services;
+using JacobC.Xiami.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,6 +51,7 @@ namespace JacobC.Xiami.Views
                 if (Playlist[i].IsSelected)
                     Playlist.RemoveAt(i);
         }, (model) => { return listView.SelectedItems.Count != 0; }));
+
 
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

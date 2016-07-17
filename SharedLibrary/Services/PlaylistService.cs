@@ -1,4 +1,5 @@
 ﻿using JacobC.Xiami.Models;
+using static JacobC.Xiami.Services.LogService;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,6 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Common;
 using Template10.Utils;
+using System.Threading;
+using Windows.Media.Playback;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace JacobC.Xiami.Services
 {
@@ -49,8 +55,8 @@ namespace JacobC.Xiami.Services
             ArtistModel mitis = new ArtistModel() { Name = "MitiS" };
             for (int i = 0; i < 6; i++)
             {
-                yield return new SongModel() { Title = "Give My Regards", Artist = mitis, Album = new AlbumModel() { Name = "Give My Regards" }, MediaUri = new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/4450c3aa50371db1f4cd52953039cd58/5789ab7d/resource/a3/73/65/3736166827.aac"), ListIndex = i };
-                yield return new SongModel() { Title = "Foundations", Artist = mitis, Album = new AlbumModel() { Name = "Foundations" }, MediaUri = new Uri(@"http://win.web.rh03.sycdn.kuwo.cn/9cde1835bc61fe36d11291d29b43ae2e/5788f9ab/resource/a2/21/1/314466624.aac") ,ListIndex = i };
+                yield return new SongModel() { Title = "Give My Regards", Artist = mitis, Album = new AlbumModel() { Name = "Give My Regards" }, MediaUri = new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/f546af32750a2f8923488a6aa34475b0/578b6d6f/resource/a3/73/65/3736166827.aac"), ListIndex = i };
+                yield return new SongModel() { Title = "Foundations", Artist = mitis, Album = new AlbumModel() { Name = "Foundations" }, MediaUri = new Uri(@"http://win.web.rh03.sycdn.kuwo.cn/528fdfbdfb65e4868c9314748f27e849/578b6deb/resource/a2/21/1/314466624.aac") ,ListIndex = i };
             }
         }
 
@@ -84,5 +90,235 @@ namespace JacobC.Xiami.Services
         {
             //TODO: 向后台发送消息
         }
+
+
+        #region Codes for Playback
+
+        private AutoResetEvent backgroundAudioTaskStarted = new AutoResetEvent(false);
+        private Dictionary<string, BitmapImage> albumArtCache = new Dictionary<string, BitmapImage>();
+        const int RPC_S_SERVER_UNAVAILABLE = -2147023174; // 0x800706BA
+
+        private bool _isBackgroundTaskRunning = false;
+        public bool IsBackgroundTaskRunning
+        {
+            get
+            {
+                if (_isBackgroundTaskRunning)
+                    return true;
+
+                string value = SettingsService.Instance.Helper.ReadAndReset<string>(nameof(BackgroundTaskState));
+                if (value == null)
+                    return false;
+                else
+                {
+                    try
+                    {
+                        _isBackgroundTaskRunning = ExtensionMethods.ParseEnum<BackgroundTaskState>(value) == BackgroundTaskState.Running;
+                    }
+                    catch (ArgumentException)
+                    {
+                        _isBackgroundTaskRunning = false;
+                    }
+                    return _isBackgroundTaskRunning;
+                }
+            }
+        }
+        public MediaPlayer CurrentPlayer
+        {
+            get
+            {
+                MediaPlayer mp = null;
+                int retryCount = 2;//重试次数
+
+                while (mp == null && --retryCount >= 0)
+                {
+                    try
+                    {
+                        mp = BackgroundMediaPlayer.Current;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.HResult == RPC_S_SERVER_UNAVAILABLE)
+                        {
+                            ResetAfterLostBackground();
+                            StartBackgroundAudioTask();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+
+                if (mp == null)
+                {
+                    throw new Exception("Failed to get a MediaPlayer instance.");
+                }
+
+                return mp;
+            }
+        }
+        private void ResetAfterLostBackground()
+        {
+            BackgroundMediaPlayer.Shutdown();
+            _isBackgroundTaskRunning = false;
+            backgroundAudioTaskStarted.Reset();
+            //prevButton.IsEnabled = true;
+            //nextButton.IsEnabled = true;
+            SettingsService.Instance.Helper.Write(nameof(BackgroundTaskState), BackgroundTaskState.Unknown.ToString());
+            //playButton.Content = "| |";
+
+            try
+            {
+                BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground;
+            }
+            catch (Exception ex)
+            {
+                if (ex.HResult == RPC_S_SERVER_UNAVAILABLE)
+                {
+                    throw new Exception("Failed to get a MediaPlayer instance.");
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+        public void StartBackgroundAudioTask()
+        {
+            AddMediaPlayerEventHandlers();
+            WindowWrapper.Current().Dispatcher.DispatchAsync(() =>
+            {
+                bool result = backgroundAudioTaskStarted.WaitOne(10000);
+                //Send message to initiate playback
+                if (result == true)
+                {
+                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, PlaylistService.Instance.Playlist);
+                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartPlayback);
+                }
+                else
+                {
+                    throw new Exception("Background Audio Task didn't start in expected time");
+                }
+            }).ContinueWith((task) => {
+                if (task.IsCompleted)
+                {
+                    DebugWrite("Background Audio Task initialized", "MediaPlayer");
+                }
+                else
+                {
+                    DebugWrite("Background Audio Task could not initialized due to an error ::" + task.Exception.ToString(), "MediaPlayer");
+                }
+            });
+        }
+        private void AddMediaPlayerEventHandlers()
+        {
+            CurrentPlayer.CurrentStateChanged += this.MediaPlayer_CurrentStateChanged;
+
+            try
+            {
+                BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground;
+            }
+            catch (Exception ex)
+            {
+                if (ex.HResult == RPC_S_SERVER_UNAVAILABLE)
+                {
+                    // Internally MessageReceivedFromBackground calls Current which can throw RPC_S_SERVER_UNAVAILABLE
+                    ErrorWrite(ex, "BackgroundPlayer");
+                    ResetAfterLostBackground();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+        private async void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
+        {
+            if (MessageService.GetTypeOfMediaMessage(e.Data) == MediaMessageTypes.TrackChanged)
+            {
+                //When foreground app is active change track based on background message
+                await WindowWrapper.Current().Dispatcher.DispatchAsync( () =>
+                {
+                    // If playback stopped then clear the UI
+                    //string trackid = MessageService.GetMediaMessage<string>(e.Data);
+                    //if (trackid == null)
+                    //{
+                    //    playlistView.SelectedIndex = -1;
+                    //    albumArt.Source = null;
+                    //    txtCurrentTrack.Text = string.Empty;
+                    //    prevButton.IsEnabled = false;
+                    //    nextButton.IsEnabled = false;
+                    //    return;
+                    //}
+
+                    //var songIndex = playlistView.GetSongIndexById(trackid);
+                    //var song = playlistView.Songs[songIndex];
+
+                    //// Update list UI
+                    //playlistView.SelectedIndex = songIndex;
+
+                    //// Update the album art
+                    //albumArt.Source = albumArtCache[song.AlbumArtUri.ToString()];
+
+                    //// Update song title
+                    //txtCurrentTrack.Text = song.Title;
+
+                    //// Ensure track buttons are re-enabled since they are disabled when pressed
+                    //prevButton.IsEnabled = true;
+                    //nextButton.IsEnabled = true;
+                });
+                return;
+            }
+
+            if (MessageService.GetTypeOfMediaMessage(e.Data) == MediaMessageTypes.BackgroundAudioTaskStarted)
+            {
+                // StartBackgroundAudioTask is waiting for this signal to know when the task is up and running
+                // and ready to receive messages
+                DebugWrite("BackgroundAudioTask started");
+                backgroundAudioTaskStarted.Set();
+                return;
+            }
+        }
+        private async void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args)
+        {
+            var currentState = sender.CurrentState; // cache outside of completion or you might get a different value
+            await WindowWrapper.Current().Dispatcher.DispatchAsync( () =>
+            {
+                //// Update state label
+                //txtCurrentState.Text = currentState.ToString();
+
+                //// Update controls
+                //UpdateTransportControls(currentState);
+            });
+        }
+
+        public void PlayTrack(SongModel song)
+        {
+            DebugWrite("Clicked item from App: " + song.MediaUri.ToString(), "MediaPlayer");
+
+            // Start the background task if it wasn't running
+            if (!IsBackgroundTaskRunning || MediaPlayerState.Closed == CurrentPlayer.CurrentState)
+            {
+                // First update the persisted start track
+                SettingsService.Instance.Helper.Write("TrackId", song.MediaUri.ToString());
+                SettingsService.Instance.Helper.Write("Position", new TimeSpan().ToString());
+
+                // Start task
+                StartBackgroundAudioTask();
+            }
+            else
+            {
+                // Switch to the selected track
+                MessageService.SendMediaMessageToBackground(MediaMessageTypes.TrackChanged, song.MediaUri);
+            }
+
+            if (MediaPlayerState.Paused == CurrentPlayer.CurrentState)
+            {
+                CurrentPlayer.Play();
+            }
+        }
+
+        #endregion
     }
 }

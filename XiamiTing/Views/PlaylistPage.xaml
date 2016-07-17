@@ -72,16 +72,6 @@
                 <x:String>&#xE006;</x:String>
             </t10c:ValueWhenConverter.Otherwise>
         </t10c:ValueWhenConverter>
-        <!--用Button拦截路由事件-->
-        <Style TargetType="Button" x:Key="EmptyButtonForIcon">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <ContentPresenter/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -276,8 +266,11 @@
                                            Foreground="{StaticResource DisableColorBrush}"
                                            Visibility="{x:Bind IsHovered, Converter={StaticResource ReverseVisibilityConverter}, Mode=OneWay}"
                                            Text="{x:Bind ListIndex}" HorizontalAlignment="Center"/>
-                                <FontIcon HorizontalAlignment="Left" Glyph="&#xE7F6;" FontSize="24"
-                                          Visibility="{x:Bind IsHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
+                                <Button Style="{StaticResource EmptyButtonForIcon}" HorizontalAlignment="Left"
+                                        Visibility="{x:Bind IsHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
+                                        Command="{x:Bind PlayTrackCommand}">
+                                    <FontIcon Glyph="&#xE7F6;" FontSize="24"/>
+                                </Button>
                             </Grid>
                             <TextBlock Grid.Column="1" Text="{x:Bind Title}"/>
                             <TextBlock Grid.Column="2" Text="{x:Bind Artist.Name}"/>

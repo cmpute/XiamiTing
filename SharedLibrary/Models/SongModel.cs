@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Template10.Mvvm;
 using Windows.UI.Xaml.Controls;
 using Template10.Common;
+using JacobC.Xiami.Services;
 
 namespace JacobC.Xiami.Models
 {
@@ -123,6 +124,12 @@ namespace JacobC.Xiami.Models
         public DelegateCommand<object> LoveCommand => _LoveCommand ?? (_LoveCommand = new DelegateCommand<object>((model) =>
         {
             IsLoved = !IsLoved;
+        }));
+
+        private DelegateCommand<object> _PlayTrackCommand;
+        public DelegateCommand<object> PlayTrackCommand => _PlayTrackCommand ?? (_PlayTrackCommand = new DelegateCommand<object>((model) =>
+        {
+            PlaylistService.Instance.PlayTrack(this);
         }));
 
         #endregion

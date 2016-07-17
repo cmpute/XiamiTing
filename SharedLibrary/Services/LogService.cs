@@ -18,7 +18,7 @@ namespace JacobC.Xiami.Services
         public static void DebugWrite(string text, string sourcetype="Log", [CallerMemberName]string caller = null)
         {
 #if DEBUG
-            System.Diagnostics.Debug.WriteLine($"[{DateTime.UtcNow.ToString("t")} {sourcetype}][caller:{caller}] {text}");
+            System.Diagnostics.Debug.WriteLine($"[{DateTime.UtcNow.ToString("T")} {sourcetype}][caller:{caller}] {text}");
 #endif
         }
 

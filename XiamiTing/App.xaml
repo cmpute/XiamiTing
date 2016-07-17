@@ -11,6 +11,16 @@
                 <ResourceDictionary Source="Styles/Colors.xaml"/>
                 <ResourceDictionary Source="Styles/Custom.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <!--用Button拦截路由事件-->
+            <Style TargetType="Button" x:Key="EmptyButtonForIcon">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <ContentPresenter/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 
