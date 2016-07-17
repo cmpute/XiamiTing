@@ -39,11 +39,5 @@ namespace JacobC.Xiami.ViewModels
                 Playlist[value].IsPlaying = true;
             }
         }
-
-
-
-        public void DeleteSelection()
-        {
-        }
     }
 }

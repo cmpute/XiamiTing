@@ -39,7 +39,6 @@ namespace JacobC.Xiami.Views
                 SongModel target = source.DataContext as SongModel;
                 target.IsHovered = val > 1;
                 target.IsSelected = (val % 2) != 0;
-                System.Diagnostics.Debug.WriteLine($"Selected:{target.IsSelected}, Hover:{target.IsHovered}");
             });
         }
 

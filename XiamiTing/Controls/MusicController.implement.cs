@@ -1,5 +1,6 @@
 ﻿using JacobC.Xiami.Models;
 using JacobC.Xiami.Services;
+using static JacobC.Xiami.Services.LogService;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,7 +29,7 @@ namespace JacobC.Xiami.Controls
         DelegateCommand _PlayCommand;
         public DelegateCommand PlayCommand => _PlayCommand ?? (_PlayCommand = new DelegateCommand(() =>
             {
-                Debug.WriteLine("Play button pressed from App");
+                DebugWrite("Play button pressed from App");
                 if (IsBackgroundTaskRunning)
                 {
                     if (MediaPlayerState.Playing == CurrentPlayer.CurrentState)
@@ -80,7 +81,7 @@ namespace JacobC.Xiami.Controls
             get
             {
                 MediaPlayer mp = null;
-                int retryCount = 2;
+                int retryCount = 2;//重试次数
 
                 while (mp == null && --retryCount >= 0)
                 {
@@ -156,11 +157,11 @@ namespace JacobC.Xiami.Controls
             }).AsTask().ContinueWith((task) => {
                 if (task.IsCompleted)
                 {
-                    Debug.WriteLine("Background Audio Task initialized");
+                    DebugWrite("Background Audio Task initialized", "MediaPlayer");
                 }
                 else
                 {
-                    Debug.WriteLine("Background Audio Task could not initialized due to an error ::" + task.Exception.ToString());
+                    DebugWrite("Background Audio Task could not initialized due to an error ::" + task.Exception.ToString(), "MediaPlayer");
                 }
             });
         }
@@ -177,7 +178,7 @@ namespace JacobC.Xiami.Controls
                 if (ex.HResult == RPC_S_SERVER_UNAVAILABLE)
                 {
                     // Internally MessageReceivedFromBackground calls Current which can throw RPC_S_SERVER_UNAVAILABLE
-                    ExtensionMethods.ConsoleLog(ex.Message);
+                    ErrorWrite(ex, "BackgroundPlayer");
                     ResetAfterLostBackground();
                 }
                 else
@@ -228,7 +229,7 @@ namespace JacobC.Xiami.Controls
             {
                 // StartBackgroundAudioTask is waiting for this signal to know when the task is up and running
                 // and ready to receive messages
-                Debug.WriteLine("BackgroundAudioTask started");
+                DebugWrite("BackgroundAudioTask started");
                 backgroundAudioTaskStarted.Set();
                 return;
             }
@@ -246,6 +247,7 @@ namespace JacobC.Xiami.Controls
             });
         }
 
+        
 
         #endregion
     }
