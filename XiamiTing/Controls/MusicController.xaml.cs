@@ -27,7 +27,7 @@ namespace JacobC.Xiami.Controls
         {
             this.InitializeComponent();
             Instance = this;
-            PlaylistService.Instance.CurrentIndexChanging += (sender, e) => CurrentSong = PlaylistService.Instance.Playlist[e.NewValue];
+            PlaylistService.Instance.CurrentIndexChanging += (sender, e) => CurrentSong = e.NewValue;
         }
     }   
 }

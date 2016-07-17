@@ -22,9 +22,15 @@ namespace JacobC.Xiami.Controls
         DelegateCommand _PlayCommand;
         public DelegateCommand PlayCommand => _PlayCommand ?? (_PlayCommand = new DelegateCommand(() =>
         {
+            var service = PlaylistService.Instance;
             LogService.DebugWrite("Play button pressed from App");
-            var CurrentPlayer = PlaylistService.Instance.CurrentPlayer;
-            if (PlaylistService.Instance.IsBackgroundTaskRunning)
+            if (service.CurrentPlaying == null)
+                if (service.Playlist.Count == 0)
+                    return;
+                else
+                    PlaylistService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[0];
+            var CurrentPlayer = service.CurrentPlayer;
+            if (service.IsBackgroundTaskRunning)
             {
                 if (MediaPlayerState.Playing == CurrentPlayer.CurrentState)
                 {
@@ -36,12 +42,12 @@ namespace JacobC.Xiami.Controls
                 }
                 else if (MediaPlayerState.Closed == CurrentPlayer.CurrentState)
                 {
-                    PlaylistService.Instance.StartBackgroundAudioTask();
+                    service.StartBackgroundAudioTask();
                 }
             }
             else
             {
-                PlaylistService.Instance.StartBackgroundAudioTask();
+                service.StartBackgroundAudioTask();
             }
         }));
 
@@ -49,6 +55,8 @@ namespace JacobC.Xiami.Controls
         public DelegateCommand<object> PreviousCommand => _PreviousCommand ?? (_PreviousCommand = new DelegateCommand<object>((model) =>
         {
             MessageService.SendMediaMessageToBackground(MediaMessageTypes.SkipPrevious);
+            PlaylistService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) - 1];
+            //TODO: 判断是否循环/随机，并且设置Next的可用性
 
             // Prevent the user from repeatedly pressing the button and causing 
             // a backlong of button presses to be handled. This button is re-eneabled 
@@ -60,6 +68,8 @@ namespace JacobC.Xiami.Controls
         public DelegateCommand<object> NextCommand => _NextCommand ?? (_NextCommand = new DelegateCommand<object>((model) =>
         {
             MessageService.SendMediaMessageToBackground(MediaMessageTypes.SkipNext);
+            PlaylistService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) + 1];
+            //TODO: 判断是否循环/随机，并且设置Next的可用性
 
             // Prevent the user from repeatedly pressing the button and causing 
             // a backlong of button presses to be handled. This button is re-eneabled 

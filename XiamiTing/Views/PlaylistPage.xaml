@@ -118,7 +118,6 @@
                                     <Grid Background="{TemplateBinding Background}">
                                         <VisualStateManager.VisualStateGroups>
                                             <VisualStateGroup>
-                                                <!--缺省样式-->
                                                 <VisualState x:Name="Normal">
                                                     <Storyboard>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
@@ -131,7 +130,6 @@
                                                         <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                     </Storyboard>
                                                 </VisualState>
-                                                <!--设置鼠标悬停样式-->
                                                 <VisualState x:Name="PointerOver">
                                                     <Storyboard>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
@@ -154,7 +152,6 @@
                                                         <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                     </Storyboard>
                                                 </VisualState>
-                                                <!--设置鼠标按下样式-->
                                                 <VisualState x:Name="Pressed">
                                                     <Storyboard>
                                                         <DoubleAnimation Storyboard.TargetName="BorderBackground"

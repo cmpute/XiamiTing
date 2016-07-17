@@ -38,8 +38,6 @@ namespace JacobC.Xiami.Services
                 if(_Playlist == null)
                 {
                     _Playlist = InitPlaylist().ToObservableCollection();
-                    //初始化以后更新UI
-                    CurrentIndexChanging.Invoke(this, new ChangedEventArgs<int>(0, 0));
                 }
                 return _Playlist;
             }
@@ -55,38 +53,40 @@ namespace JacobC.Xiami.Services
             ArtistModel mitis = new ArtistModel() { Name = "MitiS" };
             for (int i = 0; i < 6; i++)
             {
-                yield return new SongModel() { Title = "Give My Regards", Artist = mitis, Album = new AlbumModel() { Name = "Give My Regards" }, MediaUri = new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/f546af32750a2f8923488a6aa34475b0/578b6d6f/resource/a3/73/65/3736166827.aac"), ListIndex = i };
-                yield return new SongModel() { Title = "Foundations", Artist = mitis, Album = new AlbumModel() { Name = "Foundations" }, MediaUri = new Uri(@"http://win.web.rh03.sycdn.kuwo.cn/528fdfbdfb65e4868c9314748f27e849/578b6deb/resource/a2/21/1/314466624.aac") ,ListIndex = i };
+                yield return new SongModel() { Title = "Give My Regards", Artist = mitis, Album = new AlbumModel() { Name = "Give My Regards" }, MediaUri = new Uri(@"http://win.web.rg03.sycdn.kuwo.cn/205c536fdc7a5853c959b011d4ad3194/578ba972/resource/a2/47/59/21086849.aac"), ListIndex = i };
+                yield return new SongModel() { Title = "Foundations", Artist = mitis, Album = new AlbumModel() { Name = "Foundations" }, MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring02.wma") ,ListIndex = i };
             }
         }
 
-        int _CurrentIndex = 0;
+        SongModel _CurrentPlaying = null;
         /// <summary>
         /// 获取当前选中或播放的音轨
         /// </summary>
-        public int CurrentIndex
+        public SongModel CurrentPlaying
         {
             get
             {
                 if (_Playlist.Count == 0)
-                    throw new ArgumentNullException(nameof(CurrentIndex), "当前播放列表为空，无法获取音轨");
-                return _CurrentIndex;
+                    throw new ArgumentNullException(nameof(CurrentPlaying), "当前播放列表为空，无法获取音轨");
+                return _CurrentPlaying;
             }
             set
             {
-                if (_CurrentIndex != value)
+                if (_CurrentPlaying != value)
                 {
-                    CurrentIndexChanging.Invoke(this, new ChangedEventArgs<int>(_CurrentIndex, value));
+                    CurrentIndexChanging.Invoke(this, new ChangedEventArgs<SongModel>(_CurrentPlaying, value));
                     InternalCurrentIndexChanging(value);
-                    _CurrentIndex = value;
+                    if (_CurrentPlaying != null) _CurrentPlaying.IsPlaying = false;
+                    _CurrentPlaying = value;
+                    if (value != null) value.IsPlaying = true;
                 }
             }
         }
         /// <summary>
         /// 在当前播放的音轨发生改变时发生
         /// </summary>
-        public event EventHandler<ChangedEventArgs<int>> CurrentIndexChanging;
-        private void InternalCurrentIndexChanging(int newindex)
+        public event EventHandler<ChangedEventArgs<SongModel>> CurrentIndexChanging;
+        private void InternalCurrentIndexChanging(SongModel newsong)
         {
             //TODO: 向后台发送消息
         }
@@ -241,16 +241,17 @@ namespace JacobC.Xiami.Services
                 await WindowWrapper.Current().Dispatcher.DispatchAsync( () =>
                 {
                     // If playback stopped then clear the UI
-                    //string trackid = MessageService.GetMediaMessage<string>(e.Data);
-                    //if (trackid == null)
-                    //{
-                    //    playlistView.SelectedIndex = -1;
-                    //    albumArt.Source = null;
-                    //    txtCurrentTrack.Text = string.Empty;
-                    //    prevButton.IsEnabled = false;
-                    //    nextButton.IsEnabled = false;
-                    //    return;
-                    //}
+                    string trackid = MessageService.GetMediaMessage<string>(e.Data);
+                    if (trackid == null)
+                    {
+                        
+                        CurrentPlaying = null;
+                        //albumArt.Source = null;
+                        //txtCurrentTrack.Text = string.Empty;
+                        //prevButton.IsEnabled = false;
+                        //nextButton.IsEnabled = false;
+                        return;
+                    }
 
                     //var songIndex = playlistView.GetSongIndexById(trackid);
                     //var song = playlistView.Songs[songIndex];

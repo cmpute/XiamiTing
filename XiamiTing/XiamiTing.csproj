@@ -136,6 +136,16 @@
   <ItemGroup>
     <Content Include="Assets\Pictures\cd100.gif" />
     <Content Include="Assets\Pictures\cd500.gif" />
+    <Content Include="Assets\TestMedia\Ring01.jpg" />
+    <Content Include="Assets\TestMedia\Ring01.wma" />
+    <Content Include="Assets\TestMedia\Ring02.jpg" />
+    <Content Include="Assets\TestMedia\Ring02.wma" />
+    <Content Include="Assets\TestMedia\Ring03Part1.jpg" />
+    <Content Include="Assets\TestMedia\Ring03Part1.wma" />
+    <Content Include="Assets\TestMedia\Ring03Part2.jpg" />
+    <Content Include="Assets\TestMedia\Ring03Part2.wma" />
+    <Content Include="Assets\TestMedia\Ring03Part3.jpg" />
+    <Content Include="Assets\TestMedia\Ring03Part3.wma" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

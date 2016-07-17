@@ -17,7 +17,6 @@ namespace JacobC.Xiami.ViewModels
     {
         public PlaylistPageViewModel()
         {
-            PlaylistService.Instance.CurrentIndexChanging += (sender, e) => this.Set(ref _CurrentPlayingIndex, e.NewValue, nameof(CurrentPlayingIndex));
         }
 
         public ObservableCollection<SongModel> Playlist
@@ -25,19 +24,5 @@ namespace JacobC.Xiami.ViewModels
             get { return PlaylistService.Instance.Playlist; }
         }
 
-        int _CurrentPlayingIndex = default(int);
-        /// <summary>
-        /// 获取或设置当前播放的音轨属性
-        /// </summary>
-        public int CurrentPlayingIndex
-        {
-            get { return PlaylistService.Instance.CurrentIndex; }
-            set
-            {
-                Playlist[PlaylistService.Instance.CurrentIndex].IsPlaying = false;
-                PlaylistService.Instance.CurrentIndex = value;
-                Playlist[value].IsPlaying = true;
-            }
-        }
     }
 }

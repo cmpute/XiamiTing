@@ -262,7 +262,6 @@ namespace JacobC.Xiami.Services
                                     var position = TimeSpan.Parse((string)currentTrackPosition);
                                     DebugWrite("StartPlayback: Setting Position " + position, "BackgroundPlayer");
                                     BackgroundMediaPlayer.Current.Position = position;
-
                                     BackgroundMediaPlayer.Current.Play();
                                 }
                             };
@@ -296,7 +295,7 @@ namespace JacobC.Xiami.Services
             // 获取更新的项目
             var item = args.NewItem;
             DebugWrite("PlaybackList_CurrentItemChanged: " + (item == null ? "null" : GetTrackId(item).ToString()), "BackgroundPlayer");
-
+            //System.Diagnostics.Debugger.Break();
             // 更新UVC
             UpdateUVCOnNewTrack(item);
 
@@ -404,6 +403,12 @@ namespace JacobC.Xiami.Services
             BackgroundMediaPlayer.Current.AutoPlay = false;// 关闭自动播放
             BackgroundMediaPlayer.Current.Source = playbackList;
             playbackList.CurrentItemChanged += PlaybackList_CurrentItemChanged;
+            playbackList.ItemFailed += PlaybackList_ItemFailed;
+        }
+
+        private void PlaybackList_ItemFailed(MediaPlaybackList sender, MediaPlaybackItemFailedEventArgs args)
+        {
+            DebugWrite(args.Error.ErrorCode.ToString(), "BackgroundPlayer ItemError");
         }
         #endregion
     }
