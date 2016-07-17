@@ -42,5 +42,19 @@ namespace JacobC.Xiami.Views
                 System.Diagnostics.Debug.WriteLine($"Selected:{target.IsSelected}, Hover:{target.IsHovered}");
             });
         }
+
+        private DelegateCommand<object> _DeleteCommand;
+        public DelegateCommand<object> DeleteCommand => _DeleteCommand ?? (_DeleteCommand = new DelegateCommand<object>((model) =>
+        {
+            var Playlist = PlaylistService.Instance.Playlist;
+            for (int i = Playlist.Count - 1; i >= 0; i--)
+                if (Playlist[i].IsSelected)
+                    Playlist.RemoveAt(i);
+        }, (model) => { return listView.SelectedItems.Count != 0; }));
+
+        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _DeleteCommand.RaiseCanExecuteChanged();
+        }
     }
 }

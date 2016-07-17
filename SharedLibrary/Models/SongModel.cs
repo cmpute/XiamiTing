@@ -105,9 +105,17 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public bool IsHovered { get { return _IsSelectedOrHovered; } set { Set(ref _IsSelectedOrHovered, value); } }
 
+        bool _IsPlaying = default(bool);
+        /// <summary>
+        /// 获取或设置是否正在播放
+        /// </summary>
+        public bool IsPlaying { get { return _IsPlaying; } set { Set(ref _IsPlaying, value); } }
+
+
         private DelegateCommand<object> _DeleteCommand;
         public DelegateCommand<object> DeleteCommand => _DeleteCommand ?? (_DeleteCommand = new DelegateCommand<object>((model) =>
         {
+            //TODO: 判断是否在播放
             Services.PlaylistService.Instance.Playlist.Remove(this);
         }));
 
