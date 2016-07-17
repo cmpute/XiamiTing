@@ -28,28 +28,44 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
         </Style>
-        <t10c:ValueWhenConverter x:Key="ReverseVisibilityConverter">
-            <t10c:ValueWhenConverter.When>
-                <x:Boolean>False</x:Boolean>
-            </t10c:ValueWhenConverter.When>
-            <t10c:ValueWhenConverter.Value>
-                <Visibility>Visible</Visibility>
-            </t10c:ValueWhenConverter.Value>
-            <t10c:ValueWhenConverter.Otherwise>
+        <service:VisualStateConverter x:Key="IdVisibilityConverter" Mode="Hover">
+            <service:VisualStateConverter.ValueTrue>
                 <Visibility>Collapsed</Visibility>
-            </t10c:ValueWhenConverter.Otherwise>
-        </t10c:ValueWhenConverter>
-        <t10c:ValueWhenConverter x:Key="VisibilityConverter">
-            <t10c:ValueWhenConverter.When>
-                <x:Boolean>True</x:Boolean>
-            </t10c:ValueWhenConverter.When>
-            <t10c:ValueWhenConverter.Value>
-                <Visibility>Visible</Visibility>
-            </t10c:ValueWhenConverter.Value>
-            <t10c:ValueWhenConverter.Otherwise>
+            </service:VisualStateConverter.ValueTrue>
+            <service:VisualStateConverter.ParameterTrue>
                 <Visibility>Collapsed</Visibility>
-            </t10c:ValueWhenConverter.Otherwise>
-        </t10c:ValueWhenConverter>
+            </service:VisualStateConverter.ParameterTrue>
+            <service:VisualStateConverter.ValueAndParameter>
+                <Visibility>Collapsed</Visibility>
+            </service:VisualStateConverter.ValueAndParameter>
+            <service:VisualStateConverter.Otherwise>
+                <Visibility>Visible</Visibility>
+            </service:VisualStateConverter.Otherwise>
+        </service:VisualStateConverter>
+        <service:VisualStateConverter x:Key="VisibilityConverter" Mode="Hover" IgnoreParameter="True">
+            <service:VisualStateConverter.ValueTrue>
+                <Visibility>Visible</Visibility>
+            </service:VisualStateConverter.ValueTrue>
+            <service:VisualStateConverter.Otherwise>
+                <Visibility>Collapsed</Visibility>
+            </service:VisualStateConverter.Otherwise>
+        </service:VisualStateConverter>
+        <service:VisualStateConverter x:Key="PlayVisibilityConverter" Mode="Hover" ParameterReverse="True">
+            <service:VisualStateConverter.ValueAndParameter>
+                <Visibility>Visible</Visibility>
+            </service:VisualStateConverter.ValueAndParameter>
+            <service:VisualStateConverter.Otherwise>
+                <Visibility>Collapsed</Visibility>
+            </service:VisualStateConverter.Otherwise>
+        </service:VisualStateConverter>
+        <service:VisualStateConverter x:Key="CheckedConverter" Mode="Selected" IgnoreParameter="True">
+            <service:VisualStateConverter.ValueTrue>
+                <x:String>&#xE73A;</x:String>
+            </service:VisualStateConverter.ValueTrue>
+            <service:VisualStateConverter.Otherwise>
+                <x:String>&#xE739;</x:String>
+            </service:VisualStateConverter.Otherwise>
+        </service:VisualStateConverter>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -58,6 +74,10 @@
         </Grid.RowDefinitions>
         <controls:PageHeader x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
                              Grid.Row="0" Text="Playlist">
+            <controls:PageHeader.PrimaryCommands>
+                <AppBarButton Icon="Delete" Label="DeleteSelected">
+                </AppBarButton>
+            </controls:PageHeader.PrimaryCommands>
         </controls:PageHeader>
         <Grid Grid.Row="1" Margin="4">
             <Grid.RowDefinitions>
@@ -81,7 +101,6 @@
                       x:Name="listView"
                       IsItemClickEnabled="True"
                       ItemsSource="{x:Bind ViewModel.Playlist}"
-                      SelectedIndex="{x:Bind ViewModel.CurrentPlayingIndex}"
                       SelectionMode="Multiple"
                       >
                 <!--相当于ListViewItem的Style-->
@@ -96,6 +115,13 @@
                                                 <!--缺省样式-->
                                                 <VisualState x:Name="Normal">
                                                     <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
+                                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                                <DiscreteObjectKeyFrame.Value>
+                                                                    <service:VisualStateSender>Normal</service:VisualStateSender>
+                                                                </DiscreteObjectKeyFrame.Value>
+                                                            </DiscreteObjectKeyFrame>
+                                                        </ObjectAnimationUsingKeyFrames>
                                                         <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                     </Storyboard>
                                                 </VisualState>
@@ -111,6 +137,13 @@
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
+                                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                                <DiscreteObjectKeyFrame.Value>
+                                                                    <service:VisualStateSender>Hover</service:VisualStateSender>
+                                                                </DiscreteObjectKeyFrame.Value>
+                                                            </DiscreteObjectKeyFrame>
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                     </Storyboard>
@@ -161,27 +194,27 @@
                                 <ColumnDefinition Width="72"/>
                             </Grid.ColumnDefinitions>
                             <!--用Fonticon做CheckBox-->
-                            <FontIcon Foreground="{StaticResource DisableColorBrush}" Glyph="&#xE739;" FontSize="16" HorizontalAlignment="Left"/>
+                            <FontIcon Foreground="{StaticResource DisableColorBrush}" Glyph="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource CheckedConverter}}" FontSize="16" HorizontalAlignment="Left"/>
                             <Grid Margin="20,0,0,0" Padding="0" HorizontalAlignment="Left">
                                 <TextBlock Margin="4,0" 
                                            VerticalAlignment="Center"
                                            Foreground="{StaticResource DisableColorBrush}"
-                                           Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource ReverseVisibilityConverter}, Mode=OneWay}"
+                                           Visibility="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource IdVisibilityConverter}, ConverterParameter={x:Bind Playing}, Mode=OneWay}"
                                            Text="{x:Bind ListIndex}" HorizontalAlignment="Center"/>
                                 <FontIcon HorizontalAlignment="Left" Glyph="&#xE7F6;" FontSize="24"
-                                          Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
+                                          Visibility="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource PlayVisibilityConverter}, ConverterParameter={x:Bind Playing}, Mode=OneWay}"/>
                             </Grid>
                             <TextBlock Grid.Column="1" Text="{x:Bind Title}"/>
                             <TextBlock Grid.Column="2" Text="{x:Bind Artist.Name}"/>
                             <TextBlock Grid.Column="3" Text="{x:Bind Album.Name}"/>
                             <FontIcon x:Name="setLove" Style="{StaticResource sFontIcon}" Grid.Column="4" Glyph="&#xE006;" Margin="4,0,0,0"/>
                             <FontIcon Style="{StaticResource sFontIcon}" 
-                                      Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
+                                      Visibility="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent} ,Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
                                       Grid.Column="4" Glyph="&#xE169;" 
                                       Margin="28,0,0,0"/>
                             <FontIcon x:Name="deleteButton"
                                       Style="{StaticResource sFontIcon}"
-                                      Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
+                                      Visibility="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent} ,Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
                                       Grid.Column="4" Glyph="&#xE711;"
                                       Margin="52,0,0,0">
                                 <i:Interaction.Behaviors>

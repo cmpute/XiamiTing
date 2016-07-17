@@ -84,6 +84,20 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public bool IsSelectedOrHovered { get { return _IsSelectedOrHovered; } set { Set(ref _IsSelectedOrHovered, value); } }
 
+        bool _Playing = default(bool);
+        /// <summary>
+        /// 获取或设置歌曲是否正在播放
+        /// </summary>
+        public bool Playing { get { return _Playing; } set { Set(ref _Playing, value); } }
+
+        bool _Loved = default(bool);
+        /// <summary>
+        /// 获取或设置音轨是否被收藏
+        /// </summary>
+        public bool Loved { get { return _Loved; } set { Set(ref _Loved, value); } }
+
+
+
 
         private DelegateCommand<object> _DeleteCommand;
         public DelegateCommand<object> DeleteCommand => _DeleteCommand ?? (_DeleteCommand = new DelegateCommand<object>((model) =>
