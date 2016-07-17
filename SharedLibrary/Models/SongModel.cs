@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Template10.Mvvm;
 using Windows.UI.Xaml.Controls;
+using Template10.Common;
 
 namespace JacobC.Xiami.Models
 {
@@ -67,6 +68,26 @@ namespace JacobC.Xiami.Models
         }
         private void _Album_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Album));
 
+        bool _IsLoved = default(bool);
+        /// <summary>
+        /// 获取或设置歌曲是否标记为喜爱
+        /// </summary>
+        public bool IsLoved
+        {
+            get { return _IsLoved; }
+            set
+            {
+                IsLoveChanging?.Invoke(this, new ChangedEventArgs<bool>(_IsLoved, value));
+                Set(ref _IsLoved, value);
+            }
+        }
+        public event EventHandler<ChangedEventArgs<bool>> IsLoveChanging;
+
+
+        #endregion
+
+        #region Visual Binding Needed Only
+
         /// <summary>
         /// 获取或设置在列表中的位置，非必须成员
         /// </summary>
@@ -80,10 +101,9 @@ namespace JacobC.Xiami.Models
 
         bool _IsSelectedOrHovered = default(bool);
         /// <summary>
-        /// 获取或设置是否选中或悬浮
+        /// 获取或设置是否悬浮
         /// </summary>
-        public bool IsSelectedOrHovered { get { return _IsSelectedOrHovered; } set { Set(ref _IsSelectedOrHovered, value); } }
-
+        public bool IsHovered { get { return _IsSelectedOrHovered; } set { Set(ref _IsSelectedOrHovered, value); } }
 
         private DelegateCommand<object> _DeleteCommand;
         public DelegateCommand<object> DeleteCommand => _DeleteCommand ?? (_DeleteCommand = new DelegateCommand<object>((model) =>
@@ -91,20 +111,11 @@ namespace JacobC.Xiami.Models
             Services.PlaylistService.Instance.Playlist.Remove(this);
         }));
 
-        private DelegateCommand<object> _PointerInCommand;
-        public DelegateCommand<object> PointerInCommand => _PointerInCommand ?? (_PointerInCommand = new DelegateCommand<object>((model) =>
+        private DelegateCommand<object> _LoveCommand;
+        public DelegateCommand<object> LoveCommand => _LoveCommand ?? (_LoveCommand = new DelegateCommand<object>((model) =>
         {
-            System.Diagnostics.Debug.WriteLine("Pointer Area Entered");
-            IsSelectedOrHovered = IsSelected || true;
+            IsLoved = !IsLoved;
         }));
-
-        private DelegateCommand<object> _PointerOutCommand;
-        public DelegateCommand<object> PointerOutCommand => _PointerOutCommand ?? (_PointerOutCommand = new DelegateCommand<object>((model) =>
-        {
-            System.Diagnostics.Debug.WriteLine("Pointer Area Leaved");
-            IsSelectedOrHovered = IsSelected || false;
-        }));
-
 
         #endregion
 

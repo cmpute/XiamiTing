@@ -50,6 +50,28 @@
                 <Visibility>Collapsed</Visibility>
             </t10c:ValueWhenConverter.Otherwise>
         </t10c:ValueWhenConverter>
+        <t10c:ValueWhenConverter x:Key="CheckedConverter">
+            <t10c:ValueWhenConverter.When>
+                <x:Boolean>True</x:Boolean>
+            </t10c:ValueWhenConverter.When>
+            <t10c:ValueWhenConverter.Value>
+                <x:String>&#xE73A;</x:String>
+            </t10c:ValueWhenConverter.Value>
+            <t10c:ValueWhenConverter.Otherwise>
+                <x:String>&#xE739;</x:String>
+            </t10c:ValueWhenConverter.Otherwise>
+        </t10c:ValueWhenConverter>
+        <t10c:ValueWhenConverter x:Key="LovedIconConverter">
+            <t10c:ValueWhenConverter.When>
+                <x:Boolean>True</x:Boolean>
+            </t10c:ValueWhenConverter.When>
+            <t10c:ValueWhenConverter.Value>
+                <x:String>&#xE00B;</x:String>
+            </t10c:ValueWhenConverter.Value>
+            <t10c:ValueWhenConverter.Otherwise>
+                <x:String>&#xE006;</x:String>
+            </t10c:ValueWhenConverter.Otherwise>
+        </t10c:ValueWhenConverter>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -81,7 +103,6 @@
                       x:Name="listView"
                       IsItemClickEnabled="True"
                       ItemsSource="{x:Bind ViewModel.Playlist}"
-                      SelectedIndex="{x:Bind ViewModel.CurrentPlayingIndex}"
                       SelectionMode="Multiple"
                       >
                 <!--相当于ListViewItem的Style-->
@@ -96,18 +117,100 @@
                                                 <!--缺省样式-->
                                                 <VisualState x:Name="Normal">
                                                     <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
+                                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                                <DiscreteObjectKeyFrame.Value>
+                                                                    <service:VisualStateSender>Normal</service:VisualStateSender>
+                                                                </DiscreteObjectKeyFrame.Value>
+                                                            </DiscreteObjectKeyFrame>
+                                                        </ObjectAnimationUsingKeyFrames>
                                                         <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                     </Storyboard>
                                                 </VisualState>
                                                 <!--设置鼠标悬停样式-->
                                                 <VisualState x:Name="PointerOver">
                                                     <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
+                                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                                <DiscreteObjectKeyFrame.Value>
+                                                                    <service:VisualStateSender>Hover</service:VisualStateSender>
+                                                                </DiscreteObjectKeyFrame.Value>
+                                                            </DiscreteObjectKeyFrame>
+                                                        </ObjectAnimationUsingKeyFrames>
                                                         <DoubleAnimation Storyboard.TargetName="BorderBackground"
                                                                          Storyboard.TargetProperty="Opacity"
                                                                          Duration="0"
                                                                          To="1"/>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
                                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <!--设置鼠标按下样式-->
+                                                <VisualState x:Name="Pressed">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="BorderBackground"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="1"/>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <!--<PointerDownThemeAnimation TargetName="ContentPresenter" />-->
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Selected">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
+                                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                                <DiscreteObjectKeyFrame.Value>
+                                                                    <service:VisualStateSender>Selected</service:VisualStateSender>
+                                                                </DiscreteObjectKeyFrame.Value>
+                                                            </DiscreteObjectKeyFrame>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <!--<DoubleAnimation Storyboard.TargetName="MultiSelectCheck"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0:0:0"
+                                                         To="1"/>-->
+                                                        <DoubleAnimation Storyboard.TargetName="BorderBackground"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="1"/>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListAccentLowBrush}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="PointerOverSelected">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
+                                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                                <DiscreteObjectKeyFrame.Value>
+                                                                    <service:VisualStateSender>HoverSelected</service:VisualStateSender>
+                                                                </DiscreteObjectKeyFrame.Value>
+                                                            </DiscreteObjectKeyFrame>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <!--<DoubleAnimation Storyboard.TargetName="MultiSelectCheck"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0:0:0"
+                                                         To="1"/>-->
+                                                        <DoubleAnimation Storyboard.TargetName="BorderBackground"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         Duration="0"
+                                                         To="1"/>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListAccentMediumBrush}" />
                                                         </ObjectAnimationUsingKeyFrames>
                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
@@ -144,15 +247,15 @@
                         <!--TODO: ListView点击=Checkbox的check事件-->
                         <!--TODO: 点击Textblck可以链接到对应的专辑/歌曲界面（可以先链接到网页链接）-->
                         <!--TODO: 响应拖拽行为-->
-                        <Grid>
-                            <i:Interaction.Behaviors>
+                        <Grid Tag="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" Loaded="Grid_Loaded">
+                            <!--<i:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="PointerEntered">
                                     <core:InvokeCommandAction Command="{x:Bind PointerInCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
                                 </core:EventTriggerBehavior>
                                 <core:EventTriggerBehavior EventName="PointerExited">
                                     <core:InvokeCommandAction Command="{x:Bind PointerOutCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
                                 </core:EventTriggerBehavior>
-                            </i:Interaction.Behaviors>
+                            </i:Interaction.Behaviors>-->
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="48"/>
                                 <ColumnDefinition/>
@@ -161,27 +264,35 @@
                                 <ColumnDefinition Width="72"/>
                             </Grid.ColumnDefinitions>
                             <!--用Fonticon做CheckBox-->
-                            <FontIcon Foreground="{StaticResource DisableColorBrush}" Glyph="&#xE739;" FontSize="16" HorizontalAlignment="Left"/>
+                            <FontIcon Foreground="{StaticResource DisableColorBrush}" Glyph="{x:Bind IsSelected, Converter={StaticResource CheckedConverter}, Mode=OneWay}" FontSize="16" HorizontalAlignment="Left"/>
                             <Grid Margin="20,0,0,0" Padding="0" HorizontalAlignment="Left">
                                 <TextBlock Margin="4,0" 
                                            VerticalAlignment="Center"
                                            Foreground="{StaticResource DisableColorBrush}"
-                                           Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource ReverseVisibilityConverter}, Mode=OneWay}"
+                                           Visibility="{x:Bind IsHovered, Converter={StaticResource ReverseVisibilityConverter}, Mode=OneWay}"
                                            Text="{x:Bind ListIndex}" HorizontalAlignment="Center"/>
                                 <FontIcon HorizontalAlignment="Left" Glyph="&#xE7F6;" FontSize="24"
-                                          Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
+                                          Visibility="{x:Bind IsHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
                             </Grid>
                             <TextBlock Grid.Column="1" Text="{x:Bind Title}"/>
                             <TextBlock Grid.Column="2" Text="{x:Bind Artist.Name}"/>
                             <TextBlock Grid.Column="3" Text="{x:Bind Album.Name}"/>
-                            <FontIcon x:Name="setLove" Style="{StaticResource sFontIcon}" Grid.Column="4" Glyph="&#xE006;" Margin="4,0,0,0"/>
+                            <FontIcon x:Name="setLove" Style="{StaticResource sFontIcon}" Grid.Column="4"
+                                      Glyph="{x:Bind IsLoved, Converter={StaticResource LovedIconConverter}, Mode=OneWay}" 
+                                      Margin="4,0,0,0">
+                                <i:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Tapped">
+                                        <core:InvokeCommandAction Command="{x:Bind LoveCommand}"/>
+                                    </core:EventTriggerBehavior>
+                                </i:Interaction.Behaviors>
+                            </FontIcon>
                             <FontIcon Style="{StaticResource sFontIcon}" 
-                                      Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
+                                      Visibility="{x:Bind IsHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
                                       Grid.Column="4" Glyph="&#xE169;" 
                                       Margin="28,0,0,0"/>
                             <FontIcon x:Name="deleteButton"
                                       Style="{StaticResource sFontIcon}"
-                                      Visibility="{x:Bind IsSelectedOrHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
+                                      Visibility="{x:Bind IsHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
                                       Grid.Column="4" Glyph="&#xE711;"
                                       Margin="52,0,0,0">
                                 <i:Interaction.Behaviors>

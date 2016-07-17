@@ -118,6 +118,7 @@
     <Compile Include="Services\PlaylistService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\StateEnum.cs" />
+    <Compile Include="Services\VisualStateSender.cs" />
     <EmbeddedResource Include="Properties\SharedLibrary.rd.xml" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

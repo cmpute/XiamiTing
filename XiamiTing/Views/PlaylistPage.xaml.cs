@@ -1,4 +1,6 @@
-﻿using System;
+﻿using JacobC.Xiami.Models;
+using JacobC.Xiami.Services;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,6 +28,19 @@ namespace JacobC.Xiami.Views
         public PlaylistPage()
         {
             this.InitializeComponent();
+        }
+
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            Grid source = sender as Grid;
+            source.RegisterPropertyChangedCallback(Grid.TagProperty, (dpsender, dp) => 
+            {
+                int val = (int)(dpsender.GetValue(dp) ?? 0);
+                SongModel target = source.DataContext as SongModel;
+                target.IsHovered = val > 1;
+                target.IsSelected = (val % 2) != 0;
+                System.Diagnostics.Debug.WriteLine($"Selected:{target.IsSelected}, Hover:{target.IsHovered}");
+            });
         }
     }
 }
