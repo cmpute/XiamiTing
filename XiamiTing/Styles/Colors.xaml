@@ -1,7 +1,6 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:JacobC.Xiami.App">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--
         IconColor : App图标配色
