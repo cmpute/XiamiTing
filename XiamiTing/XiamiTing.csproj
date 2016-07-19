@@ -199,7 +199,9 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Converters\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BackgroundTasks\BackgroundTasks.csproj">
       <Project>{f2048935-b853-4f7a-ac91-ca10ba0128b3}</Project>
