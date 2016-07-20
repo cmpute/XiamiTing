@@ -6,18 +6,24 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:JacobC.Xiami.ViewModels"
+    xmlns:t10c="using:Template10.Converters"
     mc:Ignorable="d"
+    x:Name="This"
     d:DesignHeight="60"
     d:DesignWidth="400">
 
     <Control.Resources>
-        <Style TargetType="MediaTransportControls">
-            <Setter Property="IsTabStop" Value="False"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="FlowDirection" Value="LeftToRight"/>
-            <Setter Property="UseSystemFocusVisuals" Value="True"/>
-            <Setter Property="IsTextScaleFactorEnabled" Value="False"/>
-        </Style>
+        <t10c:ValueWhenConverter x:Key="PlayButtonConverter">
+            <t10c:ValueWhenConverter.When>
+                <x:Boolean>True</x:Boolean>
+            </t10c:ValueWhenConverter.When>
+            <t10c:ValueWhenConverter.Value>
+                <x:String>&#xE103;</x:String>
+            </t10c:ValueWhenConverter.Value>
+            <t10c:ValueWhenConverter.Otherwise>
+                <x:String>&#xE102;</x:String>
+            </t10c:ValueWhenConverter.Otherwise>
+        </t10c:ValueWhenConverter>
     </Control.Resources>
     <Grid x:Name="root">
         <!--TODO: 此处插入播放详情界面的控件-->
@@ -37,7 +43,7 @@
                 <!--插入一个控制栏背景层-->
                 <Image Height="60" Width="60" Stretch="UniformToFill">
                     <Image.Source>
-                        <BitmapImage UriSource="{x:Bind CurrentSong.Album.AlbumArtCacheUri, Mode=OneWay}" />
+                        <BitmapImage UriSource="{x:Bind CurrentSong.Album.AlbumArtUri, Mode=OneWay}" />
                     </Image.Source>
                 </Image>
                 <StackPanel x:Name="controlButtons" Grid.Column="1" Orientation="Horizontal">
@@ -53,7 +59,9 @@
                             VerticalAlignment="Center"
                             Margin="4,0"
                             Command="{x:Bind PlayCommand}">
-                        <FontIcon FontSize="40" Glyph="&#xE102;" Foreground="{StaticResource BackColorBrush}" />
+                        <FontIcon x:Name="PlayIcon" FontSize="40"
+                                  Glyph="{x:Bind IsNowPlaying, Converter={StaticResource PlayButtonConverter}, Mode=OneWay}"
+                                  Foreground="{StaticResource BackColorBrush}"/>
                     </Button>
                     <Button x:Name="next" Style="{StaticResource EmptyButtonForIcon}"
                             Background="Transparent"
@@ -69,10 +77,10 @@
                         <TextBlock x:Name="split" Margin="8,0" Text="/" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="trackTitle" />
                         <TextBlock x:Name="artistName" Text="{x:Bind CurrentSong.Artist.Name, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="split"/>
                     </RelativePanel>
-                    <Slider></Slider>
+                    <Slider Margin="4,0"></Slider>
                 </StackPanel>
                 <StackPanel Grid.Column="3" Orientation="Horizontal">
-                    <Button x:Name="list" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center">
+                    <Button x:Name="list" Style="{StaticResource EmptyButtonForIcon}" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center">
                         <FontIcon FontSize="20" Glyph="&#xE142;" />
                     </Button>
                 </StackPanel>

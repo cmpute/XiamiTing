@@ -41,6 +41,24 @@ namespace JacobC.Xiami.Controls
         /// </summary>
         public event EventHandler<ChangedEventArgs<SongModel>> CurrentSongChanged;
         partial void InternalCurrentSongChanged(ChangedEventArgs<SongModel> e);
+        
+        //TODO: !!IsNowPlaying目前绑定失效
+        /// <summary>
+        /// 获取是否正在播放属性
+        /// </summary>
+        public bool IsNowPlaying
+        {
+            get { return (bool)GetValue(IsNowPlayingProperty); }
+            private set { SetValue(IsNowPlayingProperty, value); }
+        }
+        private static readonly bool _defaultIsPlaying = default(bool);
+        /// <summary>
+        /// 标识<see cref="IsNowPlaying"/>依赖属性
+        /// </summary>
+        private static readonly DependencyProperty IsNowPlayingProperty =
+              DependencyProperty.Register(nameof(IsNowPlaying), typeof(bool),
+                  typeof(MusicController), new PropertyMetadata(_defaultIsPlaying, (d, e) => { }));
+
 
         #endregion
 

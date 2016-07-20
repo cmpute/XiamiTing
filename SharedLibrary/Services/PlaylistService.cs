@@ -53,8 +53,8 @@ namespace JacobC.Xiami.Services
             ArtistModel mitis = new ArtistModel() { Name = "MitiS" };
             for (int i = 0; i < 6; i++)
             {
-                yield return new SongModel() { Title = "Give My Regards", Artist = mitis, Album = new AlbumModel() { Name = "Give My Regards" }, MediaUri = new Uri(@"http://win.web.rg03.sycdn.kuwo.cn/205c536fdc7a5853c959b011d4ad3194/578ba972/resource/a2/47/59/21086849.aac"), ListIndex = i };
-                yield return new SongModel() { Title = "Foundations", Artist = mitis, Album = new AlbumModel() { Name = "Foundations" }, MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring02.wma") ,ListIndex = i };
+                yield return new SongModel() { Title = $"Give My Regards {i}", Artist = mitis, Album = new AlbumModel() { Name = "Give My Regards" , AlbumArtUri= new Uri(@"ms-appx:///Assets/TestMedia/Ring01.jpg")}, MediaUri = new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/3c7436b07688ca96d1cfb9bc6a547706/578f5562/resource/a3/73/65/3736166827.aac"), ListIndex = i };
+                yield return new SongModel() { Title = $"Foundations {i}", Artist = mitis, Album = new AlbumModel() { Name = "Foundations" }, MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring02.wma") ,ListIndex = i };
             }
         }
 
@@ -194,7 +194,6 @@ namespace JacobC.Xiami.Services
                 if (result == true)
                 {
                     MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, PlaylistService.Instance.Playlist);
-                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartPlayback);
                 }
                 else
                 {
@@ -210,6 +209,10 @@ namespace JacobC.Xiami.Services
                     DebugWrite("Background Audio Task could not initialized due to an error ::" + task.Exception.ToString(), "MediaPlayer");
                 }
             });
+        }
+        public void StartPlayback()
+        {
+            MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartPlayback);
         }
         private void AddMediaPlayerEventHandlers()
         {

@@ -46,6 +46,8 @@ namespace JacobC.Xiami
         public override async Task OnInitializeAsync(IActivatedEventArgs args)
         {
             SetTitleColor();
+            LogService.DebugWrite(PlaylistService.Instance.Playlist.Count.ToString(), "Starting"); // Initialize Playlist
+            PlaylistService.Instance.StartBackgroundAudioTask();
             if (Window.Current.Content as ModalDialog == null)
             {
                 // create a new frame 

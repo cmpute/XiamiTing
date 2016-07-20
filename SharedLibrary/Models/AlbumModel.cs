@@ -13,7 +13,7 @@ namespace JacobC.Xiami.Models
     [DataContract]
     public class AlbumModel : BindableBase
     {
-        Uri _AlbumArtUri = default(Uri);
+        Uri _AlbumArtUri = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");
         /// <summary>
         /// 获取或设置专辑封面的链接
         /// </summary>

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Template10.Mvvm;
 using Windows.Media.Playback;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -18,6 +19,11 @@ namespace JacobC.Xiami.Controls
     //MusicController不负责列表切歌的功能
     public sealed partial class MusicController : UserControl
     {
+        private void AddListeners()
+        {
+            PlaylistService.Instance.CurrentIndexChanging += (sender, e) => CurrentSong = e.NewValue;
+            PlaylistService.Instance.CurrentPlayer.CurrentStateChanged += async (sender, args) => await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => IsNowPlaying = sender.CurrentState == MediaPlayerState.Playing);
+        }
 
         DelegateCommand _PlayCommand;
         public DelegateCommand PlayCommand => _PlayCommand ?? (_PlayCommand = new DelegateCommand(() =>
@@ -43,11 +49,13 @@ namespace JacobC.Xiami.Controls
                 else if (MediaPlayerState.Closed == CurrentPlayer.CurrentState)
                 {
                     service.StartBackgroundAudioTask();
+                    service.StartPlayback();
                 }
             }
             else
             {
                 service.StartBackgroundAudioTask();
+                service.StartPlayback();
             }
         }));
 
