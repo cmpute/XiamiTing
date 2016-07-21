@@ -13,60 +13,31 @@ using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using JacobC.Xiami.ViewModels;
 
 namespace JacobC.Xiami.Services
 {
     /// <summary>
-    /// 维护全局的播放列表集合
+    /// 提供与后台播放程序的通信
     /// </summary>
-    public class PlaylistService
+    public class PlaybackService
     {
-        static PlaylistService _instance;
+
+        static PlaybackService _instance;
         /// <summary>
         /// 获取当前播放列表实例
         /// </summary>
-        public static PlaylistService Instance { get { return _instance ?? (_instance = new PlaylistService()); } }
+        public static PlaybackService Instance { get { return _instance ?? (_instance = new PlaybackService()); } }
 
-        private ObservableCollection<SongModel> _Playlist;
-        /// <summary>
-        /// 获取播放列表的唯一实例
-        /// </summary>
-        public ObservableCollection<SongModel> Playlist
-        {
-            get
-            {
-                if(_Playlist == null)
-                {
-                    _Playlist = InitPlaylist().ToObservableCollection();
-                }
-                return _Playlist;
-            }
-        }
-        /// <summary>
-        /// 应用程序开始时初始化播放列表
-        /// </summary>
-        /// <returns>上一次程序退出时的播放列表</returns>
-        public IEnumerable<SongModel> InitPlaylist()
-        {
-            //TODO: 从应用设置中获取缓存的播放列表
-            //以下为测试代码
-            ArtistModel mitis = new ArtistModel() { Name = "MitiS" };
-            for (int i = 0; i < 6; i++)
-            {
-                yield return new SongModel() { Title = $"Give My Regards {i}", Artist = mitis, Album = new AlbumModel() { Name = "Give My Regards" , AlbumArtUri= new Uri(@"ms-appx:///Assets/TestMedia/Ring01.jpg")}, MediaUri = new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/3c7436b07688ca96d1cfb9bc6a547706/578f5562/resource/a3/73/65/3736166827.aac"), ListIndex = i };
-                yield return new SongModel() { Title = $"Foundations {i}", Artist = mitis, Album = new AlbumModel() { Name = "Foundations" }, MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring02.wma") ,ListIndex = i };
-            }
-        }
-
-        SongModel _CurrentPlaying = null;
+        SongViewModel _CurrentPlaying = null;
         /// <summary>
         /// 获取当前选中或播放的音轨
         /// </summary>
-        public SongModel CurrentPlaying
+        public SongViewModel CurrentPlaying
         {
             get
             {
-                if (_Playlist.Count == 0)
+                if (PlaylistService.Instance.Playlist.Count == 0)
                     throw new ArgumentNullException(nameof(CurrentPlaying), "当前播放列表为空，无法获取音轨");
                 return _CurrentPlaying;
             }
@@ -74,7 +45,7 @@ namespace JacobC.Xiami.Services
             {
                 if (_CurrentPlaying != value)
                 {
-                    CurrentIndexChanging.Invoke(this, new ChangedEventArgs<SongModel>(_CurrentPlaying, value));
+                    CurrentIndexChanging.Invoke(this, new ChangedEventArgs<SongViewModel>(_CurrentPlaying, value));
                     InternalCurrentIndexChanging(value);
                     if (_CurrentPlaying != null) _CurrentPlaying.IsPlaying = false;
                     _CurrentPlaying = value;
@@ -85,8 +56,8 @@ namespace JacobC.Xiami.Services
         /// <summary>
         /// 在当前播放的音轨发生改变时发生
         /// </summary>
-        public event EventHandler<ChangedEventArgs<SongModel>> CurrentIndexChanging;
-        private void InternalCurrentIndexChanging(SongModel newsong)
+        public event EventHandler<ChangedEventArgs<SongViewModel>> CurrentIndexChanging;
+        private void InternalCurrentIndexChanging(SongViewModel newsong)
         {
             //TODO: 向后台发送消息
         }
@@ -193,7 +164,7 @@ namespace JacobC.Xiami.Services
                 //Send message to initiate playback
                 if (result == true)
                 {
-                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, PlaylistService.Instance.Playlist);
+                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, PlaylistService.Instance.GetModelList());
                 }
                 else
                 {
@@ -241,13 +212,13 @@ namespace JacobC.Xiami.Services
             if (MessageService.GetTypeOfMediaMessage(e.Data) == MediaMessageTypes.TrackChanged)
             {
                 //When foreground app is active change track based on background message
-                await WindowWrapper.Current().Dispatcher.DispatchAsync( () =>
+                await WindowWrapper.Current().Dispatcher.DispatchAsync(() =>
                 {
                     // If playback stopped then clear the UI
                     string trackid = MessageService.GetMediaMessage<string>(e.Data);
                     if (trackid == null)
                     {
-                        
+
                         CurrentPlaying = null;
                         //albumArt.Source = null;
                         //txtCurrentTrack.Text = string.Empty;
@@ -287,7 +258,7 @@ namespace JacobC.Xiami.Services
         private async void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args)
         {
             var currentState = sender.CurrentState; // cache outside of completion or you might get a different value
-            await WindowWrapper.Current().Dispatcher.DispatchAsync( () =>
+            await WindowWrapper.Current().Dispatcher.DispatchAsync(() =>
             {
                 //// Update state label
                 //txtCurrentState.Text = currentState.ToString();
@@ -299,8 +270,6 @@ namespace JacobC.Xiami.Services
 
         public void PlayTrack(SongModel song)
         {
-            DebugWrite("Clicked item from App: " + song.MediaUri.ToString(), "MediaPlayer");
-
             // Start the background task if it wasn't running
             if (!IsBackgroundTaskRunning || MediaPlayerState.Closed == CurrentPlayer.CurrentState)
             {

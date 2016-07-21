@@ -47,7 +47,7 @@ namespace JacobC.Xiami
         {
             SetTitleColor();
             LogService.DebugWrite(PlaylistService.Instance.Playlist.Count.ToString(), "Starting"); // Initialize Playlist
-            PlaylistService.Instance.StartBackgroundAudioTask();
+            PlaybackService.Instance.StartBackgroundAudioTask();
             if (Window.Current.Content as ModalDialog == null)
             {
                 // create a new frame 

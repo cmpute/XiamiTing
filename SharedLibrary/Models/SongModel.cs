@@ -84,54 +84,6 @@ namespace JacobC.Xiami.Models
         }
         public event EventHandler<ChangedEventArgs<bool>> IsLoveChanging;
 
-
-        #endregion
-
-        #region Visual Binding Needed Only
-
-        /// <summary>
-        /// 获取或设置在列表中的位置，非必须成员
-        /// </summary>
-        public int ListIndex { get; set; }
-
-        bool _IsSelected = false;
-        /// <summary>
-        /// 获取或设置是否选中
-        /// </summary>
-        public bool IsSelected { get { return _IsSelected; } set { Set(ref _IsSelected, value); } }
-
-        bool _IsSelectedOrHovered = default(bool);
-        /// <summary>
-        /// 获取或设置是否悬浮
-        /// </summary>
-        public bool IsHovered { get { return _IsSelectedOrHovered; } set { Set(ref _IsSelectedOrHovered, value); } }
-
-        bool _IsPlaying = default(bool);
-        /// <summary>
-        /// 获取或设置是否正在播放
-        /// </summary>
-        public bool IsPlaying { get { return _IsPlaying; } set { Set(ref _IsPlaying, value); } }
-
-
-        private DelegateCommand<object> _DeleteCommand;
-        public DelegateCommand<object> DeleteCommand => _DeleteCommand ?? (_DeleteCommand = new DelegateCommand<object>((model) =>
-        {
-            //TODO: 判断是否在播放
-            Services.PlaylistService.Instance.Playlist.Remove(this);
-        }));
-
-        private DelegateCommand<object> _LoveCommand;
-        public DelegateCommand<object> LoveCommand => _LoveCommand ?? (_LoveCommand = new DelegateCommand<object>((model) =>
-        {
-            IsLoved = !IsLoved;
-        }));
-
-        private DelegateCommand<object> _PlayTrackCommand;
-        public DelegateCommand<object> PlayTrackCommand => _PlayTrackCommand ?? (_PlayTrackCommand = new DelegateCommand<object>((model) =>
-        {
-            PlaylistService.Instance.PlayTrack(this);
-        }));
-
         #endregion
 
         /// <summary>

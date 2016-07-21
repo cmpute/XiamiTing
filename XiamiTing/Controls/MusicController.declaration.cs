@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using JacobC.Xiami.Models;
+using JacobC.Xiami.ViewModels;
 
 namespace JacobC.Xiami.Controls
 {
@@ -20,27 +21,27 @@ namespace JacobC.Xiami.Controls
         /// <summary>
         /// 获取或设置当前播放的歌曲
         /// </summary>
-        public SongModel CurrentSong
+        public SongViewModel CurrentSong
         {
-            get { return GetValue(CurrentSongProperty) as SongModel; }
+            get { return GetValue(CurrentSongProperty) as SongViewModel; }
             private set { SetValue(CurrentSongProperty, value); }
         }
-        private static readonly SongModel _defaultCurrentSong = new SongModel { Album = new AlbumModel() };
+        private static readonly SongViewModel _defaultCurrentSong = new SongViewModel(new SongModel { Album = new AlbumModel() });
         /// <summary>
         /// 标识<see cref="CurrentSong"/>依赖属性
         /// </summary>
         public static readonly DependencyProperty CurrentSongProperty =
-              DependencyProperty.Register(nameof(CurrentSong), typeof(SongModel),
+              DependencyProperty.Register(nameof(CurrentSong), typeof(SongViewModel),
                   typeof(MusicController), new PropertyMetadata(_defaultCurrentSong, (d, e) =>
                   {
-                      (d as MusicController).CurrentSongChanged?.Invoke(d, e.ToChangedEventArgs<SongModel>());
-                      (d as MusicController).InternalCurrentSongChanged(e.ToChangedEventArgs<SongModel>());
+                      (d as MusicController).CurrentSongChanged?.Invoke(d, e.ToChangedEventArgs<SongViewModel>());
+                      (d as MusicController).InternalCurrentSongChanged(e.ToChangedEventArgs<SongViewModel>());
                   }));
         /// <summary>
         /// 在<see cref="CurrentSong"/>属性发生变更时发生
         /// </summary>
-        public event EventHandler<ChangedEventArgs<SongModel>> CurrentSongChanged;
-        partial void InternalCurrentSongChanged(ChangedEventArgs<SongModel> e);
+        public event EventHandler<ChangedEventArgs<SongViewModel>> CurrentSongChanged;
+        partial void InternalCurrentSongChanged(ChangedEventArgs<SongViewModel> e);
         
         //TODO: !!IsNowPlaying目前绑定失效
         /// <summary>

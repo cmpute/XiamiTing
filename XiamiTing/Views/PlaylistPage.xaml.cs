@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using JacobC.Xiami.ViewModels;
 
 // “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上有介绍
 
@@ -37,7 +38,7 @@ namespace JacobC.Xiami.Views
             source.RegisterPropertyChangedCallback(Grid.TagProperty, (dpsender, dp) => 
             {
                 int val = (int)(dpsender.GetValue(dp) ?? 0);
-                SongModel target = source.DataContext as SongModel;
+                SongViewModel target = source.DataContext as SongViewModel;
                 target.IsHovered = val > 1;
                 target.IsSelected = (val % 2) != 0;
             });

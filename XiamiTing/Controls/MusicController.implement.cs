@@ -21,20 +21,20 @@ namespace JacobC.Xiami.Controls
     {
         private void AddListeners()
         {
-            PlaylistService.Instance.CurrentIndexChanging += (sender, e) => CurrentSong = e.NewValue;
-            PlaylistService.Instance.CurrentPlayer.CurrentStateChanged += async (sender, args) => await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => IsNowPlaying = sender.CurrentState == MediaPlayerState.Playing);
+            PlaybackService.Instance.CurrentIndexChanging += (sender, e) => CurrentSong = e.NewValue;
+            PlaybackService.Instance.CurrentPlayer.CurrentStateChanged += async (sender, args) => await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => IsNowPlaying = sender.CurrentState == MediaPlayerState.Playing);
         }
 
         DelegateCommand _PlayCommand;
         public DelegateCommand PlayCommand => _PlayCommand ?? (_PlayCommand = new DelegateCommand(() =>
         {
-            var service = PlaylistService.Instance;
+            var service = PlaybackService.Instance;
             LogService.DebugWrite("Play button pressed from App");
             if (service.CurrentPlaying == null)
-                if (service.Playlist.Count == 0)
+                if (PlaylistService.Instance.Playlist.Count == 0)
                     return;
                 else
-                    PlaylistService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[0];
+                    PlaybackService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[0];
             var CurrentPlayer = service.CurrentPlayer;
             if (service.IsBackgroundTaskRunning)
             {
@@ -63,7 +63,7 @@ namespace JacobC.Xiami.Controls
         public DelegateCommand<object> PreviousCommand => _PreviousCommand ?? (_PreviousCommand = new DelegateCommand<object>((model) =>
         {
             MessageService.SendMediaMessageToBackground(MediaMessageTypes.SkipPrevious);
-            PlaylistService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) - 1];
+            PlaybackService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) - 1];
             //TODO: 判断是否循环/随机，并且设置Next的可用性
 
             // Prevent the user from repeatedly pressing the button and causing 
@@ -76,7 +76,7 @@ namespace JacobC.Xiami.Controls
         public DelegateCommand<object> NextCommand => _NextCommand ?? (_NextCommand = new DelegateCommand<object>((model) =>
         {
             MessageService.SendMediaMessageToBackground(MediaMessageTypes.SkipNext);
-            PlaylistService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) + 1];
+            PlaybackService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) + 1];
             //TODO: 判断是否循环/随机，并且设置Next的可用性
 
             // Prevent the user from repeatedly pressing the button and causing 

@@ -43,7 +43,7 @@
                 <!--插入一个控制栏背景层-->
                 <Image Height="60" Width="60" Stretch="UniformToFill">
                     <Image.Source>
-                        <BitmapImage UriSource="{x:Bind CurrentSong.Album.AlbumArtUri, Mode=OneWay}" />
+                        <BitmapImage UriSource="{x:Bind CurrentSong.Model.Album.AlbumArtUri, Mode=OneWay}" />
                     </Image.Source>
                 </Image>
                 <StackPanel x:Name="controlButtons" Grid.Column="1" Orientation="Horizontal">
@@ -73,9 +73,9 @@
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <RelativePanel Margin="8,4">
-                        <TextBlock x:Name="trackTitle" Text="{x:Bind CurrentSong.Title, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}"/>
+                        <TextBlock x:Name="trackTitle" Text="{x:Bind CurrentSong.Model.Title, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}"/>
                         <TextBlock x:Name="split" Margin="8,0" Text="/" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="trackTitle" />
-                        <TextBlock x:Name="artistName" Text="{x:Bind CurrentSong.Artist.Name, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="split"/>
+                        <TextBlock x:Name="artistName" Text="{x:Bind CurrentSong.Model.Artist.Name, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="split"/>
                     </RelativePanel>
                     <Slider Margin="4,0"></Slider>
                 </StackPanel>

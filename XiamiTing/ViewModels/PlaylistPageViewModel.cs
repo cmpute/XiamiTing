@@ -19,7 +19,7 @@ namespace JacobC.Xiami.ViewModels
         {
         }
 
-        public ObservableCollection<SongModel> Playlist
+        public ObservableCollection<SongViewModel> Playlist
         {
             get { return PlaylistService.Instance.Playlist; }
         }
