@@ -13,12 +13,13 @@ namespace JacobC.Xiami.Models
     [DataContract]
     public class AlbumModel : BindableBase
     {
-        /* _:原图
-         * _1:100x100
-         * _2:185x184
-         * _3:55x55
-         * _4:原图
-         * _5:185x185
+        /* 专辑封面后缀说明
+         * ..:原图
+         * .._1:100x100
+         * .._2:185x184
+         * .._3:55x55
+         * .._4:原图
+         * .._5:185x185
          */
 
         Uri _AlbumArtUri = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");
@@ -30,24 +31,22 @@ namespace JacobC.Xiami.Models
             get { return _AlbumArtUri; }
             set
             {
-                GetAlbumArtCache();
+                //TODO: 处理出Uri的前缀文字
                 Set(ref _AlbumArtUri, value);
             }
         }
 
+        Uri _AlbumArtFullUri = new Uri(@"ms-appx:///Assets/Pictures/cd500.gif");
         /// <summary>
-        /// 获取专辑封面的本地缓存
+        /// 获取或设置专辑大图的链接
         /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public Uri AlbumArtCacheUri { get; private set; } = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");
-
-        protected async void GetAlbumArtCache()
+        public Uri AlbumArtFullUri
         {
-            await Task.Run(() =>
+            get { return _AlbumArtFullUri; }
+            set
             {
-                //TODO: 从AlbumArtUri获取专辑封面缓存
-                AlbumArtCacheUri = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");
-            });
+                Set(ref _AlbumArtFullUri, value);
+            }
         }
 
         string _Name = default(string);

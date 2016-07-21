@@ -34,7 +34,7 @@ namespace JacobC.Xiami.Net
         public IAsyncOperationWithProgress<HttpResponseMessage, HttpProgress> GetSongInfo(SongModel song)
         {
             HttpClient hc = new HttpClient();
-            return hc.GetAsync(new Uri($"http://www.xiami.com/song/{song.XiamiID}"));
+            return hc.GetAsync(new Uri($"http://www.xiami.com/song/{song.SongID}"));
         }
     }
 }

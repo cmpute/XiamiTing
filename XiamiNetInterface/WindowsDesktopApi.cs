@@ -60,26 +60,31 @@ namespace JacobC.Xiami.Net
         /// </summary>
         public IAsyncAction GetSongInfo(SongModel song)
         {
-            if (song.XiamiID == 0)
+            if (song.SongID == 0)
                 throw new ArgumentException("SongModel未设置ID");
             return Run(async token =>
             {
                 try
                 {
-                    HttpClient hc = new HttpClient();
-                    var response = await hc.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}"));
-                    var content = await response.Content.ReadAsStringAsync();
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.SongID}"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
                     HtmlNode root = doc.DocumentNode;
                     var logo = root.SelectSingleNode("//img[1]");
                     var detail = root.SelectSingleNode("//ul[1]");
+                    var detailgrade = root.SelectSingleNode("//div[1]/ul[1]");
                     if (song.Title == null)
                         song.Title = logo.GetAttributeValue("title", "UnKnown");
+                    song.PlayCount = int.Parse(detailgrade.SelectSingleNode(".//span[1]").InnerText);
+                    song.ShareCount = int.Parse(detailgrade.SelectSingleNode("./li[3]/span[1]").InnerText);
                     if (song.Album == null)
                     {
                         AlbumModel album = new AlbumModel();
-                        album.AlbumArtUri = new Uri(logo.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif"));
+                        var art = logo.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                        album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
+                        album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
                         var albumtag = detail.SelectSingleNode("./li[1]/a[1]");
                         var idtext = albumtag.GetAttributeValue("href", "/app/xiating/album?id=0");
                         var addrlength = "/app/xiating/album?id=".Length;
@@ -87,7 +92,7 @@ namespace JacobC.Xiami.Net
                         album.Name = albumtag.InnerText;
                         song.Album = album;
                     }
-                    if(song.Artist == null)
+                    if (song.Artist == null)
                     {
                         ArtistModel artist = new ArtistModel();
                         var artisttag = detail.SelectSingleNode("./li[2]/a[1]");
@@ -98,7 +103,47 @@ namespace JacobC.Xiami.Net
                         song.Artist = artist;
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e);
+                    throw e;
+                }
+            });
+        }
+
+        public IAsyncAction GetAlbumInfo(AlbumModel album)
+        {
+            if (album.AlbumID == 0)
+                throw new ArgumentException("AlbumModel未设置ID");
+            return Run(async token =>
+            {
+                try
+                {
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/album?id={album.AlbumID}"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e);
+                    throw e;
+                }
+            });
+        }
+
+        public IAsyncAction GetArtistInfo(ArtistModel artist)
+        {
+            if (artist.ArtistID == 0)
+                throw new ArgumentException("ArtistModel未设置ID");
+            return Run(async token =>
+            {
+                try
+                {
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/artist?id={artist.ArtistID}"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                }
+                catch (Exception e)
                 {
                     LogService.ErrorWrite(e);
                     throw e;

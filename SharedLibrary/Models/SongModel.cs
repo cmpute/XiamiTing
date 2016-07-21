@@ -92,7 +92,19 @@ namespace JacobC.Xiami.Models
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Uri MediaUri { get; set; }
 
-        public uint XiamiID { get; set; }
+        public uint SongID { get; set; }
+
+        int _PlayCount = -1;
+        /// <summary>
+        /// 获取或设置播放次数属性
+        /// </summary>
+        public int PlayCount { get { return _PlayCount; } set { Set(ref _PlayCount, value); } }
+
+        int _ShareCount = -1;
+        /// <summary>
+        /// 获取或设置分享次数属性
+        /// </summary>
+        public int ShareCount { get { return _ShareCount; } set { Set(ref _ShareCount, value); } }
 
     }
 }

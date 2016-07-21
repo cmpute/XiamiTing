@@ -57,7 +57,7 @@ namespace JacobC.Xiami.Services
                 SongViewModel vm = new SongViewModel(new SongModel() { Title = $"Give My Regards {i}", Artist = mitis, Album = new AlbumModel() { Name = "Give My Regards", AlbumArtUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring01.jpg") }, MediaUri = new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/3c7436b07688ca96d1cfb9bc6a547706/578f5562/resource/a3/73/65/3736166827.aac") });
                 vm.ListIndex = i;
                 yield return vm;
-                vm = new SongViewModel(new SongModel() { Title = $"Foundations {i}", Artist = mitis, Album = new AlbumModel() { Name = "Foundations" }, MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring02.wma") });
+                vm = new SongViewModel(new SongModel() { Title = $"Foundations {i}", Artist = mitis, Album = new AlbumModel() { Name = "Foundations", AlbumArtUri=new Uri("http://blog.51cto.com/images/special/1306310178_index.jpg") }, MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring02.wma") });
                 vm.ListIndex = i;
                 yield return vm;
             }
