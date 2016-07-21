@@ -62,6 +62,9 @@ namespace JacobC.Xiami.Services
                 yield return vm;
             }
         }
+        /// <summary>
+        /// 获取播放列表的Model列表
+        /// </summary>
         public Collection<SongModel> GetModelList()
         {
             Collection<SongModel> list = new Collection<SongModel>();

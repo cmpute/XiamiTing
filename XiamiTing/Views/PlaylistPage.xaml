@@ -149,103 +149,68 @@
                                         <!--悬停、按下-->
                                         <VisualStateGroup x:Name="CommonStates">
                                             <VisualState x:Name="Normal">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Tag">
+                                                        <Setter.Value>
+                                                            <service:VisualStateSender>Normal</service:VisualStateSender>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </VisualState.Setters>
                                                 <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
-                                                        <DiscreteObjectKeyFrame KeyTime="0">
-                                                            <DiscreteObjectKeyFrame.Value>
-                                                                <service:VisualStateSender>Normal</service:VisualStateSender>
-                                                            </DiscreteObjectKeyFrame.Value>
-                                                        </DiscreteObjectKeyFrame>
-                                                    </ObjectAnimationUsingKeyFrames>
                                                     <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                 </Storyboard>
                                             </VisualState>
                                             <VisualState x:Name="PointerOver">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Tag">
+                                                        <Setter.Value>
+                                                            <service:VisualStateSender>Normal</service:VisualStateSender>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                                    <Setter Target="BorderBackground.Fill" Value="{ThemeResource SystemControlHighlightListLowBrush}"/>
+                                                    <Setter Target="BorderBackground.Opacity" Value="1"/>
+                                                </VisualState.Setters>
                                                 <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
-                                                        <DiscreteObjectKeyFrame KeyTime="0">
-                                                            <DiscreteObjectKeyFrame.Value>
-                                                                <service:VisualStateSender>Hover</service:VisualStateSender>
-                                                            </DiscreteObjectKeyFrame.Value>
-                                                        </DiscreteObjectKeyFrame>
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <DoubleAnimation Storyboard.TargetName="BorderBackground"
-                                                                         Storyboard.TargetProperty="Opacity"
-                                                                         Duration="0"
-                                                                         To="1"/>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
                                                     <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                 </Storyboard>
                                             </VisualState>
                                             <VisualState x:Name="Pressed">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="BorderBackground"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         Duration="0"
-                                                         To="1"/>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                                    <Setter Target="BorderBackground.Fill" Value="{ThemeResource SystemControlHighlightListMediumBrush}"/>
+                                                    <Setter Target="BorderBackground.Opacity" Value="1"/>
+                                                </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Selected">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Tag">
+                                                        <Setter.Value>
+                                                            <service:VisualStateSender>Selected</service:VisualStateSender>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Target="MultiSelectCheck.Opacity" Value="1"/>
+                                                    <Setter Target="BorderBackground.Opacity" Value="1"/>
+                                                    <Setter Target="BorderBackground.Fill" Value="{ThemeResource SystemControlHighlightListAccentLowBrush}"/>
+                                                    <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                                </VisualState.Setters>
                                                 <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
-                                                        <DiscreteObjectKeyFrame KeyTime="0">
-                                                            <DiscreteObjectKeyFrame.Value>
-                                                                <service:VisualStateSender>Selected</service:VisualStateSender>
-                                                            </DiscreteObjectKeyFrame.Value>
-                                                        </DiscreteObjectKeyFrame>
-                                                    </ObjectAnimationUsingKeyFrames>
-
-                                                    <DoubleAnimation Storyboard.TargetName="MultiSelectCheck"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         Duration="0:0:0"
-                                                         To="1"/>
-                                                    <DoubleAnimation Storyboard.TargetName="BorderBackground"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         Duration="0"
-                                                         To="1"/>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListAccentLowBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
                                                     <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                 </Storyboard>
                                             </VisualState>
                                             <VisualState x:Name="PointerOverSelected">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Tag">
+                                                        <Setter.Value>
+                                                            <service:VisualStateSender>HoverSelected</service:VisualStateSender>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Target="MultiSelectCheck.Opacity" Value="1"/>
+                                                    <Setter Target="BorderBackground.Opacity" Value="1"/>
+                                                    <Setter Target="BorderBackground.Fill" Value="{ThemeResource SystemControlHighlightListAccentMediumBrush}"/>
+                                                    <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                                </VisualState.Setters>
                                                 <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Tag">
-                                                        <DiscreteObjectKeyFrame KeyTime="0">
-                                                            <DiscreteObjectKeyFrame.Value>
-                                                                <service:VisualStateSender>HoverSelected</service:VisualStateSender>
-                                                            </DiscreteObjectKeyFrame.Value>
-                                                        </DiscreteObjectKeyFrame>
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <DoubleAnimation Storyboard.TargetName="MultiSelectCheck"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         Duration="0:0:0"
-                                                         To="1"/>
-                                                    <DoubleAnimation Storyboard.TargetName="BorderBackground"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         Duration="0"
-                                                         To="1"/>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListAccentMediumBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
                                                     <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                 </Storyboard>
                                             </VisualState>
@@ -335,13 +300,9 @@
                                         <VisualStateGroup x:Name="DragStates">
                                             <VisualState x:Name="NotDragging" />
                                             <VisualState x:Name="Dragging">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ContentBorder"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         Duration="0"
-                                                         To="{ThemeResource ListViewItemDragThemeOpacity}" />
-                                                    <DragItemThemeAnimation TargetName="ContentBorder" />
-                                                </Storyboard>
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentBorder.Opacity" Value="{ThemeResource ListViewItemDragThemeOpacity}"/>
+                                                </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="DraggingTarget">
                                                 <Storyboard>
