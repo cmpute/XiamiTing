@@ -110,7 +110,9 @@ namespace JacobC.Xiami.Net
                 }
             });
         }
-
+        /// <summary>
+        /// 通过AlbumId获取专辑信息（不含歌曲列表）
+        /// </summary>
         public IAsyncAction GetAlbumInfo(AlbumModel album)
         {
             if (album.AlbumID == 0)
@@ -129,6 +131,46 @@ namespace JacobC.Xiami.Net
                     throw e;
                 }
             });
+        }
+        /// <summary>
+        /// 获取专辑所含歌曲
+        /// </summary>
+        public IAsyncOperation<IEnumerable<SongModel>> GetAlbumSongs(AlbumModel album)
+        {
+            if (album.AlbumID == 0)
+                throw new ArgumentException("AlbumModel未设置ID");
+            return Run(async token =>
+            {
+                try
+                {
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/album?id={album.AlbumID}"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(content);
+                    return ParseSongs(doc.DocumentNode.SelectSingleNode("//div/ul[1]"), album);
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e);
+                    throw e;
+                }
+            });
+        }
+        internal IEnumerable<SongModel> ParseSongs(HtmlNode listnode,AlbumModel album)
+        {
+            foreach(var node in listnode.ChildNodes)
+            {
+                if (node.NodeType != HtmlNodeType.Element)
+                    continue;
+                SongModel song = new SongModel();
+                song.SongID = uint.Parse(node.SelectSingleNode("./span").GetAttributeValue("rel", "0"));
+                song.Title = node.SelectSingleNode("./div/a").InnerText;
+                song.TrackArtist = node.SelectSingleNode("./div/span").InnerText;
+                song.PlayCount = int.Parse(node.SelectSingleNode("./div[2]/span").InnerText);
+                song.Album = album;
+                yield return song;
+            }
         }
 
         public IAsyncAction GetArtistInfo(ArtistModel artist)

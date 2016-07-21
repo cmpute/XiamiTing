@@ -21,7 +21,7 @@ namespace JacobC.Xiami.Models
          * .._4:原图
          * .._5:185x185
          */
-
+        [JsonProperty]
         Uri _AlbumArtUri = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");
         /// <summary>
         /// 获取或设置专辑封面的链接
@@ -31,8 +31,8 @@ namespace JacobC.Xiami.Models
             get { return _AlbumArtUri; }
             set
             {
-                //TODO: 处理出Uri的前缀文字
-                Set(ref _AlbumArtUri, value);
+                if (_AlbumArtUri.ToString() != value.ToString())
+                    Set(ref _AlbumArtUri, value);
             }
         }
 
@@ -45,17 +45,19 @@ namespace JacobC.Xiami.Models
             get { return _AlbumArtFullUri; }
             set
             {
-                Set(ref _AlbumArtFullUri, value);
+                if (_AlbumArtFullUri.ToString() != value.ToString())
+                    Set(ref _AlbumArtFullUri, value);
             }
         }
 
-        string _Name = default(string);
+        string _Name = null;
         /// <summary>
         /// 获取或设置专辑的名称
         /// </summary>
+        [JsonProperty]
         public string Name { get { return _Name; } set { Set(ref _Name, value); } }
 
-        ArtistModel _Artist = default(ArtistModel);
+        ArtistModel _Artist = null;
         /// <summary>
         /// 获取或设置专辑艺术家
         /// </summary>
@@ -74,6 +76,12 @@ namespace JacobC.Xiami.Models
             }
         }
         private void _Artist_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Artist));
+
+        float _Rating = default(float);
+        /// <summary>
+        /// 获取或设置专辑的评分
+        /// </summary>
+        public float Rating { get { return _Rating; } set { Set(ref _Rating, value); } }
 
         /// <summary>
         /// 获取或设置专辑的虾米ID

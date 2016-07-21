@@ -20,14 +20,14 @@ namespace JacobC.Xiami.Models
     {
         #region Binding Needed
 
-        string _Title = default(string);
+        string _Title = null;
         /// <summary>
         /// 获取或设置歌曲的标题
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Title { get { return _Title; } set { Set(ref _Title, value); } }
 
-        ArtistModel _Artist = default(ArtistModel);
+        ArtistModel _Artist = null;
         /// <summary>
         /// 获取或设置音轨艺术家
         /// </summary>
@@ -48,7 +48,7 @@ namespace JacobC.Xiami.Models
         }
         private void _Artist_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Artist));
 
-        AlbumModel _Album = default(AlbumModel);
+        AlbumModel _Album = null;
         /// <summary>
         /// 获取或设置音轨所属的的专辑
         /// </summary>
@@ -69,7 +69,7 @@ namespace JacobC.Xiami.Models
         }
         private void _Album_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Album));
 
-        bool _IsLoved = default(bool);
+        bool _IsLoved = false;
         /// <summary>
         /// 获取或设置歌曲是否标记为喜爱
         /// </summary>
@@ -105,6 +105,25 @@ namespace JacobC.Xiami.Models
         /// 获取或设置分享次数属性
         /// </summary>
         public int ShareCount { get { return _ShareCount; } set { Set(ref _ShareCount, value); } }
+
+        string _TrackArtist = null;
+        /// <summary>
+        /// 获取或设置专辑艺术家属性
+        /// </summary>
+        public string TrackArtist { get { return _TrackArtist; } set { Set(ref _TrackArtist, value); } }
+
+        string _Composer = null;
+        /// <summary>
+        /// 获取或设置作曲家属性
+        /// </summary>
+        public string Composer { get { return _Composer; } set { Set(ref _Composer, value); } }
+
+        string _Lyricist = null;
+        /// <summary>
+        /// 获取或设置作词家属性
+        /// </summary>
+        public string Lyricist { get { return _Lyricist; } set { Set(ref _Lyricist, value); } }
+
 
     }
 }
