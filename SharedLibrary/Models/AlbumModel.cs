@@ -13,6 +13,14 @@ namespace JacobC.Xiami.Models
     [DataContract]
     public class AlbumModel : BindableBase
     {
+        /* _:原图
+         * _1:100x100
+         * _2:185x184
+         * _3:55x55
+         * _4:原图
+         * _5:185x185
+         */
+
         Uri _AlbumArtUri = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");
         /// <summary>
         /// 获取或设置专辑封面的链接
@@ -71,6 +79,6 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取或设置专辑的虾米ID
         /// </summary>
-        public int AlbumID { get; set; }
+        public uint AlbumID { get; set; } = 0;
     }
 }

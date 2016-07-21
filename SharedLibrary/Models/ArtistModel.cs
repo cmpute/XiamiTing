@@ -16,6 +16,7 @@ namespace JacobC.Xiami.Models
     public class ArtistModel : BindableBase
     {
         #region Playback Needed
+
         string _Name = default(string);
         /// <summary>
         /// 获取或设置艺术家的名字
@@ -24,5 +25,11 @@ namespace JacobC.Xiami.Models
         public string Name { get { return _Name; } set { Set(ref _Name, value); } }
 
         #endregion
+
+        /// <summary>
+        /// 获取或设置艺人的虾米ID
+        /// </summary>
+        public uint ArtistID { get; set; } = 0;
+
     }
 }

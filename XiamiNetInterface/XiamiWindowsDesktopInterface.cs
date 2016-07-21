@@ -1,12 +1,16 @@
-﻿using JacobC.Xiami.Models;
+﻿using HtmlAgilityPack;
+using JacobC.Xiami.Models;
+using JacobC.Xiami.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Web.Http;
+using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
 
 namespace JacobC.Xiami.Net
 {
@@ -50,16 +54,56 @@ namespace JacobC.Xiami.Net
             }
         }
 
+        //Completed
         /// <summary>
         /// 通过SongId获取歌曲的信息（不含取媒体地址）
         /// </summary>
-        public async void GetSongInfo(SongModel song)
+        public IAsyncAction GetSongInfo(SongModel song)
         {
-            HttpClient hc = new HttpClient();
-            var response = await hc.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}"));
-            var content = await response.Content.ReadAsStringAsync();
-            var maincontent = content.Substring(content.IndexOf("</style>"));
-            song.Title = Regex.Match(maincontent, "*").Value;
+            if (song.XiamiID == 0)
+                throw new ArgumentException("SongModel未设置ID");
+            return Run(async token =>
+            {
+                try
+                {
+                    HttpClient hc = new HttpClient();
+                    var response = await hc.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}"));
+                    var content = await response.Content.ReadAsStringAsync();
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(content);
+                    HtmlNode root = doc.DocumentNode;
+                    var logo = root.SelectSingleNode("//img[1]");
+                    var detail = root.SelectSingleNode("//ul[1]");
+                    if (song.Title == null)
+                        song.Title = logo.GetAttributeValue("title", "UnKnown");
+                    if (song.Album == null)
+                    {
+                        AlbumModel album = new AlbumModel();
+                        album.AlbumArtUri = new Uri(logo.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif"));
+                        var albumtag = detail.SelectSingleNode("./li[1]/a[1]");
+                        var idtext = albumtag.GetAttributeValue("href", "/app/xiating/album?id=0");
+                        var addrlength = "/app/xiating/album?id=".Length;
+                        album.AlbumID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
+                        album.Name = albumtag.InnerText;
+                        song.Album = album;
+                    }
+                    if(song.Artist == null)
+                    {
+                        ArtistModel artist = new ArtistModel();
+                        var artisttag = detail.SelectSingleNode("./li[2]/a[1]");
+                        var idtext = artisttag.GetAttributeValue("href", "/app/xiating/artist?id=0");
+                        var addrlength = "/app/xiating/artist?id=".Length;
+                        artist.ArtistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
+                        artist.Name = artisttag.InnerText;
+                        song.Artist = artist;
+                    }
+                }
+                catch(Exception e)
+                {
+                    LogService.ErrorWrite(e);
+                    throw e;
+                }
+            });
         }
     }
 }

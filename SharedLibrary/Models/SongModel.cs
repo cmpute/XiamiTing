@@ -92,7 +92,7 @@ namespace JacobC.Xiami.Models
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Uri MediaUri { get; set; }
 
-        public int XiamiID { get; set; }
+        public uint XiamiID { get; set; }
 
     }
 }
