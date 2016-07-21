@@ -108,6 +108,8 @@
     <None Include="WebAnalysis.log" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HttpHelper.cs" />
+    <Compile Include="IXiamiInterface.cs" />
     <Compile Include="XiamiLogin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XiamiWebInterface.cs" />

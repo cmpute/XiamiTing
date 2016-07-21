@@ -1,15 +1,19 @@
-﻿using System;
+﻿using JacobC.Xiami.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Web.Http;
 
 namespace JacobC.Xiami.Net
 {
     /// <summary>
     /// 虾米Windows桌面端使用的Api集（实际上桌面程序也大量使用了Web的api）
     /// </summary>
-    public class WindowsDesktopApi
+    public class WindowsDesktopApi : IXiamiInterface
     {
         /*TODO:
          * 未登录版本
@@ -31,5 +35,31 @@ namespace JacobC.Xiami.Net
          * 登录以后/app/的页面uid=用户uid
          * 登录以后可以使用的api的method有Library.getLibrary, Library.getSongs（收藏的曲目）, Library.getCollects, Members.token， Search.autocomplete2, limit控制一页多少个，page可以控制页数
          */
+
+        private WindowsDesktopApi() { }
+        static WindowsDesktopApi _instance;
+        /// <summary>
+        /// 获取<see cref="WindowsDesktopApi"/>的唯一实例
+        /// </summary>
+        public static WindowsDesktopApi Instance
+        {
+            get
+            {
+                if (_instance == null) _instance = new WindowsDesktopApi();
+                return _instance;
+            }
+        }
+
+        /// <summary>
+        /// 通过SongId获取歌曲的信息（不含取媒体地址）
+        /// </summary>
+        public async void GetSongInfo(SongModel song)
+        {
+            HttpClient hc = new HttpClient();
+            var response = await hc.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}"));
+            var content = await response.Content.ReadAsStringAsync();
+            var maincontent = content.Substring(content.IndexOf("</style>"));
+            song.Title = Regex.Match(maincontent, "*").Value;
+        }
     }
 }
