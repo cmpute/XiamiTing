@@ -11,6 +11,7 @@ using Template10.Mvvm;
 
 namespace JacobC.Xiami.Models
 {
+    //TODO: 可以考虑在测试使用情况以后添加Dictionary<>来静态存储专辑的应用，避免多次套用
     [DataContract]
     public class AlbumModel : SafeBindableBase
     {

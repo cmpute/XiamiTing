@@ -26,6 +26,13 @@ namespace JacobC.Xiami.Models
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Name { get { return _Name; } set { Set(ref _Name, value); } }
 
+        string _AliasName = default(string);
+        /// <summary>
+        /// 获取或设置艺人的别名、英文名
+        /// </summary>
+        public string AliasName { get { return _AliasName; } set { Set(ref _AliasName, value); } }
+
+
         #endregion
 
         /// <summary>

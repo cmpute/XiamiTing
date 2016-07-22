@@ -150,8 +150,8 @@ namespace JacobC.Xiami.Net
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
                     List<Task> process = new List<Task>();//并行处理
-                    process.Add(Task.Run(() => album.SongList = ParseSongs(doc.DocumentNode.SelectSingleNode("//div/ul[1]"), album)));
-                    process.Add(Task.Run(() => album.RelateHotAlbums = ParseRelateAlbums(doc.DocumentNode.SelectSingleNode("//h3").NextSibling.NextSibling)));
+                    process.Add(Task.Run(() => { if (album.SongList == null || cover) album.SongList = ParseSongs(doc.DocumentNode.SelectSingleNode("//div/ul[1]"), album); }));
+                    process.Add(Task.Run(() => { if (album.RelateHotAlbums == null || cover) album.RelateHotAlbums = ParseRelateAlbums(doc.DocumentNode.SelectSingleNode("//h3").NextSibling.NextSibling); }));
 
                     var infonode = doc.DocumentNode.SelectSingleNode("//section[1]/div[1]/div[2]/div[1]");
                     if (album.AlbumArtUri.Host == "")
@@ -219,8 +219,10 @@ namespace JacobC.Xiami.Net
             }
         }
 
-        public IAsyncAction GetArtistInfo(ArtistModel artist)
+        public IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = false)
         {
+            //TODO: 艺人专辑http://www.xiami.com/app/xiating/artist-album2?id= 相似艺人http://www.xiami.com/app/xiating/artist-similar?id=
+            //TODO: 艺人专辑、艺人歌曲列表都采用增量加载
             if (artist.ArtistID == 0)
                 throw new ArgumentException("ArtistModel未设置ID");
             return Run(async token =>
@@ -230,6 +232,8 @@ namespace JacobC.Xiami.Net
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/artist?id={artist.ArtistID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(content);
                 }
                 catch (Exception e)
                 {
