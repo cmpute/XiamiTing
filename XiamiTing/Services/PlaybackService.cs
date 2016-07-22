@@ -164,7 +164,7 @@ namespace JacobC.Xiami.Services
                 //Send message to initiate playback
                 if (result == true)
                 {
-                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, PlaylistService.Instance.GetModelList());
+                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, PlaylistService.Instance.GetModelList().ToList());//如果使用IEnumerable会产生Json转换错误，泛型出错
                 }
                 else
                 {

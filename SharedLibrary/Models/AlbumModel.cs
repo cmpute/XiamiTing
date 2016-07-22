@@ -95,5 +95,12 @@ namespace JacobC.Xiami.Models
         /// 获取或设置专辑所含歌曲属性
         /// </summary>
         public IEnumerable<SongModel> SongList { get { return _SongList; } set { Set(ref _SongList, value); } }
+
+        DateTime _ReleaseDate = default(DateTime);
+        /// <summary>
+        /// 获取或设置发售日期属性
+        /// </summary>
+        public DateTime ReleaseDate { get { return _ReleaseDate; } set { Set(ref _ReleaseDate, value); } }
+
     }
 }

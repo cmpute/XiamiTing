@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -119,8 +120,8 @@ namespace JacobC.Xiami.Net
                     {
                         ArtistModel artist = song.Album?.Artist ?? new ArtistModel();
                         var artisttag = detail.SelectSingleNode("./li[2]/a[1]");
-                        idtext = artisttag.GetAttributeValue("href", "/app/xiating/artist?id=0");
-                        addrlength = "/app/xiating/artist?id=".Length;
+                        var idtext = artisttag.GetAttributeValue("href", "/app/xiating/artist?id=0");
+                        var addrlength = "/app/xiating/artist?id=".Length;
                         artist.ArtistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
                         artist.Name = artisttag.InnerText;
                         song.Album.Artist = artist;
@@ -164,6 +165,20 @@ namespace JacobC.Xiami.Net
                     }
                     album.Name = infonode.SelectSingleNode(".//h2").InnerText;
                     album.Rating = infonode.SelectSingleNode(".//p").InnerText.Remove(0, 4).Trim();
+                    album.ReleaseDate = DateTime.Parse(infonode.SelectSingleNode(".//span/span").InnerText.Remove(0, 5));//TODO: 针对地域进行转换
+                    var artisttag = infonode.SelectSingleNode(".//span/a");
+                    System.Diagnostics.Debugger.Break();
+                    if ((album.Artist==null)||cover)
+                    {
+                        ArtistModel artist = album.Artist ?? new ArtistModel();
+                        artist.Name = artisttag.InnerText;
+                        var idtext = artisttag.GetAttributeValue("onclick", "artist_detail(0);");
+                        var addrlength = "artist_detail(".Length;
+                        artist.ArtistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf(")", addrlength) - addrlength));
+                        album.Artist = artist;
+                    }
+
+                    //TODO:相关专辑的Parse
                     
                     await Task.WhenAll(process);
                 }

@@ -110,7 +110,12 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取或设置音轨艺术家属性
         /// </summary>
-        public string TrackArtist { get { return _TrackArtist; } set { Set(ref _TrackArtist, value); } }
+        [JsonProperty]
+        public string TrackArtist
+        {
+            get { return _TrackArtist ?? Album?.Artist?.Name; }
+            set { Set(ref _TrackArtist, value); }
+        }
 
         string _Composer = null;
         /// <summary>
