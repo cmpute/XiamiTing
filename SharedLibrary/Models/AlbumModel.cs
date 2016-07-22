@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using JacobC.Xiami.Services;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +14,18 @@ namespace JacobC.Xiami.Models
     [DataContract]
     public class AlbumModel : BindableBase
     {
+        public override void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            try
+            {
+                base.RaisePropertyChanged(propertyName);
+            }
+            catch (Exception e)
+            {
+                LogService.ErrorWrite(e, "BindableBase");
+            }
+        }
+
         /* 专辑封面后缀说明
          * ..:原图
          * .._1:100x100
@@ -31,7 +44,7 @@ namespace JacobC.Xiami.Models
             get { return _AlbumArtUri; }
             set
             {
-                if (_AlbumArtUri.ToString() != value.ToString())
+                if (_AlbumArtUri?.ToString() != value?.ToString())
                     Set(ref _AlbumArtUri, value);
             }
         }
@@ -45,7 +58,7 @@ namespace JacobC.Xiami.Models
             get { return _AlbumArtFullUri; }
             set
             {
-                if (_AlbumArtFullUri.ToString() != value.ToString())
+                if (_AlbumArtFullUri?.ToString() != value?.ToString())
                     Set(ref _AlbumArtFullUri, value);
             }
         }
@@ -77,11 +90,11 @@ namespace JacobC.Xiami.Models
         }
         private void _Artist_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Artist));
 
-        float _Rating = default(float);
+        string _Rating = null;
         /// <summary>
         /// 获取或设置专辑的评分
         /// </summary>
-        public float Rating { get { return _Rating; } set { Set(ref _Rating, value); } }
+        public string Rating { get { return _Rating; } set { Set(ref _Rating, value); } }
 
         /// <summary>
         /// 获取或设置专辑的虾米ID

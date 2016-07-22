@@ -65,12 +65,7 @@ namespace JacobC.Xiami.Services
         /// <summary>
         /// 获取播放列表的Model列表
         /// </summary>
-        public Collection<SongModel> GetModelList()
-        {
-            Collection<SongModel> list = new Collection<SongModel>();
-            foreach (SongViewModel s in Playlist)
-                list.Add(s.Model);
-            return list;
-        }
+        public IEnumerable<SongModel> GetModelList() => Playlist.Select((source) => source.Model);
+
     }
 }

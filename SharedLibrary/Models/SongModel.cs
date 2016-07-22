@@ -9,6 +9,7 @@ using Template10.Mvvm;
 using Windows.UI.Xaml.Controls;
 using Template10.Common;
 using JacobC.Xiami.Services;
+using System.Runtime.CompilerServices;
 
 namespace JacobC.Xiami.Models
 {
@@ -18,6 +19,18 @@ namespace JacobC.Xiami.Models
     [DataContract]
     public class SongModel : BindableBase
     {
+        public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            try
+            {
+                base.RaisePropertyChanged(propertyName);
+            }
+            catch(Exception e)
+            {
+                LogService.ErrorWrite(e, "BindableBase");
+            }
+        }
+
         #region Binding Needed
 
         string _Title = null;
@@ -42,7 +55,6 @@ namespace JacobC.Xiami.Models
                     if (_Artist != null) _Artist.PropertyChanged -= _Artist_PropertyChanged;
                     _Artist = value;
                     if (_Artist != null) _Artist.PropertyChanged += _Artist_PropertyChanged;
-                    this.RaisePropertyChanged();
                 }
             }
         }
@@ -124,6 +136,11 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Lyricist { get { return _Lyricist; } set { Set(ref _Lyricist, value); } }
 
+        string _Arranger = default(string);
+        /// <summary>
+        /// 获取或设置编曲家属性
+        /// </summary>
+        public string Arranger { get { return _Arranger; } set { Set(ref _Arranger, value); } }
 
     }
 }

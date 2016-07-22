@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using JacobC.Xiami.Services;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,19 @@ namespace JacobC.Xiami.Models
     [DataContract]
     public class ArtistModel : BindableBase
     {
+        
+        public override void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            try
+            {
+                base.RaisePropertyChanged(propertyName);
+            }
+            catch (Exception e)
+            {
+                LogService.ErrorWrite(e, "BindableBase");
+            }
+        }
+
         #region Playback Needed
 
         string _Name = default(string);
