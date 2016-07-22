@@ -421,7 +421,7 @@
                             </Button>
                         </Grid>
                         <TextBlock Grid.Column="1" Text="{x:Bind Model.Title}"/>
-                        <TextBlock Grid.Column="2" Text="{x:Bind Model.Artist.Name}"/>
+                        <TextBlock Grid.Column="2" Text="{x:Bind Model.TrackArtist}"/>
                         <TextBlock Grid.Column="3" Text="{x:Bind Model.Album.Name}"/>
                         <CheckBox Grid.Column="4" Margin="4,0,0,0" IsChecked="{x:Bind Model.IsLoved, Converter={StaticResource ToNullableConverter}, Mode=TwoWay}">
                             <Control.Template>

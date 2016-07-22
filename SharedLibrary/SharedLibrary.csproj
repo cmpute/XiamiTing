@@ -109,9 +109,12 @@
   <ItemGroup>
     <Compile Include="Models\AlbumModel.cs" />
     <Compile Include="Models\ArtistModel.cs" />
+    <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Models\SongModel.cs" />
+    <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="SafeBindableBase.cs" />
     <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\MediaMessageTypes.cs" />

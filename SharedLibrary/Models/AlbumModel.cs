@@ -12,19 +12,8 @@ using Template10.Mvvm;
 namespace JacobC.Xiami.Models
 {
     [DataContract]
-    public class AlbumModel : BindableBase
+    public class AlbumModel : SafeBindableBase
     {
-        public override void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            try
-            {
-                base.RaisePropertyChanged(propertyName);
-            }
-            catch (Exception e)
-            {
-                LogService.ErrorWrite(e, "BindableBase");
-            }
-        }
 
         /* 专辑封面后缀说明
          * ..:原图
@@ -100,5 +89,11 @@ namespace JacobC.Xiami.Models
         /// 获取或设置专辑的虾米ID
         /// </summary>
         public uint AlbumID { get; set; } = 0;
+
+        IEnumerable<SongModel> _SongList = null;
+        /// <summary>
+        /// 获取或设置专辑所含歌曲属性
+        /// </summary>
+        public IEnumerable<SongModel> SongList { get { return _SongList; } set { Set(ref _SongList, value); } }
     }
 }

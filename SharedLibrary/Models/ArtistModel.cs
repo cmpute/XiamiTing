@@ -14,20 +14,8 @@ namespace JacobC.Xiami.Models
     /// 艺术家（歌手、编曲家等）的MVVM模型
     /// </summary>
     [DataContract]
-    public class ArtistModel : BindableBase
+    public class ArtistModel : SafeBindableBase
     {
-        
-        public override void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            try
-            {
-                base.RaisePropertyChanged(propertyName);
-            }
-            catch (Exception e)
-            {
-                LogService.ErrorWrite(e, "BindableBase");
-            }
-        }
 
         #region Playback Needed
 

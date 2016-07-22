@@ -17,20 +17,8 @@ namespace JacobC.Xiami.Models
     /// 歌曲的MVVM的Model兼ViewModel模型
     /// </summary>
     [DataContract]
-    public class SongModel : BindableBase
+    public class SongModel : SafeBindableBase
     {
-        public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            try
-            {
-                base.RaisePropertyChanged(propertyName);
-            }
-            catch(Exception e)
-            {
-                LogService.ErrorWrite(e, "BindableBase");
-            }
-        }
-
         #region Binding Needed
 
         string _Title = null;
@@ -40,25 +28,25 @@ namespace JacobC.Xiami.Models
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Title { get { return _Title; } set { Set(ref _Title, value); } }
 
-        ArtistModel _Artist = null;
-        /// <summary>
-        /// 获取或设置音轨艺术家
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public ArtistModel Artist
-        {
-            get { return _Artist; }
-            set
-            {
-                if (!object.Equals(_Artist, value))
-                {
-                    if (_Artist != null) _Artist.PropertyChanged -= _Artist_PropertyChanged;
-                    _Artist = value;
-                    if (_Artist != null) _Artist.PropertyChanged += _Artist_PropertyChanged;
-                }
-            }
-        }
-        private void _Artist_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Artist));
+        //ArtistModel _Artist = null;
+        ///// <summary>
+        ///// 获取或设置专辑艺术家
+        ///// </summary>
+        //[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        //public ArtistModel Artist
+        //{
+        //    get { return _Artist; }
+        //    set
+        //    {
+        //        if (!object.Equals(_Artist, value))
+        //        {
+        //            if (_Artist != null) _Artist.PropertyChanged -= _Artist_PropertyChanged;
+        //            _Artist = value;
+        //            if (_Artist != null) _Artist.PropertyChanged += _Artist_PropertyChanged;
+        //        }
+        //    }
+        //}
+        //private void _Artist_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Artist));
 
         AlbumModel _Album = null;
         /// <summary>
@@ -120,7 +108,7 @@ namespace JacobC.Xiami.Models
 
         string _TrackArtist = null;
         /// <summary>
-        /// 获取或设置专辑艺术家属性
+        /// 获取或设置音轨艺术家属性
         /// </summary>
         public string TrackArtist { get { return _TrackArtist; } set { Set(ref _TrackArtist, value); } }
 

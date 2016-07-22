@@ -58,7 +58,8 @@ namespace JacobC.Xiami.Net
         /// <summary>
         /// 通过SongId获取歌曲的信息（不含取媒体地址）
         /// </summary>
-        public IAsyncAction GetSongInfo(SongModel song)
+        /// <param name="cover">是否覆盖已存在的Album和Artist信息</param>
+        public IAsyncAction GetSongInfo(SongModel song, bool cover = false)
         {
             if (song.SongID == 0)
                 throw new ArgumentException("SongModel未设置ID");
@@ -66,7 +67,7 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
-                    LogService.DebugWrite($"Get info of song {song.SongID}","NetInterface");
+                    LogService.DebugWrite($"Get info of song {song.SongID}", "NetInterface");
 
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.SongID}"));
                     token.Register(() => gettask.Cancel());
@@ -82,20 +83,9 @@ namespace JacobC.Xiami.Net
                     song.PlayCount = int.Parse(detailgrade.SelectSingleNode(".//span[1]").InnerText);
                     song.ShareCount = int.Parse(detailgrade.SelectSingleNode("./li[3]/span[1]").InnerText);
 
-                    AlbumModel album = song.Album ?? new AlbumModel();
-                    var art = logo.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
-                    album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
-                    album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
-                    var albumtag = detail.SelectSingleNode("./li[1]/a[1]");
-                    var idtext = albumtag.GetAttributeValue("href", "/app/xiating/album?id=0");
-                    var addrlength = "/app/xiating/album?id=".Length;
-                    album.AlbumID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
-                    album.Name = albumtag.InnerText;
-                    song.Album = album;
                     var additionnodes = detail.SelectNodes("./li[position()>2]");
-
                     foreach (var node in additionnodes)
-                        switch(node.FirstChild.InnerText)
+                        switch (node.FirstChild.InnerText)
                         {
                             case "作词：":
                                 song.Lyricist = node.LastChild.InnerText;
@@ -108,13 +98,33 @@ namespace JacobC.Xiami.Net
                                 break;
                         }
 
-                    ArtistModel artist = song.Artist ?? new ArtistModel();
-                    var artisttag = detail.SelectSingleNode("./li[2]/a[1]");
-                    idtext = artisttag.GetAttributeValue("href", "/app/xiating/artist?id=0");
-                    addrlength = "/app/xiating/artist?id=".Length;
-                    artist.ArtistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
-                    artist.Name = artisttag.InnerText;
-                    song.Artist = artist;
+                    if ((song.Album == null) || cover)
+                    {
+                        AlbumModel album = song.Album ?? new AlbumModel();
+                        if (album.AlbumArtUri.Host == "")
+                        {
+                            var art = logo.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                            album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
+                            album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
+                        }
+                        var albumtag = detail.SelectSingleNode("./li[1]/a[1]");
+                        var idtext = albumtag.GetAttributeValue("href", "/app/xiating/album?id=0");
+                        var addrlength = "/app/xiating/album?id=".Length;
+                        album.AlbumID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
+                        album.Name = albumtag.InnerText;
+                        song.Album = album;
+                    }
+
+                    if ((song.Album?.Artist == null) || cover)
+                    {
+                        ArtistModel artist = song.Album?.Artist ?? new ArtistModel();
+                        var artisttag = detail.SelectSingleNode("./li[2]/a[1]");
+                        idtext = artisttag.GetAttributeValue("href", "/app/xiating/artist?id=0");
+                        addrlength = "/app/xiating/artist?id=".Length;
+                        artist.ArtistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
+                        artist.Name = artisttag.InnerText;
+                        song.Album.Artist = artist;
+                    }
 
                     LogService.DebugWrite($"Getted info of song {song.Title}", "NetInterface");
                 }
@@ -128,31 +138,8 @@ namespace JacobC.Xiami.Net
         /// <summary>
         /// 通过AlbumId获取专辑信息（不含歌曲列表）
         /// </summary>
-        public IAsyncAction GetAlbumInfo(AlbumModel album)
-        {
-            if (album.AlbumID == 0)
-                throw new ArgumentException("AlbumModel未设置ID");
-            return Run(async token =>
-            {
-                try
-                {
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/album?id={album.AlbumID}"));
-                    token.Register(() => gettask.Cancel());
-                    var content = await gettask;
-                }
-                catch (Exception e)
-                {
-                    LogService.ErrorWrite(e);
-                    throw e;
-                }
-            });
-        }
-        /// <summary>
-        /// 获取专辑所含歌曲
-        /// </summary>
-        /// <param name="album">需要获取的专辑来源</param>
-        /// <returns>返回<see cref="SongModel"/>的<see cref="IEnumerable{T}"/>迭代器</returns>
-        public IAsyncOperation<IEnumerable<SongModel>> GetAlbumSongs(AlbumModel album)
+        /// <param name="cover">是否覆盖已存在的Artist信息</param>
+        public IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = false)
         {
             if (album.AlbumID == 0)
                 throw new ArgumentException("AlbumModel未设置ID");
@@ -165,8 +152,20 @@ namespace JacobC.Xiami.Net
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
-                    var result = ParseSongs(doc.DocumentNode.SelectSingleNode("//div/ul[1]"), album);
-                    return result;
+                    List<Task> process = new List<Task>();//并行处理
+                    process.Add(Task.Run(() => album.SongList = ParseSongs(doc.DocumentNode.SelectSingleNode("//div/ul[1]"), album)));
+
+                    var infonode = doc.DocumentNode.SelectSingleNode("//section[1]/div[1]/div[2]/div[1]");
+                    if (album.AlbumArtUri.Host == "")
+                    {
+                        var art = infonode.SelectSingleNode(".//img").GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                        album.AlbumArtUri = new Uri(art);
+                        album.AlbumArtFullUri = new Uri(art.Replace("_1", ""));
+                    }
+                    album.Name = infonode.SelectSingleNode(".//h2").InnerText;
+                    album.Rating = infonode.SelectSingleNode(".//p").InnerText.Remove(0, 4).Trim();
+                    
+                    await Task.WhenAll(process);
                 }
                 catch (Exception e)
                 {
@@ -189,50 +188,6 @@ namespace JacobC.Xiami.Net
                 song.Album = album;
                 yield return song;
             }
-        }
-        /// <summary>
-        /// 获取专辑所含歌曲并且获取歌曲的详细信息
-        /// </summary>
-        /// <param name="album">需要获取的专辑来源</param>
-        /// <returns>返回<see cref="SongModel"/>的<see cref="ICollection{T}"/>集合类型</returns>
-        public IAsyncOperation<ICollection<SongModel>> GetAlbumSongsWithDetail(AlbumModel album)
-        {
-            if (album.AlbumID == 0)
-                throw new ArgumentException("AlbumModel未设置ID");
-            return Run(async token =>
-            {
-                try
-                {
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/album?id={album.AlbumID}"));
-                    token.Register(() => gettask.Cancel());
-                    var content = await gettask;
-                    HtmlDocument doc = new HtmlDocument();
-                    doc.LoadHtml(content);
-                    List<Task> tasks = new List<Task>();
-                    var listnode = doc.DocumentNode.SelectSingleNode("//div/ul[1]");
-                    ICollection<SongModel> songs = new Collection<SongModel>();
-                    foreach (var node in listnode.ChildNodes)
-                    {
-                        if (node.NodeType != HtmlNodeType.Element)
-                            continue;
-                        SongModel song = new SongModel();
-                        song.SongID = uint.Parse(node.SelectSingleNode("./span").GetAttributeValue("rel", "0"));
-                        tasks.Add(GetSongInfo(song).AsTask());
-                        song.Title = node.SelectSingleNode("./div/a").InnerText;
-                        song.TrackArtist = node.SelectSingleNode("./div/span").InnerText;
-                        song.PlayCount = int.Parse(node.SelectSingleNode("./div[2]/span").InnerText);
-                        song.Album = album;
-                        songs.Add(song);
-                    }
-                    if (tasks.Count > 0) await Task.WhenAll(tasks);
-                    return songs;
-                }
-                catch (Exception e)
-                {
-                    LogService.ErrorWrite(e);
-                    throw e;
-                }
-            });
         }
 
         public IAsyncAction GetArtistInfo(ArtistModel artist)
