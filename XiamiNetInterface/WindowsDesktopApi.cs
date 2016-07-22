@@ -79,29 +79,36 @@ namespace JacobC.Xiami.Net
                         song.Title = logo.GetAttributeValue("title", "UnKnown");
                     song.PlayCount = int.Parse(detailgrade.SelectSingleNode(".//span[1]").InnerText);
                     song.ShareCount = int.Parse(detailgrade.SelectSingleNode("./li[3]/span[1]").InnerText);
-                    if (song.Album == null)
-                    {
-                        AlbumModel album = new AlbumModel();
-                        var art = logo.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
-                        album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
-                        album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
-                        var albumtag = detail.SelectSingleNode("./li[1]/a[1]");
-                        var idtext = albumtag.GetAttributeValue("href", "/app/xiating/album?id=0");
-                        var addrlength = "/app/xiating/album?id=".Length;
-                        album.AlbumID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
-                        album.Name = albumtag.InnerText;
-                        song.Album = album;
-                    }
-                    if (song.Artist == null)
-                    {
-                        ArtistModel artist = new ArtistModel();
-                        var artisttag = detail.SelectSingleNode("./li[2]/a[1]");
-                        var idtext = artisttag.GetAttributeValue("href", "/app/xiating/artist?id=0");
-                        var addrlength = "/app/xiating/artist?id=".Length;
-                        artist.ArtistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
-                        artist.Name = artisttag.InnerText;
-                        song.Artist = artist;
-                    }
+
+                    AlbumModel album = song.Album ?? new AlbumModel();
+                    var art = logo.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                    album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
+                    album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
+                    var albumtag = detail.SelectSingleNode("./li[1]/a[1]");
+                    var idtext = albumtag.GetAttributeValue("href", "/app/xiating/album?id=0");
+                    var addrlength = "/app/xiating/album?id=".Length;
+                    album.AlbumID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
+                    album.Name = albumtag.InnerText;
+                    song.Album = album;
+                    var additionnodes = detail.SelectNodes("./li[position()>2]");
+                    foreach(var node in additionnodes)
+                        switch(node.FirstChild.InnerText)
+                        {
+                            case "作词：":
+                                song.Lyricist = node.LastChild.InnerText;
+                                break;
+                            case "作曲：":
+                                song.Composer = node.LastChild.InnerText;
+                                break;
+                        }
+
+                    ArtistModel artist = song.Artist ?? new ArtistModel();
+                    var artisttag = detail.SelectSingleNode("./li[2]/a[1]");
+                    idtext = artisttag.GetAttributeValue("href", "/app/xiating/artist?id=0");
+                    addrlength = "/app/xiating/artist?id=".Length;
+                    artist.ArtistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
+                    artist.Name = artisttag.InnerText;
+                    song.Artist = artist;
                 }
                 catch (Exception e)
                 {
