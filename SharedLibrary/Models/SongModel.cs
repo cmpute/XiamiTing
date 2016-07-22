@@ -135,5 +135,13 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Arranger { get { return _Arranger; } set { Set(ref _Arranger, value); } }
 
+        public override string ToString()
+        {
+            return $@"标题：{Title}  ID：{SongID}
+播放：{PlayCount}  分享：{ShareCount}
+专辑艺人：{Album?.Artist?.Name}  音轨艺人：{TrackArtist}
+作词：{Lyricist}  作曲：{Composer}  编曲：{Arranger}
+";
+        }
     }
 }

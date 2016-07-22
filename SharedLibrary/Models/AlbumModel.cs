@@ -96,11 +96,22 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public IEnumerable<SongModel> SongList { get { return _SongList; } set { Set(ref _SongList, value); } }
 
+        IEnumerable<AlbumModel> _RelateHotAlbums = null;
+        /// <summary>
+        /// 获取或设置该艺人其他热门专辑属性
+        /// </summary>
+        public IEnumerable<AlbumModel> RelateHotAlbums { get { return _RelateHotAlbums; } set { Set(ref _RelateHotAlbums, value); } }
+
         DateTime _ReleaseDate = default(DateTime);
         /// <summary>
         /// 获取或设置发售日期属性
         /// </summary>
         public DateTime ReleaseDate { get { return _ReleaseDate; } set { Set(ref _ReleaseDate, value); } }
 
+        public override string ToString()
+        {
+            return $@"名称：{Name}  ID:{AlbumID}
+评分：{Rating}  发售日期：{ReleaseDate}";
+        }
     }
 }

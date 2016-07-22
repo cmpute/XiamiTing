@@ -3,15 +3,8 @@ using JacobC.Xiami.Models;
 using JacobC.Xiami.Services;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Web.Http;
 using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
 
 namespace JacobC.Xiami.Net
@@ -56,6 +49,7 @@ namespace JacobC.Xiami.Net
             }
         }
 
+        //TODO: 判断歌曲是否被喜爱
         /// <summary>
         /// 通过SongId获取歌曲的信息（不含取媒体地址）
         /// </summary>
@@ -68,7 +62,7 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
-                    LogService.DebugWrite($"Get info of song {song.SongID}", "NetInterface");
+                    LogService.DebugWrite($"Get info of Song {song.SongID}", "NetInterface");
 
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.SongID}"));
                     token.Register(() => gettask.Cancel());
@@ -127,7 +121,7 @@ namespace JacobC.Xiami.Net
                         song.Album.Artist = artist;
                     }
 
-                    LogService.DebugWrite($"Getted info of song {song.Title}", "NetInterface");
+                    LogService.DebugWrite($"Getted info of Song {song.Title}", "NetInterface");
                 }
                 catch (Exception e)
                 {
@@ -148,6 +142,8 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
+                    LogService.DebugWrite($"Get info of Album {album.AlbumID}", "NetInterface");
+
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/album?id={album.AlbumID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
@@ -155,6 +151,7 @@ namespace JacobC.Xiami.Net
                     doc.LoadHtml(content);
                     List<Task> process = new List<Task>();//并行处理
                     process.Add(Task.Run(() => album.SongList = ParseSongs(doc.DocumentNode.SelectSingleNode("//div/ul[1]"), album)));
+                    process.Add(Task.Run(() => album.RelateHotAlbums = ParseRelateAlbums(doc.DocumentNode.SelectSingleNode("//h3").NextSibling.NextSibling)));
 
                     var infonode = doc.DocumentNode.SelectSingleNode("//section[1]/div[1]/div[2]/div[1]");
                     if (album.AlbumArtUri.Host == "")
@@ -167,7 +164,6 @@ namespace JacobC.Xiami.Net
                     album.Rating = infonode.SelectSingleNode(".//p").InnerText.Remove(0, 4).Trim();
                     album.ReleaseDate = DateTime.Parse(infonode.SelectSingleNode(".//span/span").InnerText.Remove(0, 5));//TODO: 针对地域进行转换
                     var artisttag = infonode.SelectSingleNode(".//span/a");
-                    System.Diagnostics.Debugger.Break();
                     if ((album.Artist==null)||cover)
                     {
                         ArtistModel artist = album.Artist ?? new ArtistModel();
@@ -177,10 +173,9 @@ namespace JacobC.Xiami.Net
                         artist.ArtistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf(")", addrlength) - addrlength));
                         album.Artist = artist;
                     }
-
-                    //TODO:相关专辑的Parse
                     
                     await Task.WhenAll(process);
+                    LogService.DebugWrite($"Getted info of Album {album.Name}", "NetInterface");
                 }
                 catch (Exception e)
                 {
@@ -189,6 +184,7 @@ namespace JacobC.Xiami.Net
                 }
             });
         }
+        //TODO: 换用别的传递内容减少内存占用？listnode的引用会导致GC无法清理HtmlDocument
         internal IEnumerable<SongModel> ParseSongs(HtmlNode listnode, AlbumModel album)
         {
             foreach(var node in listnode.ChildNodes)
@@ -198,10 +194,26 @@ namespace JacobC.Xiami.Net
                 SongModel song = new SongModel();
                 song.SongID = uint.Parse(node.SelectSingleNode("./span").GetAttributeValue("rel", "0"));
                 song.Title = node.SelectSingleNode("./div/a").InnerText;
-                song.TrackArtist = node.SelectSingleNode("./div/span").InnerText;
+                song.TrackArtist = node.SelectSingleNode("./div/span")?.InnerText;
                 song.PlayCount = int.Parse(node.SelectSingleNode("./div[2]/span").InnerText);
                 song.Album = album;
                 yield return song;
+            }
+        }
+        internal IEnumerable<AlbumModel> ParseRelateAlbums(HtmlNode listnode)
+        {
+            foreach (var node in listnode.ChildNodes)
+            {
+                if (node.NodeType != HtmlNodeType.Element)
+                    continue;
+                AlbumModel album = new AlbumModel();
+                album.AlbumID = uint.Parse(node.GetAttributeValue("rel", "0"));
+                album.Name = node.SelectSingleNode("./div/a").InnerText;
+                album.Rating = node.SelectSingleNode(".//em").InnerText;
+                var art = node.SelectSingleNode(".//img").GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                album.AlbumArtUri = new Uri(art);
+                album.AlbumArtFullUri = new Uri(art.Replace("_1", ""));
+                yield return album;
             }
         }
 
