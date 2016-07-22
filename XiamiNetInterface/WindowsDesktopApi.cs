@@ -162,7 +162,7 @@ namespace JacobC.Xiami.Net
                     }
                     album.Name = infonode.SelectSingleNode(".//h2").InnerText;
                     album.Rating = infonode.SelectSingleNode(".//p").InnerText.Remove(0, 4).Trim();
-                    album.ReleaseDate = DateTime.Parse(infonode.SelectSingleNode(".//span/span").InnerText.Remove(0, 5));//TODO: 针对地域进行转换
+                    album.ReleaseDate = infonode.SelectSingleNode(".//span/span").InnerText.Remove(0, 5);//TODO: 针对地域进行转换
                     var artisttag = infonode.SelectSingleNode(".//span/a");
                     if ((album.Artist==null)||cover)
                     {
@@ -184,7 +184,9 @@ namespace JacobC.Xiami.Net
                 }
             });
         }
-        //TODO: 换用别的传递内容减少内存占用？listnode的引用会导致GC无法清理HtmlDocument
+        /* 换用别的传递内容或者返回新的List减少内存占用？listnode的引用会导致GC无法清理HtmlDocument?
+         * 实测发现返回换成返回一个新List也没有减少内存占用。。
+         */
         internal IEnumerable<SongModel> ParseSongs(HtmlNode listnode, AlbumModel album)
         {
             foreach(var node in listnode.ChildNodes)

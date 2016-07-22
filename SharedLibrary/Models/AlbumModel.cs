@@ -102,11 +102,11 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public IEnumerable<AlbumModel> RelateHotAlbums { get { return _RelateHotAlbums; } set { Set(ref _RelateHotAlbums, value); } }
 
-        DateTime _ReleaseDate = default(DateTime);
+        string _ReleaseDate = null; //使用DateTime的话会引入DateTimeFormatInfo增加内存消耗
         /// <summary>
         /// 获取或设置发售日期属性
         /// </summary>
-        public DateTime ReleaseDate { get { return _ReleaseDate; } set { Set(ref _ReleaseDate, value); } }
+        public string ReleaseDate { get { return _ReleaseDate; } set { Set(ref _ReleaseDate, value); } }
 
         public override string ToString()
         {
