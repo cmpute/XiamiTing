@@ -107,11 +107,13 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IncrementalLoadingBase.cs" />
     <Compile Include="Models\AlbumModel.cs" />
     <Compile Include="Models\ArtistModel.cs" />
     <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Models\SongModel.cs" />
     <Compile Include="Models\UserModel.cs" />
+    <Compile Include="PageItemsCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="SafeBindableBase.cs" />
