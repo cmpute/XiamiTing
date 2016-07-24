@@ -13,6 +13,7 @@ namespace JacobC.Xiami.Services
         private SettingsService()
         {
             _helper = new SettingsHelper();
+            _CacheItemsInDict = _helper.Read(nameof(CacheItemsInDict), false);
         }
 
         public SettingsHelper Helper
@@ -20,6 +21,9 @@ namespace JacobC.Xiami.Services
             get { return _helper; }
         }
 
+        /// <summary>
+        /// 是否在标题栏显示返回按钮
+        /// </summary>
         public bool UseShellBackButton
         {
             get { return _helper.Read<bool>(nameof(UseShellBackButton), true); }
@@ -59,6 +63,23 @@ namespace JacobC.Xiami.Services
             {
                 _helper.Write(nameof(CacheMaxDuration), value);
                 BootStrapper.Current.CacheMaxDuration = value;
+            }
+        }
+
+        bool _CacheItemsInDict;
+        /// <summary>
+        /// 是否用<see cref="System.Collections.Generic.Dictionary{TKey, TValue}"/>存储歌曲专辑等信息，采用会减少加载时间但是提高内存占用
+        /// </summary>
+        public bool CacheItemsInDict
+        {
+            get { return _CacheItemsInDict; }
+            set
+            {
+                if (_CacheItemsInDict != value)
+                {
+                    _CacheItemsInDict = value;
+                    _helper.Write(nameof(CacheItemsInDict), value);
+                }
             }
         }
     }

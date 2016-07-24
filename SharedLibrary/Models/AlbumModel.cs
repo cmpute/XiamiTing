@@ -11,10 +11,31 @@ using Template10.Mvvm;
 
 namespace JacobC.Xiami.Models
 {
-    //TODO: 可以考虑在测试使用情况以后添加Dictionary<>来静态存储专辑的应用，避免多次套用
     [DataContract]
     public class AlbumModel : SafeBindableBase
     {
+        static Dictionary<uint, AlbumModel> _dict;
+        static AlbumModel()
+        {
+            if (SettingsService.Instance.CacheItemsInDict)
+                _dict = new Dictionary<uint, AlbumModel>();
+        }
+        /// <summary>
+        /// 获取一个新的<see cref="AlbumModel"/>实例，如果已经创建过则返回这个实例
+        /// </summary>
+        /// <param name="XiamiID">标志<see cref="AlbumModel"/>的虾米ID</param>
+        /// <returns></returns>
+        public static AlbumModel GetNew(uint XiamiID)
+        {
+            AlbumModel album = null;
+            if (!(_dict?.TryGetValue(XiamiID, out album) ?? false))
+            {
+                album = new AlbumModel() { AlbumID = XiamiID };
+                _dict?.Add(XiamiID, album);
+            }
+            return album;
+        }
+        private AlbumModel() { }
 
         /* 专辑封面后缀说明
          * ..:原图

@@ -95,28 +95,28 @@ namespace JacobC.Xiami.Net
 
                     if ((song.Album == null) || cover)
                     {
-                        AlbumModel album = song.Album ?? new AlbumModel();
+                        var albumtag = detail.SelectSingleNode("./li[1]/a[1]");
+                        var idtext = albumtag.GetAttributeValue("href", "/app/xiating/album?id=0");
+                        var addrlength = "/app/xiating/album?id=".Length;
+                        uint albumID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
+                        AlbumModel album = song.Album ?? AlbumModel.GetNew(albumID);
                         if (album.AlbumArtUri.Host == "")
                         {
                             var art = logo.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
                             album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
                             album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
                         }
-                        var albumtag = detail.SelectSingleNode("./li[1]/a[1]");
-                        var idtext = albumtag.GetAttributeValue("href", "/app/xiating/album?id=0");
-                        var addrlength = "/app/xiating/album?id=".Length;
-                        album.AlbumID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
                         album.Name = albumtag.InnerText;
                         song.Album = album;
                     }
 
                     if ((song.Album?.Artist == null) || cover)
                     {
-                        ArtistModel artist = song.Album?.Artist ?? new ArtistModel();
                         var artisttag = detail.SelectSingleNode("./li[2]/a[1]");
                         var idtext = artisttag.GetAttributeValue("href", "/app/xiating/artist?id=0");
                         var addrlength = "/app/xiating/artist?id=".Length;
-                        artist.ArtistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
+                        uint artistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
+                        ArtistModel artist = song.Album?.Artist ?? ArtistModel.GetNew(artistID);
                         artist.Name = artisttag.InnerText;
                         song.Album.Artist = artist;
                     }
@@ -166,11 +166,11 @@ namespace JacobC.Xiami.Net
                     var artisttag = infonode.SelectSingleNode(".//span/a");
                     if ((album.Artist==null)||cover)
                     {
-                        ArtistModel artist = album.Artist ?? new ArtistModel();
-                        artist.Name = artisttag.InnerText;
                         var idtext = artisttag.GetAttributeValue("onclick", "artist_detail(0);");
                         var addrlength = "artist_detail(".Length;
-                        artist.ArtistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf(")", addrlength) - addrlength));
+                        uint artistID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf(")", addrlength) - addrlength));
+                        ArtistModel artist = album.Artist ?? ArtistModel.GetNew(artistID);
+                        artist.Name = artisttag.InnerText;
                         album.Artist = artist;
                     }
                     
@@ -193,8 +193,8 @@ namespace JacobC.Xiami.Net
             {
                 if (node.NodeType != HtmlNodeType.Element)
                     continue;
-                SongModel song = new SongModel();
-                song.SongID = uint.Parse(node.SelectSingleNode("./span").GetAttributeValue("rel", "0"));
+                uint songID = uint.Parse(node.SelectSingleNode("./span").GetAttributeValue("rel", "0"));
+                SongModel song = SongModel.GetNew(songID);
                 song.Title = node.SelectSingleNode("./div/a").InnerText;
                 song.TrackArtist = node.SelectSingleNode("./div/span")?.InnerText;
                 song.PlayCount = int.Parse(node.SelectSingleNode("./div[2]/span").InnerText);
@@ -208,8 +208,7 @@ namespace JacobC.Xiami.Net
             {
                 if (node.NodeType != HtmlNodeType.Element)
                     continue;
-                AlbumModel album = new AlbumModel();
-                album.AlbumID = uint.Parse(node.GetAttributeValue("rel", "0"));
+                AlbumModel album = AlbumModel.GetNew(uint.Parse(node.GetAttributeValue("rel", "0")));
                 album.Name = node.SelectSingleNode("./div/a").InnerText;
                 album.Rating = node.SelectSingleNode(".//em").InnerText;
                 var art = node.SelectSingleNode(".//img").GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");

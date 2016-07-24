@@ -49,7 +49,7 @@ namespace JacobC.Xiami
             bool result = false;
             try
             {
-                result= base.Set<T>(ref storage, value, propertyName);
+                result = base.Set<T>(ref storage, value, propertyName);
             }
             catch
             {
@@ -57,7 +57,7 @@ namespace JacobC.Xiami
             }
             finally
             {
-                storage = value;
+                if(!result) storage = value;
             }
             return result;
         }

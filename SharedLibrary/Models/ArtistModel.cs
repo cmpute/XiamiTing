@@ -16,6 +16,28 @@ namespace JacobC.Xiami.Models
     [DataContract]
     public class ArtistModel : SafeBindableBase
     {
+        static Dictionary<uint, ArtistModel> _dict;
+        static ArtistModel()
+        {
+            if (SettingsService.Instance.CacheItemsInDict)
+                _dict = new Dictionary<uint, ArtistModel>();
+        }
+        /// <summary>
+        /// 获取一个新的<see cref="ArtistModel"/>实例，如果已经创建过则返回这个实例
+        /// </summary>
+        /// <param name="XiamiID">标志<see cref="ArtistModel"/>的虾米ID</param>
+        /// <returns></returns>
+        public static ArtistModel GetNew(uint XiamiID)
+        {
+            ArtistModel album = null;
+            if (!(_dict?.TryGetValue(XiamiID, out album) ?? false))
+            {
+                album = new ArtistModel() { ArtistID = XiamiID };
+                _dict?.Add(XiamiID, album);
+            }
+            return album;
+        }
+        private ArtistModel() { }
 
         #region Playback Needed
 

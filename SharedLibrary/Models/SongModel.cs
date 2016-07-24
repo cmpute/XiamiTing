@@ -19,6 +19,30 @@ namespace JacobC.Xiami.Models
     [DataContract]
     public class SongModel : SafeBindableBase
     {
+
+        static Dictionary<uint, SongModel> _dict;
+        static SongModel()
+        {
+            if (SettingsService.Instance.CacheItemsInDict)
+                _dict = new Dictionary<uint, SongModel>();
+        }
+        /// <summary>
+        /// 获取一个新的<see cref="SongModel"/>实例，如果已经创建过则返回这个实例
+        /// </summary>
+        /// <param name="XiamiID">标志<see cref="SongModel"/>的虾米ID</param>
+        /// <returns></returns>
+        public static SongModel GetNew(uint XiamiID)
+        {
+            SongModel album = null;
+            if (!(_dict?.TryGetValue(XiamiID, out album) ?? false))
+            {
+                album = new SongModel() { SongID = XiamiID };
+                _dict?.Add(XiamiID, album);
+            }
+            return album;
+        }
+        private SongModel() { }
+
         #region Binding Needed
 
         string _Title = null;
