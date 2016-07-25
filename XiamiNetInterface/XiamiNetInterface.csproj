@@ -110,11 +110,12 @@
   <ItemGroup>
     <Compile Include="ConnectException.cs" />
     <Compile Include="HttpHelper.cs" />
-    <Compile Include="IXiamiInterface.cs" />
+    <Compile Include="IXiamiApi.cs" />
+    <Compile Include="WindowsDesktopApi.cs" />
     <Compile Include="XiamiLogin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebApi.cs" />
-    <Compile Include="WindowsDesktopApi.cs" />
+    <Compile Include="WapApi.cs" />
     <EmbeddedResource Include="Properties\XiamiNetInterface.rd.xml" />
   </ItemGroup>
   <ItemGroup>

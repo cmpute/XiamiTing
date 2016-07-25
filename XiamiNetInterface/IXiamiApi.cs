@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JacobC.Xiami.Net
 {
-    public interface IXiamiInterface
+    public interface IXiamiApi
     {
     }
 }
