@@ -2,7 +2,9 @@
 using JacobC.Xiami.Models;
 using JacobC.Xiami.Services;
 using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
@@ -121,7 +123,7 @@ namespace JacobC.Xiami.Net
                         song.Album.Artist = artist;
                     }
 
-                    LogService.DebugWrite($"Getted info of Song {song.Title}", "NetInterface");
+                    LogService.DebugWrite($"Finish Getting info of Song {song.Title}", "NetInterface");
                 }
                 catch (Exception e)
                 {
@@ -130,6 +132,7 @@ namespace JacobC.Xiami.Net
                 }
             });
         }
+
         /// <summary>
         /// 通过AlbumId获取专辑信息（不含歌曲列表）
         /// </summary>
@@ -150,7 +153,7 @@ namespace JacobC.Xiami.Net
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
                     List<Task> process = new List<Task>();//并行处理
-                    process.Add(Task.Run(() => { if (album.SongList == null || cover) album.SongList = ParseSongs(doc.DocumentNode.SelectSingleNode("//div/ul[1]"), album); }));
+                    process.Add(Task.Run(() => { if (album.SongList == null || cover) album.SongList = ParseAlbumSongs(doc.DocumentNode.SelectSingleNode("//div/ul[1]"), album); }));
                     process.Add(Task.Run(() => { if (album.RelateHotAlbums == null || cover) album.RelateHotAlbums = ParseRelateAlbums(doc.DocumentNode.SelectSingleNode("//h3").NextSibling.NextSibling); }));
 
                     var infonode = doc.DocumentNode.SelectSingleNode("//section[1]/div[1]/div[2]/div[1]");
@@ -175,7 +178,7 @@ namespace JacobC.Xiami.Net
                     }
                     
                     await Task.WhenAll(process);
-                    LogService.DebugWrite($"Getted info of Album {album.Name}", "NetInterface");
+                    LogService.DebugWrite($"Finish Getting info of Album {album.Name}", "NetInterface");
                 }
                 catch (Exception e)
                 {
@@ -187,7 +190,7 @@ namespace JacobC.Xiami.Net
         /* 换用别的传递内容或者返回新的List减少内存占用？listnode的引用会导致GC无法清理HtmlDocument?
          * 实测发现返回换成返回一个新List也没有减少内存占用。。
          */
-        internal IEnumerable<SongModel> ParseSongs(HtmlNode listnode, AlbumModel album)
+        internal IEnumerable<SongModel> ParseAlbumSongs(HtmlNode listnode, AlbumModel album)
         {
             foreach(var node in listnode.ChildNodes)
             {
@@ -228,15 +231,71 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
+                    LogService.DebugWrite($"Get info of Artist {artist.ArtistID}", "NetInterface");
+                    
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/artist?id={artist.ArtistID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
+
+                    var body = doc.DocumentNode.SelectSingleNode("//div[@id='artist']");
+                    artist.Name = body.SelectSingleNode(".//h2").InnerText;
+                    artist.AliasName = body.SelectSingleNode(".//p").InnerText;
+                    var area = body.SelectSingleNode(".//p[2]");
+                    if (area != null) artist.Name = area.InnerText.Remove(0, 3);
+
+                    if (artist.ArtistAvatarUri.Host == "")
+                    {
+                        var art = body.SelectSingleNode(".//img").GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                        artist.ArtistAvatarUri = new Uri(art);
+                        artist.ArtistAvatarFullUri = new Uri(art.Replace("_1", ""));
+                    }
+                    
+                    var songlist = ParseArtistSongs(body.SelectSingleNode(".//ul[@class='playlist']")).ToArray();//只计算一次count
+                    artist.HotSongs = new PageItemsCollection<SongModel>(songlist, (pageindex, c) => GetArtistSongsPage(artist.ArtistID, pageindex, c));
+                    
+                    LogService.DebugWrite($"Finish Getting info of Artist {artist.ArtistID}", "NetInterface");
                 }
                 catch (Exception e)
                 {
-                    LogService.ErrorWrite(e);
+                    LogService.ErrorWrite(e, "NetInterface");
+                    throw e;
+                }
+            });
+        }
+        internal IEnumerable<SongModel> ParseArtistSongs(HtmlNode listnode)
+        {
+            foreach(var item in listnode.ChildNodes)
+            {
+                if (item.NodeType != HtmlNodeType.Element)
+                    continue;
+                var id = uint.Parse(item.SelectSingleNode("./span").GetAttributeValue("rel", "0"));
+                SongModel song = SongModel.GetNew(id);
+                song.Title = item.SelectSingleNode(".//a").InnerText;
+                int playcount = -1;
+                if (int.TryParse(item.SelectSingleNode("./div/span").InnerText, out playcount))
+                    song.PlayCount = playcount;
+                yield return song;
+            }
+        }
+        internal Task<IEnumerable<SongModel>> GetArtistSongsPage(uint artistId, uint pageindex, CancellationToken c)
+        {
+            LogService.DebugWrite($"Get Artist Song Page{pageindex}", "NetInterface");
+            return Task.Run<IEnumerable<SongModel>>(async () =>
+            {
+                try
+                {
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/artist?id={artistId}&page={pageindex}&callback=JQuery"));
+                    c.Register(() => gettask.Cancel());
+                    var content = System.Text.RegularExpressions.Regex.Unescape(await gettask);
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(content.Substring(8, content.Length - 10));
+                    return ParseArtistSongs(doc.DocumentNode);
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e, "NetInterface");
                     throw e;
                 }
             });

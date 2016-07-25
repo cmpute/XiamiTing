@@ -14,7 +14,7 @@ namespace JacobC.Xiami
     /// <typeparam name="T">集合项目类型</typeparam>
     public class PageItemsCollection<T> : IncrementalLoadingBase<T>
     {
-        //if = null / count<pagecapacity => hasmore = false
+        //TODO: 考虑SongViewModel怎么处理
         public delegate Task<IEnumerable<T>> FetchPageDelegate(uint pageIndex, CancellationToken token);
 
         FetchPageDelegate _fetchPage;
@@ -23,9 +23,10 @@ namespace JacobC.Xiami
 
         public uint PageCapacity { get; set; }
 
-        public PageItemsCollection(uint capacity, IEnumerable<T> firstpage, FetchPageDelegate fetchPage) : base(firstpage)
+        public PageItemsCollection(IEnumerable<T> firstpage, FetchPageDelegate fetchPage) : base(firstpage)
         {
-            PageCapacity = capacity;
+            PageCapacity = (uint)firstpage.Count();
+            AddRange(firstpage);
             _fetchPage = fetchPage;
             _hasMore = true;
         }
@@ -37,7 +38,7 @@ namespace JacobC.Xiami
         }
         internal async void _GetFirst()
         {
-            var result = await Run((c) => _fetchPage(1, c));
+            var result = await Run((c) => _fetchPage?.Invoke(1, c));
             if (result == null)
                 _hasMore = false;
             else if (result.Count() < PageCapacity)
@@ -60,7 +61,7 @@ namespace JacobC.Xiami
             var returnlist = new List<T>();
             for (uint i = _current + 1; i <= pages; i++)
             {
-                var r = await _fetchPage(1, c);//为了保证顺序，不使用并发
+                var r = await _fetchPage(i, c);//为了保证顺序，不使用并发
                 returnlist.AddRange(r);
                 if (i == pages)
                     if (r == null)
@@ -70,6 +71,7 @@ namespace JacobC.Xiami
                     else
                         _hasMore = true;
             }
+            _current = pages;
             return returnlist;
         }
     }

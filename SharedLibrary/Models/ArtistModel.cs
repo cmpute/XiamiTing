@@ -29,13 +29,13 @@ namespace JacobC.Xiami.Models
         /// <returns></returns>
         public static ArtistModel GetNew(uint XiamiID)
         {
-            ArtistModel album = null;
-            if (!(_dict?.TryGetValue(XiamiID, out album) ?? false))
+            ArtistModel artist = null;
+            if (!(_dict?.TryGetValue(XiamiID, out artist) ?? false))
             {
-                album = new ArtistModel() { ArtistID = XiamiID };
-                _dict?.Add(XiamiID, album);
+                artist = new ArtistModel() { ArtistID = XiamiID };
+                _dict?.Add(XiamiID, artist);
             }
-            return album;
+            return artist;
         }
         private ArtistModel() { }
 
@@ -48,19 +48,65 @@ namespace JacobC.Xiami.Models
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Name { get { return _Name; } set { Set(ref _Name, value); } }
 
+        #endregion
+
         string _AliasName = default(string);
         /// <summary>
         /// 获取或设置艺人的别名、英文名
         /// </summary>
         public string AliasName { get { return _AliasName; } set { Set(ref _AliasName, value); } }
 
+        string _Area = default(string);
+        /// <summary>
+        /// 获取或设置艺人所属地区
+        /// </summary>
+        public string Area { get { return _Area; } set { Set(ref _Area, value); } }
 
-        #endregion
+        Uri _ArtistAvatarUri = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");//TODO: 增加艺人默认头像
+        /// <summary>
+        /// 获取或设置艺人头像的链接
+        /// </summary>
+        public Uri ArtistAvatarUri
+        {
+            get { return _ArtistAvatarUri; }
+            set
+            {
+                if (_ArtistAvatarUri?.ToString() != value?.ToString())
+                    Set(ref _ArtistAvatarUri, value);
+            }
+        }
+
+        Uri _ArtistAvatarFullUri = new Uri(@"ms-appx:///Assets/Pictures/cd500.gif");
+        /// <summary>
+        /// 获取或设置艺人头像的链接
+        /// </summary>
+        public Uri ArtistAvatarFullUri
+        {
+            get { return _ArtistAvatarFullUri; }
+            set
+            {
+                if (_ArtistAvatarFullUri?.ToString() != value?.ToString())
+                    Set(ref _ArtistAvatarFullUri, value);
+            }
+        }
+
+        PageItemsCollection<SongModel> _HotSongs = null;
+
+        /// <summary>
+        /// 获取或设置艺人热门歌曲属性
+        /// </summary>
+        public PageItemsCollection<SongModel> HotSongs { get { return _HotSongs; } set { Set(ref _HotSongs, value); } }
 
         /// <summary>
         /// 获取或设置艺人的虾米ID
         /// </summary>
         public uint ArtistID { get; set; } = 0;
+
+        public override string ToString()
+        {
+            return $@"歌手：{Name} ID:{ArtistID}
+地区：{Area} 别称：{AliasName}";
+        }
 
     }
 }
