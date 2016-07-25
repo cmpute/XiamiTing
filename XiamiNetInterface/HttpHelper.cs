@@ -23,12 +23,19 @@ namespace JacobC.Xiami.Net
                     httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
                     var postTask = httpClient.PostAsync(uri, re);
                     token.Register(() => postTask.Cancel());
-                    using (var get = await postTask)
+                    try
                     {
-                        if (!get.IsSuccessStatusCode)
-                            throw new System.Net.Http.HttpRequestException(get.StatusCode.ToString());
-                        else
-                            return await get.Content.ReadAsStringAsync();
+                        using (var get = await postTask)
+                        {
+                            if (!get.IsSuccessStatusCode)
+                                throw new ConnectException("在HttpRequest中出现错误", new System.Net.Http.HttpRequestException(get.StatusCode.ToString()));
+                            else
+                                return await get.Content.ReadAsStringAsync();
+                        }
+                    }
+                    catch (System.Runtime.InteropServices.COMException ce)
+                    {
+                        throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
                     }
                 }
             });
@@ -44,12 +51,19 @@ namespace JacobC.Xiami.Net
                 httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
                 var postTask = httpClient.GetAsync(uri);
                 token.Register(() => postTask.Cancel());
-                using (var get = await postTask)
+                try
                 {
-                    if (!get.IsSuccessStatusCode)
-                        throw new System.Net.Http.HttpRequestException(get.StatusCode.ToString());
-                    else
-                        return await get.Content.ReadAsStringAsync();
+                    using (var get = await postTask)
+                    {
+                        if (!get.IsSuccessStatusCode)
+                            throw new ConnectException("在HttpRequest中出现错误", new System.Net.Http.HttpRequestException(get.StatusCode.ToString()));
+                        else
+                            return await get.Content.ReadAsStringAsync();
+                    }
+                }
+                catch(System.Runtime.InteropServices.COMException ce)
+                {
+                    throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
                 }
             });
         }

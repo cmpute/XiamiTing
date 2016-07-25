@@ -108,6 +108,7 @@
     <None Include="WebAnalysis.log" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectException.cs" />
     <Compile Include="HttpHelper.cs" />
     <Compile Include="IXiamiInterface.cs" />
     <Compile Include="XiamiLogin.cs" />
