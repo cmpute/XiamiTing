@@ -91,11 +91,17 @@ namespace JacobC.Xiami.Models
         }
 
         PageItemsCollection<SongModel> _HotSongs = null;
-
         /// <summary>
         /// 获取或设置艺人热门歌曲属性
         /// </summary>
         public PageItemsCollection<SongModel> HotSongs { get { return _HotSongs; } set { Set(ref _HotSongs, value); } }
+
+        PageItemsCollection<AlbumModel> _Albums = default(PageItemsCollection<AlbumModel>);
+        /// <summary>
+        /// 获取或设置艺人所属的专辑
+        /// </summary>
+        public PageItemsCollection<AlbumModel> Albums { get { return _Albums; } set { Set(ref _Albums, value); } }
+
 
         /// <summary>
         /// 获取或设置艺人的虾米ID

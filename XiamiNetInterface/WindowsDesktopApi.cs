@@ -214,9 +214,12 @@ namespace JacobC.Xiami.Net
                 AlbumModel album = AlbumModel.GetNew(uint.Parse(node.GetAttributeValue("rel", "0")));
                 album.Name = node.SelectSingleNode("./div/a").InnerText;
                 album.Rating = node.SelectSingleNode(".//em").InnerText;
-                var art = node.SelectSingleNode(".//img").GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
-                album.AlbumArtUri = new Uri(art);
-                album.AlbumArtFullUri = new Uri(art.Replace("_1", ""));
+                if (album.AlbumArtUri.Host == "")
+                {
+                    var art = node.SelectSingleNode(".//img").GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                    album.AlbumArtUri = new Uri(art);
+                    album.AlbumArtFullUri = new Uri(art.Replace("_1", ""));
+                }
                 yield return album;
             }
         }
@@ -254,6 +257,7 @@ namespace JacobC.Xiami.Net
                     
                     var songlist = ParseArtistSongs(body.SelectSingleNode(".//ul[@class='playlist']")).ToArray();//只计算一次count
                     artist.HotSongs = new PageItemsCollection<SongModel>(songlist, (pageindex, c) => GetArtistSongsPage(artist.ArtistID, pageindex, c));
+                    artist.Albums = new PageItemsCollection<AlbumModel>(16, (pageindex, c) => GetArtistAlbumPage(artist.ArtistID, pageindex, c));
                     
                     LogService.DebugWrite($"Finish Getting info of Artist {artist.ArtistID}", "NetInterface");
                 }
@@ -282,7 +286,7 @@ namespace JacobC.Xiami.Net
         internal Task<IEnumerable<SongModel>> GetArtistSongsPage(uint artistId, uint pageindex, CancellationToken c)
         {
             LogService.DebugWrite($"Get Artist Song Page{pageindex}", "NetInterface");
-            return Task.Run<IEnumerable<SongModel>>(async () =>
+            return Task.Run(async () =>
             {
                 try
                 {
@@ -299,6 +303,47 @@ namespace JacobC.Xiami.Net
                     throw e;
                 }
             });
+        }
+        internal Task<IEnumerable<AlbumModel>> GetArtistAlbumPage(uint artistId, uint pageindex, CancellationToken c)
+        {
+            LogService.DebugWrite($"Get Artist Album Page{pageindex}", "NetInterface");
+            return Task.Run(async () =>
+            {
+                try
+                {
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/artist-album2?id={artistId}&page={pageindex}&callback=JQuery"));
+                    c.Register(() => gettask.Cancel());
+                    var content = System.Text.RegularExpressions.Regex.Unescape(await gettask);
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(content.Substring(8, content.Length - 10));
+                    return ParseArtistAlbums(doc.DocumentNode);
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e, "NetInterface");
+                    throw e;
+                }
+            });
+        }
+        internal IEnumerable<AlbumModel> ParseArtistAlbums (HtmlNode listnode)
+        {
+            foreach (var item in listnode.ChildNodes)
+            {
+                if (item.NodeType != HtmlNodeType.Element)
+                    continue;
+                var id = uint.Parse(item.GetAttributeValue("rel", "0"));
+                AlbumModel album = AlbumModel.GetNew(id);
+                var imagenode = item.SelectSingleNode(".//img");
+                album.Name = imagenode.GetAttributeValue("alt", null);
+                if(album.AlbumArtUri.Host == "")
+                {
+                    var art = imagenode.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                    album.AlbumArtUri = new Uri(art);
+                    album.AlbumArtFullUri = new Uri(art.Replace("_1", ""));
+                }
+                album.Rating = item.SelectSingleNode(".//em").InnerText;
+                yield return album;
+            }
         }
     }
 }
