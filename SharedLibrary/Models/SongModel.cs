@@ -52,6 +52,13 @@ namespace JacobC.Xiami.Models
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Title { get { return _Title; } set { Set(ref _Title, value); } }
 
+        string _AliasTitle = default(string);
+        /// <summary>
+        /// 获取或设置曲目名称的说明
+        /// </summary>
+        public string AliasTitle { get { return _AliasTitle; } set { Set(ref _AliasTitle, value); } }
+
+
         //ArtistModel _Artist = null;
         ///// <summary>
         ///// 获取或设置专辑艺术家
@@ -159,12 +166,19 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Arranger { get { return _Arranger; } set { Set(ref _Arranger, value); } }
 
+        string _Vocalist = default(string);
+        /// <summary>
+        /// 获取或设置演唱者
+        /// </summary>
+        public string Vocalist { get { return _Vocalist; } set { Set(ref _Vocalist, value); } }
+
+
         public override string ToString()
         {
-            return $@"标题：{Title}  ID：{SongID}
+            return $@"标题：{Title}  ID：{SongID} 描述：{AliasTitle}
 播放：{PlayCount}  分享：{ShareCount}
 专辑艺人：{Album?.Artist?.Name}  音轨艺人：{TrackArtist}
-作词：{Lyricist}  作曲：{Composer}  编曲：{Arranger}
+作词：{Lyricist}  作曲：{Composer}  编曲：{Arranger} 歌手：{Vocalist}
 ";
         }
     }
