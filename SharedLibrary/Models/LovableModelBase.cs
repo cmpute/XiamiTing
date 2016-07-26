@@ -35,6 +35,13 @@ namespace JacobC.Xiami.Models
         /// 获取或设置收藏标签
         /// </summary>
         public IEnumerable<string> Tags { get { return _Tags; } set { Set(ref _Tags, value); } }
+
+        IEnumerable<UserModel> _RelatedLovers = default(IEnumerable<UserModel>);
+        /// <summary>
+        /// 获取或设置收藏了该内容的用户推荐
+        /// </summary>
+        public IEnumerable<UserModel> RelatedLovers { get { return _RelatedLovers; } set { Set(ref _RelatedLovers, value); } }
+
     }
 
     public class XiamiModelBase : SafeBindableBase

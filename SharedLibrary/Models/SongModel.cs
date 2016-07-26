@@ -33,18 +33,17 @@ namespace JacobC.Xiami.Models
         /// <returns></returns>
         public static SongModel GetNew(uint xiamiID)
         {
-            SongModel album = null;
-            if (!(_dict?.TryGetValue(xiamiID, out album) ?? false))
+            SongModel song = null;
+            if (!(_dict?.TryGetValue(xiamiID, out song) ?? false))
             {
-                album = new SongModel() { XiamiID = xiamiID };
-                _dict?.Add(xiamiID, album);
+                song = new SongModel() { XiamiID = xiamiID };
+                _dict?.Add(xiamiID, song);
             }
-            return album;
+            return song;
         }
         private SongModel() { }
 
         #region Binding Needed
-
 
         //ArtistModel _Artist = null;
         ///// <summary>
@@ -141,6 +140,12 @@ namespace JacobC.Xiami.Models
         /// 获取或设置演唱者
         /// </summary>
         public string Vocalist { get { return _Vocalist; } set { Set(ref _Vocalist, value); } }
+
+        IEnumerable<CollectionModel> _RelateHotCollections = default(IEnumerable<CollectionModel>);
+        /// <summary>
+        /// 获取或设置推荐的精选集属性
+        /// </summary>
+        public IEnumerable<CollectionModel> RelateHotCollections { get { return _RelateHotCollections; } set { Set(ref _RelateHotCollections, value); } }
 
 
         public override string ToString()

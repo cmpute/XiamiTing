@@ -8,5 +8,6 @@ namespace JacobC.Xiami.Models
 {
     public class CommentModel : SafeBindableBase
     {
+        public CommentModel ReplyTo { get; set; }
     }
 }

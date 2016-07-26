@@ -110,6 +110,7 @@
     <Compile Include="IncrementalLoadingBase.cs" />
     <Compile Include="Models\AlbumModel.cs" />
     <Compile Include="Models\ArtistModel.cs" />
+    <Compile Include="Models\CollectionModel.cs" />
     <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Models\LovableModelBase.cs" />
     <Compile Include="Models\SongModel.cs" />

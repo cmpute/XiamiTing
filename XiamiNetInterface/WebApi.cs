@@ -51,7 +51,43 @@ namespace JacobC.Xiami.Net
                         song.Name = title.FirstChild.InnerText;
                     if (song.Description == null || cover)
                         song.Description = title.LastChild.InnerText;
-
+                    var loveop = body.SelectSingleNode(".//ul/li[1]");
+                    song.IsLoved = loveop.GetAttributeValue("style", "") == "display:none";
+                    var detail = body.SelectSingleNode(".//table");
+                    foreach (var item in detail.SelectNodes(".//tr"))
+                    {
+                        switch(item.ChildNodes[1].InnerText)
+                        {
+                            case "所属专辑：":
+                                var linknode = item.SelectSingleNode(".//a");
+                                var id = uint.Parse(linknode.GetAttributeValue("href", "/album/0").Substring(7));
+                                if ((song.Album == null )|| cover)
+                                {
+                                    var album = song.Album ?? AlbumModel.GetNew(id);
+                                    album.Name = linknode.InnerText;
+                                    if (album.AlbumArtUri.Host == "")
+                                    {
+                                        var art = detail.ParentNode.SelectSingleNode(".//img").GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                                        album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
+                                        album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
+                                    }
+                                    song.Album = album;
+                                }
+                                break;
+                            case "演唱者：":
+                                song.TrackArtist = item.SelectSingleNode(".//a").InnerText;
+                                break;
+                            case "作词：":
+                                song.Lyricist = item.SelectSingleNode(".//div").InnerText;
+                                break;
+                            case "作曲：":
+                                song.Composer = item.SelectSingleNode(".//div").InnerText;
+                                break;
+                            case "编曲：":
+                                song.Arranger = item.SelectSingleNode(".//div").InnerText;
+                                break;
+                        }
+                    }
                     //System.Diagnostics.Debug.Write(body.OuterHtml);
                     //System.Diagnostics.Debugger.Break();
                 }

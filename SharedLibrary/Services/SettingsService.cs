@@ -66,7 +66,7 @@ namespace JacobC.Xiami.Services
             }
         }
 
-        bool _CacheItemsInDict;
+        bool _CacheItemsInDict = true;
         /// <summary>
         /// 是否用<see cref="System.Collections.Generic.Dictionary{TKey, TValue}"/>存储歌曲专辑等信息
         /// </summary>
