@@ -13,9 +13,7 @@ namespace JacobC.Xiami.Net
     /// </summary>
     public class WebApi : IXiamiApi
     {
-        /* TODO:
-         * 
-         */
+
         private WebApi() { }
         static WebApi _instance;
         /// <summary>

@@ -135,12 +135,6 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Arranger { get { return _Arranger; } set { Set(ref _Arranger, value); } }
 
-        string _Vocalist = default(string);
-        /// <summary>
-        /// 获取或设置演唱者
-        /// </summary>
-        public string Vocalist { get { return _Vocalist; } set { Set(ref _Vocalist, value); } }
-
         IEnumerable<CollectionModel> _RelateHotCollections = default(IEnumerable<CollectionModel>);
         /// <summary>
         /// 获取或设置推荐的精选集属性
@@ -153,7 +147,7 @@ namespace JacobC.Xiami.Models
             return $@"标题：{Name}  ID：{XiamiID} 描述：{Description}
 播放：{PlayCount}  分享：{ShareCount}
 专辑艺人：{Album?.Artist?.Name}  音轨艺人：{TrackArtist}
-作词：{Lyricist}  作曲：{Composer}  编曲：{Arranger} 歌手：{Vocalist}
+作词：{Lyricist}  作曲：{Composer}  编曲：{Arranger}
 ";
         }
     }

@@ -10,7 +10,8 @@ namespace JacobC.Xiami.Net
 {
     /* 测试对象：
      * Song：1770000099，1776283116，1775466136
-     * 
+     * Album：2100370674，422726
+     * Artist：3110
      */
     public interface IXiamiApi
     {
