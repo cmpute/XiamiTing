@@ -19,7 +19,7 @@ namespace JacobC.Xiami.Net
     /// </remarks>
     public class WapApi : IXiamiApi
     {
-        /*TODO:
+        /* TODO:
          * 未登录版本
          * uid也可以没有 cookie中设置av=4.5信息量超级多！！！
          * /app/xiating/collect-recommend?av=XMusic_2.0.2.1618&uid=0 推荐精选集

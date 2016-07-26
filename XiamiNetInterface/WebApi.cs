@@ -28,13 +28,19 @@ namespace JacobC.Xiami.Net
             }
         }
 
-        /// <summary>
-        /// 通过SongId获取歌曲的信息（不含取媒体地址）
-        /// </summary>
-        public IAsyncOperationWithProgress<HttpResponseMessage, HttpProgress> GetSongInfo(SongModel song)
+        public IAsyncAction GetSongInfo(SongModel song, bool cover = false)
         {
-            HttpClient hc = new HttpClient();
-            return hc.GetAsync(new Uri($"http://www.xiami.com/song/{song.SongID}"));
+            throw new NotImplementedException();
+        }
+
+        public IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = false)
+        {
+            throw new NotImplementedException();
         }
     }
 }

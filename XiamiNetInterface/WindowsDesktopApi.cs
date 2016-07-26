@@ -121,5 +121,15 @@ namespace JacobC.Xiami.Net
                 }
             });
         }
+
+        public IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = false)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

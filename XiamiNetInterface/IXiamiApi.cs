@@ -1,8 +1,10 @@
-﻿using System;
+﻿using JacobC.Xiami.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 
 namespace JacobC.Xiami.Net
 {
@@ -12,5 +14,8 @@ namespace JacobC.Xiami.Net
      */
     public interface IXiamiApi
     {
+        IAsyncAction GetSongInfo(SongModel song, bool cover = false);
+        IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = false);
+        IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = false);
     }
 }
