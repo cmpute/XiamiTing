@@ -17,7 +17,7 @@ namespace JacobC.Xiami.Models
     /// 歌曲的MVVM的Model兼ViewModel模型
     /// </summary>
     [DataContract]
-    public class SongModel : SafeBindableBase
+    public class SongModel : LovableModelBase
     {
 
         static Dictionary<uint, SongModel> _dict;
@@ -29,34 +29,21 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取一个新的<see cref="SongModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>
-        /// <param name="XiamiID">标志<see cref="SongModel"/>的虾米ID</param>
+        /// <param name="xiamiID">标志<see cref="SongModel"/>的虾米ID</param>
         /// <returns></returns>
-        public static SongModel GetNew(uint XiamiID)
+        public static SongModel GetNew(uint xiamiID)
         {
             SongModel album = null;
-            if (!(_dict?.TryGetValue(XiamiID, out album) ?? false))
+            if (!(_dict?.TryGetValue(xiamiID, out album) ?? false))
             {
-                album = new SongModel() { SongID = XiamiID };
-                _dict?.Add(XiamiID, album);
+                album = new SongModel() { XiamiID = xiamiID };
+                _dict?.Add(xiamiID, album);
             }
             return album;
         }
         private SongModel() { }
 
         #region Binding Needed
-
-        string _Title = null;
-        /// <summary>
-        /// 获取或设置歌曲的标题
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string Title { get { return _Title; } set { Set(ref _Title, value); } }
-
-        string _AliasTitle = default(string);
-        /// <summary>
-        /// 获取或设置曲目名称的说明
-        /// </summary>
-        public string AliasTitle { get { return _AliasTitle; } set { Set(ref _AliasTitle, value); } }
 
 
         //ArtistModel _Artist = null;
@@ -100,21 +87,6 @@ namespace JacobC.Xiami.Models
         }
         private void _Album_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Album));
 
-        bool _IsLoved = false;
-        /// <summary>
-        /// 获取或设置歌曲是否标记为喜爱
-        /// </summary>
-        public bool IsLoved
-        {
-            get { return _IsLoved; }
-            set
-            {
-                IsLoveChanging?.Invoke(this, new ChangedEventArgs<bool>(_IsLoved, value));
-                Set(ref _IsLoved, value);
-            }
-        }
-        public event EventHandler<ChangedEventArgs<bool>> IsLoveChanging;
-
         #endregion
 
         /// <summary>
@@ -122,8 +94,6 @@ namespace JacobC.Xiami.Models
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Uri MediaUri { get; set; }
-
-        public uint SongID { get; set; }
 
         int _PlayCount = -1;
         /// <summary>
@@ -175,7 +145,7 @@ namespace JacobC.Xiami.Models
 
         public override string ToString()
         {
-            return $@"标题：{Title}  ID：{SongID} 描述：{AliasTitle}
+            return $@"标题：{Name}  ID：{XiamiID} 描述：{Description}
 播放：{PlayCount}  分享：{ShareCount}
 专辑艺人：{Album?.Artist?.Name}  音轨艺人：{TrackArtist}
 作词：{Lyricist}  作曲：{Composer}  编曲：{Arranger} 歌手：{Vocalist}

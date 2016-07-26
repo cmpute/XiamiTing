@@ -12,7 +12,7 @@ using Template10.Mvvm;
 namespace JacobC.Xiami.Models
 {
     [DataContract]
-    public class AlbumModel : SafeBindableBase
+    public class AlbumModel : LovableModelBase
     {
         static Dictionary<uint, AlbumModel> _dict;
         static AlbumModel()
@@ -23,15 +23,15 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取一个新的<see cref="AlbumModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>
-        /// <param name="XiamiID">标志<see cref="AlbumModel"/>的虾米ID</param>
+        /// <param name="xiamiID">标志<see cref="AlbumModel"/>的虾米ID</param>
         /// <returns></returns>
-        public static AlbumModel GetNew(uint XiamiID)
+        public static AlbumModel GetNew(uint xiamiID)
         {
             AlbumModel album = null;
-            if (!(_dict?.TryGetValue(XiamiID, out album) ?? false))
+            if (!(_dict?.TryGetValue(xiamiID, out album) ?? false))
             {
-                album = new AlbumModel() { AlbumID = XiamiID };
-                _dict?.Add(XiamiID, album);
+                album = new AlbumModel() { XiamiID = xiamiID };
+                _dict?.Add(xiamiID, album);
             }
             return album;
         }
@@ -74,13 +74,6 @@ namespace JacobC.Xiami.Models
             }
         }
 
-        string _Name = null;
-        /// <summary>
-        /// 获取或设置专辑的名称
-        /// </summary>
-        [JsonProperty]
-        public string Name { get { return _Name; } set { Set(ref _Name, value); } }
-
         ArtistModel _Artist = null;
         /// <summary>
         /// 获取或设置专辑艺术家
@@ -107,11 +100,6 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Rating { get { return _Rating; } set { Set(ref _Rating, value); } }
 
-        /// <summary>
-        /// 获取或设置专辑的虾米ID
-        /// </summary>
-        public uint AlbumID { get; set; } = 0;
-
         IEnumerable<SongModel> _SongList = null;
         /// <summary>
         /// 获取或设置专辑所含歌曲属性
@@ -132,7 +120,7 @@ namespace JacobC.Xiami.Models
 
         public override string ToString()
         {
-            return $@"名称：{Name}  ID:{AlbumID}
+            return $@"名称：{Name}  ID:{XiamiID}
 评分：{Rating}  发售日期：{ReleaseDate}";
         }
     }

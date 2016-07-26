@@ -111,6 +111,7 @@
     <Compile Include="Models\AlbumModel.cs" />
     <Compile Include="Models\ArtistModel.cs" />
     <Compile Include="Models\CommentModel.cs" />
+    <Compile Include="Models\LovableModelBase.cs" />
     <Compile Include="Models\SongModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="PageItemsCollection.cs" />

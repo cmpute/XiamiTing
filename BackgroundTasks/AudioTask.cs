@@ -395,7 +395,7 @@ namespace JacobC.Xiami.Services
             {
                 var source = MediaSource.CreateFromUri(song.MediaUri);
                 source.CustomProperties[TrackIdKey] = song.MediaUri;
-                source.CustomProperties[TitleKey] = song.Title;
+                source.CustomProperties[TitleKey] = song.Name;
                 source.CustomProperties[AlbumArtKey] = song.Album.AlbumArtUri;
                 playbackList.Items.Add(new MediaPlaybackItem(source));
                 DebugWrite($"song added {song.MediaUri.ToString()}", "BackgroundPlayer");

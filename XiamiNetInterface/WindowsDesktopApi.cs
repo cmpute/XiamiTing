@@ -44,16 +44,16 @@ namespace JacobC.Xiami.Net
 
         public IAsyncAction GetSongInfo(SongModel song, bool cover = false)
         {
-            if (song.SongID == 0)
+            if (song.XiamiID == 0)
                 throw new ArgumentException("SongModel未设置ID");
             return Run(async token =>
             {
 
                 try
                 {
-                    LogService.DebugWrite($"Get info of Song {song.SongID}", "NetInterface");
+                    LogService.DebugWrite($"Get info of Song {song.XiamiID}", "NetInterface");
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.SongID}"));
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
@@ -62,10 +62,10 @@ namespace JacobC.Xiami.Net
                     var logo = root.SelectSingleNode(".//img[1]");
                     var detail = root.SelectSingleNode(".//ul[1]");
                     var detailgrade = root.SelectSingleNode(".//div[1]/ul[1]");
-                    if (song.Title == null)
-                        song.Title = logo.GetAttributeValue("title", "UnKnown");
-                    if (song.AliasTitle == null)
-                        song.AliasTitle = root.SelectSingleNode(".//p").InnerText;
+                    if (song.Name == null)
+                        song.Name = logo.GetAttributeValue("title", "UnKnown");
+                    if (song.Description == null)
+                        song.Description = root.SelectSingleNode(".//p").InnerText;
                     song.PlayCount = int.Parse(detailgrade.SelectSingleNode(".//span[1]").InnerText);
                     song.ShareCount = int.Parse(detailgrade.SelectSingleNode("./li[3]/span[1]").InnerText);
 
@@ -112,7 +112,7 @@ namespace JacobC.Xiami.Net
                         song.Album.Artist = artist;
                     }
 
-                    LogService.DebugWrite($"Finish Getting info of Song {song.Title}", "NetInterface");
+                    LogService.DebugWrite($"Finish Getting info of Song {song.Name}", "NetInterface");
                 }
                 catch (Exception e)
                 {

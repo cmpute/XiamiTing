@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
 using Windows.Foundation;
 using System.Net.Http;
+using JacobC.Xiami.Services;
 
 namespace JacobC.Xiami.Net
 {
@@ -24,6 +25,21 @@ namespace JacobC.Xiami.Net
                     _handler = new HttpClientHandler();
                 
                 return _handler;
+            }
+        }
+
+        public static void ClearCookies()
+        {
+            _handler = new HttpClientHandler();
+            _client = new HttpClient(_handler);
+        }
+        public static void PrintCookies() => PrintCookies(new Uri("http://www.xiami.com"));
+        public static void PrintCookies(Uri domain)
+        {
+            var container = Handler.CookieContainer;
+            foreach (System.Net.Cookie item in container.GetCookies(domain))
+            {
+                LogService.DebugWrite(item.ToString(), "Cookie");
             }
         }
 

@@ -61,15 +61,15 @@ namespace JacobC.Xiami.Net
         /// <param name="cover">是否覆盖已存在的Album和Artist信息</param>
         public IAsyncAction GetSongInfo(SongModel song, bool cover = false)
         {
-            if (song.SongID == 0)
+            if (song.XiamiID == 0)
                 throw new ArgumentException("SongModel未设置ID");
             return Run(async token =>
             {
                 try
                 {
-                    LogService.DebugWrite($"Get info of Song {song.SongID}", "NetInterface");
+                    LogService.DebugWrite($"Get info of Song {song.XiamiID}", "NetInterface");
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.SongID}"));
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
@@ -78,8 +78,8 @@ namespace JacobC.Xiami.Net
                     var logo = root.SelectSingleNode("//img[1]");
                     var detail = root.SelectSingleNode("//ul[1]");
                     var detailgrade = root.SelectSingleNode("//div[1]/ul[1]");
-                    if (song.Title == null)
-                        song.Title = logo.GetAttributeValue("title", "UnKnown");
+                    if (song.Name == null)
+                        song.Name = logo.GetAttributeValue("title", "UnKnown");
                     song.PlayCount = int.Parse(detailgrade.SelectSingleNode(".//span[1]").InnerText);
                     song.ShareCount = int.Parse(detailgrade.SelectSingleNode("./li[3]/span[1]").InnerText);
 
@@ -126,7 +126,7 @@ namespace JacobC.Xiami.Net
                         song.Album.Artist = artist;
                     }
 
-                    LogService.DebugWrite($"Finish Getting info of Song {song.Title}", "NetInterface");
+                    LogService.DebugWrite($"Finish Getting info of Song {song.Name}", "NetInterface");
                 }
                 catch (Exception e)
                 {
@@ -142,15 +142,15 @@ namespace JacobC.Xiami.Net
         /// <param name="cover">是否覆盖已存在的Artist信息</param>
         public IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = false)
         {
-            if (album.AlbumID == 0)
+            if (album.XiamiID == 0)
                 throw new ArgumentException("AlbumModel未设置ID");
             return Run(async token =>
             {
                 try
                 {
-                    LogService.DebugWrite($"Get info of Album {album.AlbumID}", "NetInterface");
+                    LogService.DebugWrite($"Get info of Album {album.XiamiID}", "NetInterface");
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/album?id={album.AlbumID}"));
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/album?id={album.XiamiID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
@@ -201,7 +201,7 @@ namespace JacobC.Xiami.Net
                     continue;
                 uint songID = uint.Parse(node.SelectSingleNode("./span").GetAttributeValue("rel", "0"));
                 SongModel song = SongModel.GetNew(songID);
-                song.Title = node.SelectSingleNode("./div/a").InnerText;
+                song.Name = node.SelectSingleNode("./div/a").InnerText;
                 song.TrackArtist = node.SelectSingleNode("./div/span")?.InnerText;
                 song.PlayCount = int.Parse(node.SelectSingleNode("./div[2]/span").InnerText);
                 song.Album = album;
@@ -231,15 +231,15 @@ namespace JacobC.Xiami.Net
         {
             //TODO: 艺人专辑http://www.xiami.com/app/xiating/artist-album2?id= 相似艺人http://www.xiami.com/app/xiating/artist-similar?id=
             //TODO: 艺人专辑、艺人歌曲列表都采用增量加载
-            if (artist.ArtistID == 0)
+            if (artist.XiamiID == 0)
                 throw new ArgumentException("ArtistModel未设置ID");
             return Run(async token =>
             {
                 try
                 {
-                    LogService.DebugWrite($"Get info of Artist {artist.ArtistID}", "NetInterface");
+                    LogService.DebugWrite($"Get info of Artist {artist.XiamiID}", "NetInterface");
                     
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/artist?id={artist.ArtistID}"));
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/artist?id={artist.XiamiID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
@@ -259,10 +259,10 @@ namespace JacobC.Xiami.Net
                     }
                     
                     var songlist = ParseArtistSongs(body.SelectSingleNode(".//ul[@class='playlist']")).ToArray();//只计算一次count
-                    artist.HotSongs = new PageItemsCollection<SongModel>(songlist, (pageindex, c) => GetArtistSongsPage(artist.ArtistID, pageindex, c));
-                    artist.Albums = new PageItemsCollection<AlbumModel>(16, (pageindex, c) => GetArtistAlbumPage(artist.ArtistID, pageindex, c));
+                    artist.HotSongs = new PageItemsCollection<SongModel>(songlist, (pageindex, c) => GetArtistSongsPage(artist.XiamiID, pageindex, c));
+                    artist.Albums = new PageItemsCollection<AlbumModel>(16, (pageindex, c) => GetArtistAlbumPage(artist.XiamiID, pageindex, c));
                     
-                    LogService.DebugWrite($"Finish Getting info of Artist {artist.ArtistID}", "NetInterface");
+                    LogService.DebugWrite($"Finish Getting info of Artist {artist.XiamiID}", "NetInterface");
                 }
                 catch (Exception e)
                 {
@@ -279,7 +279,7 @@ namespace JacobC.Xiami.Net
                     continue;
                 var id = uint.Parse(item.SelectSingleNode("./span").GetAttributeValue("rel", "0"));
                 SongModel song = SongModel.GetNew(id);
-                song.Title = item.SelectSingleNode(".//a").InnerText;
+                song.Name = item.SelectSingleNode(".//a").InnerText;
                 int playcount = -1;
                 if (int.TryParse(item.SelectSingleNode("./div/span").InnerText, out playcount))
                     song.PlayCount = playcount;

@@ -14,7 +14,7 @@ namespace JacobC.Xiami.Models
     /// 艺术家（歌手、编曲家等）的MVVM模型
     /// </summary>
     [DataContract]
-    public class ArtistModel : SafeBindableBase
+    public class ArtistModel : LovableModelBase
     {
         static Dictionary<uint, ArtistModel> _dict;
         static ArtistModel()
@@ -32,23 +32,12 @@ namespace JacobC.Xiami.Models
             ArtistModel artist = null;
             if (!(_dict?.TryGetValue(XiamiID, out artist) ?? false))
             {
-                artist = new ArtistModel() { ArtistID = XiamiID };
+                artist = new ArtistModel() { XiamiID = XiamiID };
                 _dict?.Add(XiamiID, artist);
             }
             return artist;
         }
         private ArtistModel() { }
-
-        #region Playback Needed
-
-        string _Name = default(string);
-        /// <summary>
-        /// 获取或设置艺术家的名字
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string Name { get { return _Name; } set { Set(ref _Name, value); } }
-
-        #endregion
 
         string _AliasName = default(string);
         /// <summary>
@@ -106,11 +95,11 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取或设置艺人的虾米ID
         /// </summary>
-        public uint ArtistID { get; set; } = 0;
+        public uint XiamiID { get; set; } = 0;
 
         public override string ToString()
         {
-            return $@"歌手：{Name} ID:{ArtistID}
+            return $@"歌手：{Name} ID:{XiamiID}
 地区：{Area} 别称：{AliasName}";
         }
 
