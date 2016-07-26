@@ -130,7 +130,7 @@ namespace JacobC.Xiami.Net
                 }
                 catch (Exception e)
                 {
-                    LogService.ErrorWrite(e);
+                    LogService.ErrorWrite(e, "NetInterface");
                     throw e;
                 }
             });
