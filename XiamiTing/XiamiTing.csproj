@@ -139,6 +139,9 @@
   <ItemGroup>
     <Content Include="Assets\Pictures\cd100.gif" />
     <Content Include="Assets\Pictures\cd500.gif" />
+    <Content Include="Assets\Pictures\usr100.gif" />
+    <Content Include="Assets\Pictures\usr200.gif" />
+    <Content Include="Assets\Pictures\usr50.gif" />
     <Content Include="Assets\TestMedia\Ring01.jpg" />
     <Content Include="Assets\TestMedia\Ring01.wma" />
     <Content Include="Assets\TestMedia\Ring02.jpg" />

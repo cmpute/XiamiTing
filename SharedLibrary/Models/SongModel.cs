@@ -141,6 +141,12 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public IEnumerable<CollectionModel> RelateHotCollections { get { return _RelateHotCollections; } set { Set(ref _RelateHotCollections, value); } }
 
+        IEnumerable<SongModel> _RelateHotSongs = default(IEnumerable<SongModel>);
+        /// <summary>
+        /// 获取或设置相似歌曲推荐
+        /// </summary>
+        public IEnumerable<SongModel> RelateHotSongs { get { return _RelateHotSongs; } set { Set(ref _RelateHotSongs, value); } }
+
 
         public override string ToString()
         {

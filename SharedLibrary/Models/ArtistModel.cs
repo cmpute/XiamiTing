@@ -51,7 +51,7 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Area { get { return _Area; } set { Set(ref _Area, value); } }
 
-        Uri _ArtistAvatarUri = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");//TODO: 增加艺人默认头像
+        Uri _ArtistAvatarUri = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");
         /// <summary>
         /// 获取或设置艺人头像的链接
         /// </summary>
@@ -67,7 +67,7 @@ namespace JacobC.Xiami.Models
 
         Uri _ArtistAvatarFullUri = new Uri(@"ms-appx:///Assets/Pictures/cd500.gif");
         /// <summary>
-        /// 获取或设置艺人头像的链接
+        /// 获取或设置艺人高清头像的链接
         /// </summary>
         public Uri ArtistAvatarFullUri
         {

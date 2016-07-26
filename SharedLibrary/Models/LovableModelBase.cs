@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,7 +63,7 @@ namespace JacobC.Xiami.Models
         /// 获取或设置名称
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string Name { get { return _Name; } set { Set(ref _Name, value); } }
+        public string Name { get { return _Name; } set { Set(ref _Name, WebUtility.HtmlDecode(value)); } }
 
         PageItemsCollection<CommentModel> _Comments = null;
         /// <summary>
