@@ -38,6 +38,7 @@ namespace JacobC.Xiami.Net
             throw new NotImplementedException();
         }
 
+        //TODO: 对比获取的歌曲信息，减少重复获取开支，尤其是几个IEnumerable。可以考虑WebApi的cover均为true
         public IAsyncAction GetSongInfo(SongModel song, bool cover = false)
         {
             return Run(async (c) =>

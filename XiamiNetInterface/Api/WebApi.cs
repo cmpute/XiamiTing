@@ -38,14 +38,14 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
-                    LogService.DebugWrite($"Get info of Song {song.XiamiID}", "NetInterface");
+                    LogService.DebugWrite($"Get info of Song {song.XiamiID}", "WebApi");
 
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/song/{song.XiamiID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
-                    var body = doc.DocumentNode.SelectSingleNode("//div[@id='page']");
+                    var body = doc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
                     List<Task> process = new List<Task>();
                     process.Add(Task.Run(() =>
                     {
@@ -60,7 +60,7 @@ namespace JacobC.Xiami.Net
                     process.Add(Task.Run(() =>
                     {
                         if (song.Tags == null || cover)
-                            song.Tags = ParseSongTags(body.SelectSingleNode(".//div[@id='song_tags_block']/div"));
+                            song.Tags = ParseTags(body.SelectSingleNode(".//div[@id='song_tags_block']/div"));
                     }));
 
                     var title = body.SelectSingleNode(".//h1");
@@ -73,12 +73,12 @@ namespace JacobC.Xiami.Net
                     var detail = body.SelectSingleNode(".//table");
                     foreach (var item in detail.SelectNodes(".//tr"))
                     {
-                        switch(item.ChildNodes[1].InnerText)
+                        switch (item.ChildNodes[1].InnerText)
                         {
                             case "所属专辑：":
                                 var linknode = item.SelectSingleNode(".//a");
                                 var id = uint.Parse(linknode.GetAttributeValue("href", "/album/0").Substring(7));
-                                if ((song.Album == null )|| cover)
+                                if ((song.Album == null) || cover)
                                 {
                                     var album = song.Album ?? AlbumModel.GetNew(id);
                                     album.Name = linknode.InnerText;
@@ -105,14 +105,14 @@ namespace JacobC.Xiami.Net
                                 break;
                         }
                     }
-                    
+
 
                     await Task.WhenAll(process);
-                    LogService.DebugWrite($"Finishi Getting info of Song {song.XiamiID}", "NetInterface");
+                    LogService.DebugWrite($"Finishi Getting info of Song {song.XiamiID}", "WebApi");
                 }
                 catch (Exception e)
                 {
-                    LogService.ErrorWrite(e, "NetInterface");
+                    LogService.ErrorWrite(e, "WebApi");
                     throw e;
                 }
             });
@@ -153,7 +153,7 @@ namespace JacobC.Xiami.Net
                 yield return song;
             }
         }
-        internal IEnumerable<string> ParseSongTags(HtmlNode listnode)
+        internal IEnumerable<string> ParseTags(HtmlNode listnode)
         {
             foreach (var item in listnode.ChildNodes)
                 if (item.NodeType == HtmlNodeType.Element)
@@ -162,7 +162,29 @@ namespace JacobC.Xiami.Net
 
         public IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = false)
         {
-            throw new NotImplementedException();
+            if (album.XiamiID == 0)
+                throw new ArgumentException("SongModel未设置ID");
+            return Run(async token =>
+            {
+                try
+                {
+                    LogService.DebugWrite($"Get info of Album {album.XiamiID}", "WebApi");
+
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/album/{album.XiamiID}"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    HtmlDocument doc = new HtmlDocument();
+                    var body = doc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
+
+
+                    LogService.DebugWrite($"Finishi Getting info of Album {album.XiamiID}", "WebApi");
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e, "WebApi");
+                    throw e;
+                }
+            });
         }
 
         public IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = false)
