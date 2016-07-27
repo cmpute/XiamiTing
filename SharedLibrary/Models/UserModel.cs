@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JacobC.Xiami.Models
 {
-    public class UserModel : XiamiModelBase
+    public class UserModel : XiamiModelBase<uint>
     {
         
         static Dictionary<uint, UserModel> _dict;

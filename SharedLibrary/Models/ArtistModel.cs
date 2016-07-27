@@ -14,7 +14,7 @@ namespace JacobC.Xiami.Models
     /// 艺术家（歌手、编曲家等）的MVVM模型
     /// </summary>
     [DataContract]
-    public class ArtistModel : LovableModelBase
+    public class ArtistModel : LovableModelBase<uint>
     {
         static Dictionary<uint, ArtistModel> _dict;
         static ArtistModel()
@@ -90,12 +90,6 @@ namespace JacobC.Xiami.Models
         /// 获取或设置艺人所属的专辑
         /// </summary>
         public PageItemsCollection<AlbumModel> Albums { get { return _Albums; } set { Set(ref _Albums, value); } }
-
-
-        /// <summary>
-        /// 获取或设置艺人的虾米ID
-        /// </summary>
-        public uint XiamiID { get; set; } = 0;
 
         public override string ToString()
         {

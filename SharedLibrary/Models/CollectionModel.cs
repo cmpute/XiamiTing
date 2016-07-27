@@ -10,7 +10,7 @@ namespace JacobC.Xiami.Models
     /// <summary>
     /// 虾米精选集的Model
     /// </summary>
-    public class CollectionModel : LovableModelBase
+    public class CollectionModel : LovableModelBase<uint>
     {
 
         static Dictionary<uint, CollectionModel> _dict;

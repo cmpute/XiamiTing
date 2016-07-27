@@ -17,7 +17,7 @@ namespace JacobC.Xiami.Models
     /// 歌曲的MVVM的Model兼ViewModel模型
     /// </summary>
     [DataContract]
-    public class SongModel : LovableModelBase
+    public class SongModel : LovableModelBase<uint>
     {
 
         static Dictionary<uint, SongModel> _dict;

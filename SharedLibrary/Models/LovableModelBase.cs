@@ -11,7 +11,8 @@ namespace JacobC.Xiami.Models
     /// <summary>
     /// 可以收藏的内容基类
     /// </summary>
-    public class LovableModelBase : XiamiModelBase
+    /// <typeparam name="TID">虾米ID的类型</typeparam>
+    public class LovableModelBase<TID> : XiamiModelBase<TID>
     {
         bool _IsLoved = default(bool);
         /// <summary>
@@ -45,12 +46,16 @@ namespace JacobC.Xiami.Models
 
     }
 
-    public class XiamiModelBase : SafeBindableBase
+    /// <summary>
+    /// 虾米内容的基类
+    /// </summary>
+    /// <typeparam name="TID">虾米ID的类型</typeparam>
+    public class XiamiModelBase<TID> : SafeBindableBase
     {
         /// <summary>
         /// 获取或设置在虾米中的编号
         /// </summary>
-        public uint XiamiID { get; set; }
+        public TID XiamiID { get; set; }
 
         string _Description = default(string);
         /// <summary>

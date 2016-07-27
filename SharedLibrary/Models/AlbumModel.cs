@@ -12,7 +12,7 @@ using Template10.Mvvm;
 namespace JacobC.Xiami.Models
 {
     [DataContract]
-    public class AlbumModel : LovableModelBase
+    public class AlbumModel : LovableModelBase<uint>
     {
         static Dictionary<uint, AlbumModel> _dict;
         static AlbumModel()
