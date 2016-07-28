@@ -100,6 +100,39 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Rating { get { return _Rating; } set { Set(ref _Rating, value); } }
 
+        int[] _RatingDetail = new int[5] { -1, -1, -1, -1, -1 };
+        /// <summary>
+        /// 获取或设置专辑的详细评分
+        /// </summary>
+        public int[] RatingDetail
+        {
+            get { return _RatingDetail; }
+            set
+            {
+                if (value.Length != 5) throw new InvalidOperationException("评分应为五个档");
+                Set(ref _RatingDetail, value);
+            }
+        }
+
+        string _Language = default(string);
+        /// <summary>
+        /// 获取或设置专辑的语种
+        /// </summary>
+        public string Language { get { return _Language; } set { Set(ref _Language, value); } }
+
+        string _Publisher = default(string);
+        /// <summary>
+        /// 获取或设置专辑的发行公司
+        /// </summary>
+        public string Publisher { get { return _Publisher; } set { Set(ref _Publisher, value); } }
+
+        string _Type = default(string);
+        /// <summary>
+        /// 获取或设置专辑的类别
+        /// </summary>
+        public string Type { get { return _Type; } set { Set(ref _Type, value); } }
+
+
         IEnumerable<SongModel> _SongList = null;
         /// <summary>
         /// 获取或设置专辑所含歌曲属性
@@ -111,6 +144,13 @@ namespace JacobC.Xiami.Models
         /// 获取或设置该艺人其他热门专辑属性
         /// </summary>
         public IEnumerable<AlbumModel> RelateHotAlbums { get { return _RelateHotAlbums; } set { Set(ref _RelateHotAlbums, value); } }
+
+        IEnumerable<GenreModel> _Genre = default(IEnumerable<GenreModel>);
+        /// <summary>
+        /// 获取或设置专辑的风格
+        /// </summary>
+        public IEnumerable<GenreModel> Genre { get { return _Genre; } set { Set(ref _Genre, value); } }
+
 
         string _ReleaseDate = null; //使用DateTime的话会引入DateTimeFormatInfo增加内存消耗
         /// <summary>
