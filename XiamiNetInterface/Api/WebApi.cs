@@ -2,6 +2,7 @@
 using JacobC.Xiami.Models;
 using JacobC.Xiami.Services;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -50,17 +51,17 @@ namespace JacobC.Xiami.Net
                     process.Add(Task.Run(() =>
                     {
                         if (song.RelatedLovers == null || cover)
-                            song.RelatedLovers = ParseSongRelateUsers(body.SelectSingleNode(".//div[@id='song_fans_block']/div/ul"));
+                            song.RelatedLovers = ParseSongRelateUsers(body.SelectSingleNode(".//div[@id='song_fans_block']/div/ul")).ToList();
                     }));
                     process.Add(Task.Run(() =>
                     {
                         if (song.RelateHotSongs == null || cover)
-                            song.RelateHotSongs = ParseSongRelateSongs(body.SelectSingleNode(".//div[@id='relate_song']/div/table"));
+                            song.RelateHotSongs = ParseSongRelateSongs(body.SelectSingleNode(".//div[@id='relate_song']/div/table")).ToList();
                     }));
                     process.Add(Task.Run(() =>
                     {
                         if (song.Tags == null || cover)
-                            song.Tags = ParseTags(body.SelectSingleNode(".//div[@id='song_tags_block']/div"));
+                            song.Tags = ParseTags(body.SelectSingleNode(".//div[@id='song_tags_block']/div")).ToList();
                     }));
 
                     var title = body.SelectSingleNode(".//h1");
@@ -175,11 +176,22 @@ namespace JacobC.Xiami.Net
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
                     var body = doc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
+                    List<Task> process = new List<Task>();
+                    process.Add(Task.Run(() => 
+                    {
+                        var listnode = body.SelectSingleNode(".//div[@class='chapter mgt10']");
+                        if (album.SongList == null || cover)
+                            album.SongList = ParseAlbumSongs(listnode).ToList();
+                        else
+                            ParseAlbumSongs(listnode, album.SongList);
+                    }));
 
                     var title = body.SelectSingleNode(".//h1");
                     if (album.Name == null || cover)
-                        album.Name = title.InnerText;
-                    //TODO: description
+                        album.Name = title.FirstChild.InnerText;
+                    if (title.LastChild.NodeType != HtmlNodeType.Element)
+                        if (album.Description == null || cover)
+                            album.Description = title.LastChild.InnerText;
                     var info = body.SelectSingleNode(".//div[@id='album_info']");
                     album.Rating = info.SelectSingleNode(".//em").InnerText;
                     var ratings = info.SelectNodes(".//ul/li");
@@ -188,7 +200,7 @@ namespace JacobC.Xiami.Net
                     var loveop = body.SelectSingleNode(".//ul[@id='acts_list']");
                     album.IsLoved = loveop.SelectSingleNode("./li[1]").GetAttributeValue("style", "") == "display:none";
                     var share = loveop.SelectSingleNode(".//em").InnerText;
-                    album.ShareCount = int.Parse(share.Substring(1, share.Length - 1);
+                    album.ShareCount = int.Parse(share.Substring(1, share.Length - 1));
                     foreach (var item in info.SelectNodes(".//tr"))
                     {
                         switch(item.ChildNodes[1].InnerText)
@@ -224,8 +236,8 @@ namespace JacobC.Xiami.Net
                     //TODO: 分享次数?
                     if (album.Introduction == null || cover)
                         album.Introduction = body.SelectSingleNode(".//span[@property='v.summary']").InnerText;
-                    
 
+                    await Task.WhenAll(process);
                     LogService.DebugWrite($"Finishi Getting info of Album {album.XiamiID}", "WebApi");
                 }
                 catch (Exception e)
@@ -238,6 +250,11 @@ namespace JacobC.Xiami.Net
 
         internal IEnumerable<SongModel> ParseAlbumSongs(HtmlNode listnode)
         {
+            yield return null; // TODO: 暂时完成这部分功能
+        }
+        internal void ParseAlbumSongs(HtmlNode listnode, IEnumerable<SongModel> former)
+        {
+            var iter = former.GetEnumerator();
 
         }
 

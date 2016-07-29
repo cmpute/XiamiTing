@@ -32,17 +32,36 @@ namespace JacobC.Xiami.Models
             throw new NotImplementedException();
         }
 
-        IEnumerable<string> _Tags = default(IEnumerable<string>);
+        IList<string> _Tags = default(IList<string>);
         /// <summary>
         /// 获取或设置收藏标签
         /// </summary>
-        public IEnumerable<string> Tags { get { return _Tags; } set { Set(ref _Tags, value); } }
+        public IList<string> Tags { get { return _Tags; } set { Set(ref _Tags, value); } }
 
-        IEnumerable<UserModel> _RelatedLovers = default(IEnumerable<UserModel>);
+        IList<UserModel> _RelatedLovers = default(IList<UserModel>);
         /// <summary>
         /// 获取或设置收藏了该内容的用户推荐
         /// </summary>
-        public IEnumerable<UserModel> RelatedLovers { get { return _RelatedLovers; } set { Set(ref _RelatedLovers, value); } }
+        public IList<UserModel> RelatedLovers { get { return _RelatedLovers; } set { Set(ref _RelatedLovers, value); } }
+
+        int _PlayCount = -1;
+        /// <summary>
+        /// 获取或设置播放次数属性
+        /// </summary>
+        public int PlayCount { get { return _PlayCount; } set { Set(ref _PlayCount, value); } }
+
+        int _ShareCount = -1;
+        /// <summary>
+        /// 获取或设置分享次数属性
+        /// </summary>
+        public int ShareCount { get { return _ShareCount; } set { Set(ref _ShareCount, value); } }
+
+        int _LovedCount = default(int);
+        /// <summary>
+        /// 获取或设置收藏次数
+        /// </summary>
+        public int LovedCount { get { return _LovedCount; } set { Set(ref _LovedCount, value); } }
+
 
     }
 

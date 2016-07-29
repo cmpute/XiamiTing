@@ -156,8 +156,8 @@ namespace JacobC.Xiami.Net
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
                     List<Task> process = new List<Task>();//并行处理
-                    process.Add(Task.Run(() => { if (album.SongList == null || cover) album.SongList = ParseAlbumSongs(doc.DocumentNode.SelectSingleNode("//div/ul[1]"), album); }));
-                    process.Add(Task.Run(() => { if (album.RelateHotAlbums == null || cover) album.RelateHotAlbums = ParseRelateAlbums(doc.DocumentNode.SelectSingleNode("//h3").NextSibling.NextSibling); }));
+                    process.Add(Task.Run(() => { if (album.SongList == null || cover) album.SongList = ParseAlbumSongs(doc.DocumentNode.SelectSingleNode("//div/ul[1]"), album).ToList(); }));
+                    process.Add(Task.Run(() => { if (album.RelateHotAlbums == null || cover) album.RelateHotAlbums = ParseRelateAlbums(doc.DocumentNode.SelectSingleNode("//h3").NextSibling.NextSibling).ToList(); }));
 
                     var infonode = doc.DocumentNode.SelectSingleNode("//section[1]/div[1]/div[2]/div[1]");
                     if (album.AlbumArtUri.Host == "")

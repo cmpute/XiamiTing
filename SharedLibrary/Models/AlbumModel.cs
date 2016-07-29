@@ -138,31 +138,24 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Introduction { get { return _Introduction; } set { Set(ref _Introduction, value); } }
 
-        int _ShareCount = default(int);
-        /// <summary>
-        /// 获取或设置分享次数
-        /// </summary>
-        public int ShareCount { get { return _ShareCount; } set { Set(ref _ShareCount, value); } }
 
-
-
-        IEnumerable<SongModel> _SongList = null;
+        IList<SongModel> _SongList = null;
         /// <summary>
         /// 获取或设置专辑所含歌曲属性
         /// </summary>
-        public IEnumerable<SongModel> SongList { get { return _SongList; } set { Set(ref _SongList, value); } }
+        public IList<SongModel> SongList { get { return _SongList; } set { Set(ref _SongList, value); } }
 
-        IEnumerable<AlbumModel> _RelateHotAlbums = null;
+        IList<AlbumModel> _RelateHotAlbums = null;
         /// <summary>
         /// 获取或设置该艺人其他热门专辑属性
         /// </summary>
-        public IEnumerable<AlbumModel> RelateHotAlbums { get { return _RelateHotAlbums; } set { Set(ref _RelateHotAlbums, value); } }
+        public IList<AlbumModel> RelateHotAlbums { get { return _RelateHotAlbums; } set { Set(ref _RelateHotAlbums, value); } }
 
-        IEnumerable<GenreModel> _Genre = default(IEnumerable<GenreModel>);
+        IList<GenreModel> _Genre = default(IList<GenreModel>);
         /// <summary>
         /// 获取或设置专辑的风格
         /// </summary>
-        public IEnumerable<GenreModel> Genre { get { return _Genre; } set { Set(ref _Genre, value); } }
+        public IList<GenreModel> Genre { get { return _Genre; } set { Set(ref _Genre, value); } }
 
 
         string _ReleaseDate = null; //使用DateTime的话会引入DateTimeFormatInfo增加内存消耗

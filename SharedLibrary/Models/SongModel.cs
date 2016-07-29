@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.Serialization;
+﻿using JacobC.Xiami.Services;
 using Newtonsoft.Json;
-using Template10.Mvvm;
-using Windows.UI.Xaml.Controls;
-using Template10.Common;
-using JacobC.Xiami.Services;
-using System.Runtime.CompilerServices;
+using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace JacobC.Xiami.Models
 {
@@ -86,6 +79,13 @@ namespace JacobC.Xiami.Models
         }
         private void _Album_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Album));
 
+        MVModel _MV = default(MVModel);
+        /// <summary>
+        /// 获取或设置MV(地址)
+        /// </summary>
+        public MVModel MV { get { return _MV; } set { Set(ref _MV, value); } }
+
+
         #endregion
 
         /// <summary>
@@ -94,17 +94,6 @@ namespace JacobC.Xiami.Models
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Uri MediaUri { get; set; }
 
-        int _PlayCount = -1;
-        /// <summary>
-        /// 获取或设置播放次数属性
-        /// </summary>
-        public int PlayCount { get { return _PlayCount; } set { Set(ref _PlayCount, value); } }
-
-        int _ShareCount = -1;
-        /// <summary>
-        /// 获取或设置分享次数属性
-        /// </summary>
-        public int ShareCount { get { return _ShareCount; } set { Set(ref _ShareCount, value); } }
 
         string _TrackArtist = null;
         /// <summary>
@@ -148,17 +137,17 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Arranger { get { return _Arranger; } set { Set(ref _Arranger, value); } }
 
-        IEnumerable<CollectionModel> _RelateHotCollections = default(IEnumerable<CollectionModel>);
+        IList<CollectionModel> _RelateHotCollections = default(IList<CollectionModel>);
         /// <summary>
         /// 获取或设置推荐的精选集属性
         /// </summary>
-        public IEnumerable<CollectionModel> RelateHotCollections { get { return _RelateHotCollections; } set { Set(ref _RelateHotCollections, value); } }
+        public IList<CollectionModel> RelateHotCollections { get { return _RelateHotCollections; } set { Set(ref _RelateHotCollections, value); } }
 
-        IEnumerable<SongModel> _RelateHotSongs = default(IEnumerable<SongModel>);
+        IList<SongModel> _RelateHotSongs = default(IList<SongModel>);
         /// <summary>
         /// 获取或设置相似歌曲推荐
         /// </summary>
-        public IEnumerable<SongModel> RelateHotSongs { get { return _RelateHotSongs; } set { Set(ref _RelateHotSongs, value); } }
+        public IList<SongModel> RelateHotSongs { get { return _RelateHotSongs; } set { Set(ref _RelateHotSongs, value); } }
 
 
         public override string ToString()
