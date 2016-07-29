@@ -132,6 +132,19 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Type { get { return _Type; } set { Set(ref _Type, value); } }
 
+        string _Introduction = default(string);
+        /// <summary>
+        /// 获取或设置专辑介绍
+        /// </summary>
+        public string Introduction { get { return _Introduction; } set { Set(ref _Introduction, value); } }
+
+        int _ShareCount = default(int);
+        /// <summary>
+        /// 获取或设置分享次数
+        /// </summary>
+        public int ShareCount { get { return _ShareCount; } set { Set(ref _ShareCount, value); } }
+
+
 
         IEnumerable<SongModel> _SongList = null;
         /// <summary>

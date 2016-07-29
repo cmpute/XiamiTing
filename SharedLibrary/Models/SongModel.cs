@@ -117,6 +117,19 @@ namespace JacobC.Xiami.Models
             set { Set(ref _TrackArtist, value); }
         }
 
+        int _TrackID = default(int);
+        /// <summary>
+        /// 获取或设置音轨号
+        /// </summary>
+        public int TrackID { get { return _TrackID; } set { Set(ref _TrackID, value); } }
+
+        TimeSpan _AudioLength = default(TimeSpan);
+        /// <summary>
+        /// 获取或设置音频长度
+        /// </summary>
+        public TimeSpan AudioLength { get { return _AudioLength; } set { Set(ref _AudioLength, value); } }
+
+
         string _Composer = null;
         /// <summary>
         /// 获取或设置作曲家属性

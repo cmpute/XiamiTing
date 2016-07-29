@@ -12,6 +12,7 @@ namespace JacobC.Xiami.Net
 {
     public static class HttpHelper
     {
+        //TODO: 采用gzip
         static HttpClientHandler _handler;
         /// <summary>
         /// 获取控制Http请求属性的<see cref=""/>

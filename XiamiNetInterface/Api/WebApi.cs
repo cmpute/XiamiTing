@@ -185,8 +185,10 @@ namespace JacobC.Xiami.Net
                     var ratings = info.SelectNodes(".//ul/li");
                     for (int i = 0; i < ratings.Count; i++)
                         album.RatingDetail[i] = int.Parse(ratings[i].LastChild.InnerText);
-                    var loveop = body.SelectSingleNode(".//ul[@id='acts_list']/li[1]");
-                    album.IsLoved = loveop.GetAttributeValue("style", "") == "display:none";
+                    var loveop = body.SelectSingleNode(".//ul[@id='acts_list']");
+                    album.IsLoved = loveop.SelectSingleNode("./li[1]").GetAttributeValue("style", "") == "display:none";
+                    var share = loveop.SelectSingleNode(".//em").InnerText;
+                    album.ShareCount = int.Parse(share.Substring(1, share.Length - 1);
                     foreach (var item in info.SelectNodes(".//tr"))
                     {
                         switch(item.ChildNodes[1].InnerText)
@@ -220,6 +222,9 @@ namespace JacobC.Xiami.Net
                         album.AlbumArtFullUri = new Uri(art.GetAttributeValue("href", "ms-appx:///Assets/Pictures/cd500.gif"));
                     }
                     //TODO: 分享次数?
+                    if (album.Introduction == null || cover)
+                        album.Introduction = body.SelectSingleNode(".//span[@property='v.summary']").InnerText;
+                    
 
                     LogService.DebugWrite($"Finishi Getting info of Album {album.XiamiID}", "WebApi");
                 }
@@ -229,6 +234,11 @@ namespace JacobC.Xiami.Net
                     throw e;
                 }
             });
+        }
+
+        internal IEnumerable<SongModel> ParseAlbumSongs(HtmlNode listnode)
+        {
+
         }
 
         public IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = false)
