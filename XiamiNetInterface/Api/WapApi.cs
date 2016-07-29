@@ -58,7 +58,7 @@ namespace JacobC.Xiami.Net
         /// <summary>
         /// 通过SongId获取歌曲的信息（不含取媒体地址）
         /// </summary>
-        /// <param name="cover">是否覆盖已存在的Album和Artist信息</param>
+        /// <param name="cover">是否覆盖已存在的Album和Artist信息</param> 
         public IAsyncAction GetSongInfo(SongModel song, bool cover = false)
         {
             if (song.XiamiID == 0)

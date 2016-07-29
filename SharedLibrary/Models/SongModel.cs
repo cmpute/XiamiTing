@@ -112,6 +112,13 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public int TrackID { get { return _TrackID; } set { Set(ref _TrackID, value); } }
 
+        string _DiscID = default(string);
+        /// <summary>
+        /// 获取或设置专辑的Disc序号或Disc说明
+        /// </summary>
+        public string DiscID { get { return _DiscID; } set { Set(ref _DiscID, value); } }
+
+
         TimeSpan _AudioLength = default(TimeSpan);
         /// <summary>
         /// 获取或设置音频长度

@@ -233,7 +233,6 @@ namespace JacobC.Xiami.Net
                         album.AlbumArtUri = new Uri(art.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif"));
                         album.AlbumArtFullUri = new Uri(art.GetAttributeValue("href", "ms-appx:///Assets/Pictures/cd500.gif"));
                     }
-                    //TODO: 分享次数?
                     if (album.Introduction == null || cover)
                         album.Introduction = body.SelectSingleNode(".//span[@property='v.summary']").InnerText;
 
@@ -253,9 +252,31 @@ namespace JacobC.Xiami.Net
             yield return null; // TODO: 暂时完成这部分功能
         }
         internal void ParseAlbumSongs(HtmlNode listnode, IEnumerable<SongModel> former)
-        {
+        {//TODO: 待测试
             var iter = former.GetEnumerator();
-
+            string disc = null;
+            foreach (var item in listnode.ChildNodes)
+            {
+                if (item.NodeType != HtmlNodeType.Element)
+                    continue;
+                if (item.Name == "strong")
+                    disc = item.InnerText;
+                else
+                    foreach (var songitem in item.SelectSingleNode("./tbody").ChildNodes)
+                    {
+                        if (songitem.NodeType != HtmlNodeType.Element)
+                            continue;
+                        if (!iter.MoveNext())
+                            throw new ArgumentException("歌曲列表不匹配");
+                        if (songitem.ChildNodes[1].FirstChild.GetAttributeValue("value", "0") != iter.Current.XiamiID.ToString())
+                            throw new ArgumentException("歌曲列表ID不匹配");
+                        var cur = iter.Current;
+                        cur.DiscID = disc;
+                        cur.TrackID = int.Parse(songitem.ChildNodes[3].InnerText);
+                        if (cur.Name == null)
+                            cur.Name = songitem.ChildNodes[3].ChildNodes[1].InnerText;
+                    }
+            }
         }
 
         public IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = false)
