@@ -3,6 +3,8 @@ ConsoleTest/
 NetTest/
 #MediaTest
 XiamiTing/Assets/TestMedia
+#Analysis
+*.py
 
 # Windows image file caches
 Thumbs.db

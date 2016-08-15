@@ -107,6 +107,7 @@
     <None Include="Api\Api Compare.xlsx" />
     <None Include="project.json" />
     <None Include="WebAnalysis.log" />
+    <None Include="xiami.py" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\CombinedApi.cs" />

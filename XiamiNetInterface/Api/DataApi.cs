@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
 
 namespace JacobC.Xiami.Net
@@ -38,7 +39,24 @@ namespace JacobC.Xiami.Net
             });
         }
 
-
+        internal static string ParseDownloadLink(int row, string locationstring)
+        {
+            //System.Diagnostics.Debugger.Break();
+            int len = locationstring.Length;
+            var cols = len / row;
+            var rows_ex = len % row;
+            List<string> matrix = new List<string>();
+            for (int r = 0; r < row; r++)
+            {
+                var rlen = r < rows_ex ? cols + 1 : cols;
+                matrix.Add(locationstring.Substring(0, rlen));
+                locationstring = locationstring.Substring(rlen);
+            }
+            string res = "";
+            for (int i = 0; i < len; i++)
+                res += matrix[i % row][i / row];
+            return res;
+        }
         public static IAsyncOperation<string> GetDownloadLink(uint songID, bool isHQ)
         {
             return Run(async token =>
@@ -47,10 +65,13 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get basic info of Song {songID}", nameof(DataApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/song/playlist?id={song.XiamiID}"));
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/song/playlist?id={songID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
-                    //TODO: 完成剩下的部分
+                    var match = Regex.Match(content, @"(?<=location>).+?(?=</location)");
+                    if (!match.Success)
+                        throw new Exception("获取下载地址出错");
+                    return System.Net.WebUtility.UrlDecode(ParseDownloadLink(int.Parse(match.Value[0].ToString()), match.Value.Substring(1)));
                 }
                 catch (Exception e)
                 {
