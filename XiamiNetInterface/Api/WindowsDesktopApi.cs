@@ -48,11 +48,10 @@ namespace JacobC.Xiami.Net
                 throw new ArgumentException("SongModel未设置ID");
             return Run(async token =>
             {
-
                 try
                 {
-                    LogService.DebugWrite($"Get info of Song {song.XiamiID}", "NetInterface");
-
+                    LogService.DebugWrite($"Get info of Song {song.XiamiID}", nameof(WindowsDesktopApi));
+                    
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
@@ -112,11 +111,11 @@ namespace JacobC.Xiami.Net
                         song.Album.Artist = artist;
                     }
 
-                    LogService.DebugWrite($"Finish Getting info of Song {song.Name}", "NetInterface");
+                    LogService.DebugWrite($"Finish Getting info of Song {song.Name}", nameof(WindowsDesktopApi));
                 }
                 catch (Exception e)
                 {
-                    LogService.ErrorWrite(e, "NetInterface");
+                    LogService.ErrorWrite(e, nameof(WindowsDesktopApi));
                     throw e;
                 }
             });

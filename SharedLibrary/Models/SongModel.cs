@@ -121,7 +121,7 @@ namespace JacobC.Xiami.Models
 
         TimeSpan _AudioLength = default(TimeSpan);
         /// <summary>
-        /// 获取或设置音频长度
+        /// 获取或设置音频时长
         /// </summary>
         public TimeSpan AudioLength { get { return _AudioLength; } set { Set(ref _AudioLength, value); } }
 

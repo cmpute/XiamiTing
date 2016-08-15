@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\CombinedApi.cs" />
+    <Compile Include="Api\DataApi.cs" />
     <Compile Include="ConnectException.cs" />
     <Compile Include="HttpHelper.cs" />
     <Compile Include="Api\IXiamiApi.cs" />

@@ -39,7 +39,7 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
-                    LogService.DebugWrite($"Get info of Song {song.XiamiID}", "WebApi");
+                    LogService.DebugWrite($"Get info of Song {song.XiamiID}", nameof(WebApi));
 
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/song/{song.XiamiID}"));
                     token.Register(() => gettask.Cancel());
@@ -109,11 +109,11 @@ namespace JacobC.Xiami.Net
 
 
                     await Task.WhenAll(process);
-                    LogService.DebugWrite($"Finishi Getting info of Song {song.XiamiID}", "WebApi");
+                    LogService.DebugWrite($"Finishi Getting info of Song {song.XiamiID}", nameof(WebApi));
                 }
                 catch (Exception e)
                 {
-                    LogService.ErrorWrite(e, "WebApi");
+                    LogService.ErrorWrite(e, nameof(WebApi));
                     throw e;
                 }
             });
@@ -169,7 +169,7 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
-                    LogService.DebugWrite($"Get info of Album {album.XiamiID}", "WebApi");
+                    LogService.DebugWrite($"Get info of Album {album.XiamiID}", nameof(WebApi));
 
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/album/{album.XiamiID}"));
                     token.Register(() => gettask.Cancel());
@@ -237,11 +237,11 @@ namespace JacobC.Xiami.Net
                         album.Introduction = body.SelectSingleNode(".//span[@property='v.summary']").InnerText;
 
                     await Task.WhenAll(process);
-                    LogService.DebugWrite($"Finishi Getting info of Album {album.XiamiID}", "WebApi");
+                    LogService.DebugWrite($"Finishi Getting info of Album {album.XiamiID}", nameof(WebApi));
                 }
                 catch (Exception e)
                 {
-                    LogService.ErrorWrite(e, "WebApi");
+                    LogService.ErrorWrite(e, nameof(WebApi));
                     throw e;
                 }
             });

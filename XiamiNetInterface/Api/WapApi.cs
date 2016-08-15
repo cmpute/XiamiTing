@@ -67,7 +67,7 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
-                    LogService.DebugWrite($"Get info of Song {song.XiamiID}", "NetInterface");
+                    LogService.DebugWrite($"Get info of Song {song.XiamiID}", nameof(WapApi));
 
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}"));
                     token.Register(() => gettask.Cancel());
@@ -126,11 +126,11 @@ namespace JacobC.Xiami.Net
                         song.Album.Artist = artist;
                     }
 
-                    LogService.DebugWrite($"Finish Getting info of Song {song.Name}", "NetInterface");
+                    LogService.DebugWrite($"Finish Getting info of Song {song.Name}", nameof(WapApi));
                 }
                 catch (Exception e)
                 {
-                    LogService.ErrorWrite(e, "NetInterface");
+                    LogService.ErrorWrite(e, nameof(WapApi));
                     throw e;
                 }
             });
@@ -148,7 +148,7 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
-                    LogService.DebugWrite($"Get info of Album {album.XiamiID}", "NetInterface");
+                    LogService.DebugWrite($"Get info of Album {album.XiamiID}", nameof(WapApi));
 
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/album?id={album.XiamiID}"));
                     token.Register(() => gettask.Cancel());
@@ -181,7 +181,7 @@ namespace JacobC.Xiami.Net
                     }
                     
                     await Task.WhenAll(process);
-                    LogService.DebugWrite($"Finish Getting info of Album {album.Name}", "NetInterface");
+                    LogService.DebugWrite($"Finish Getting info of Album {album.Name}", nameof(WapApi));
                 }
                 catch (Exception e)
                 {
@@ -237,7 +237,7 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
-                    LogService.DebugWrite($"Get info of Artist {artist.XiamiID}", "NetInterface");
+                    LogService.DebugWrite($"Get info of Artist {artist.XiamiID}", nameof(WapApi));
                     
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/artist?id={artist.XiamiID}"));
                     token.Register(() => gettask.Cancel());
@@ -262,11 +262,11 @@ namespace JacobC.Xiami.Net
                     artist.HotSongs = new PageItemsCollection<SongModel>(songlist, (pageindex, c) => GetArtistSongsPage(artist.XiamiID, pageindex, c));
                     artist.Albums = new PageItemsCollection<AlbumModel>(16, (pageindex, c) => GetArtistAlbumPage(artist.XiamiID, pageindex, c));
                     
-                    LogService.DebugWrite($"Finish Getting info of Artist {artist.XiamiID}", "NetInterface");
+                    LogService.DebugWrite($"Finish Getting info of Artist {artist.XiamiID}", nameof(WapApi));
                 }
                 catch (Exception e)
                 {
-                    LogService.ErrorWrite(e, "NetInterface");
+                    LogService.ErrorWrite(e, nameof(WapApi));
                     throw e;
                 }
             });
@@ -288,7 +288,7 @@ namespace JacobC.Xiami.Net
         }
         internal Task<IEnumerable<SongModel>> GetArtistSongsPage(uint artistId, uint pageindex, CancellationToken c)
         {
-            LogService.DebugWrite($"Get Artist Song Page{pageindex}", "NetInterface");
+            LogService.DebugWrite($"Get Artist Song Page{pageindex}", nameof(WapApi));
             return Task.Run(async () =>
             {
                 try
@@ -302,14 +302,14 @@ namespace JacobC.Xiami.Net
                 }
                 catch (Exception e)
                 {
-                    LogService.ErrorWrite(e, "NetInterface");
+                    LogService.ErrorWrite(e, nameof(WapApi));
                     throw e;
                 }
             });
         }
         internal Task<IEnumerable<AlbumModel>> GetArtistAlbumPage(uint artistId, uint pageindex, CancellationToken c)
         {
-            LogService.DebugWrite($"Get Artist Album Page{pageindex}", "NetInterface");
+            LogService.DebugWrite($"Get Artist Album Page{pageindex}", nameof(WapApi));
             return Task.Run(async () =>
             {
                 try
@@ -323,7 +323,7 @@ namespace JacobC.Xiami.Net
                 }
                 catch (Exception e)
                 {
-                    LogService.ErrorWrite(e, "NetInterface");
+                    LogService.ErrorWrite(e, nameof(WapApi));
                     throw e;
                 }
             });
