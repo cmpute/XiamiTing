@@ -13,7 +13,6 @@ namespace JacobC.Xiami.Net
 {
     public static class HttpHelper
     {
-        //TODO: 采用gzip
         static HttpClientHandler _handler;
         /// <summary>
         /// 获取控制Http请求属性的<see cref=""/>
@@ -55,10 +54,11 @@ namespace JacobC.Xiami.Net
                     _client = new HttpClient(Handler);
                     _client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
                     //_client.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-                    //_client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, sdch");
-                    //_client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("zh-CN,zh;q=0.8");
-                    //_client.DefaultRequestHeaders.Referrer = new Uri("http://www.xiami.com/play?ids=/song/playlist/id/1/type/9");
+                    _client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, sdch");
+                    _client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("zh-CN,zh;q=0.8");
+                    _client.DefaultRequestHeaders.Referrer = new Uri("http://www.xiami.com/play?ids=/song/playlist/id/1/type/9");
                     //_client.DefaultRequestHeaders.Connection.ParseAdd("keep-alive");
+                    _client.Timeout = TimeSpan.FromSeconds(5);
                 }
                 return _client;
             }
@@ -99,11 +99,10 @@ namespace JacobC.Xiami.Net
         {
             return Run(async token =>
             {
-                var postTask = Client.GetAsync(uri);
-                token.Register(() => postTask.AsAsyncOperation().Cancel());
                 try
                 {
-                    using (var get = await postTask)
+                    var t = Client.GetAsync(uri, token);
+                    using (var get = await t)
                     {
                         if (!get.IsSuccessStatusCode)
                             throw new ConnectException("在HttpRequest中出现错误", new System.Net.Http.HttpRequestException(get.StatusCode.ToString()));

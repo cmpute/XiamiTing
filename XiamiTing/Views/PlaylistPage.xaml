@@ -420,7 +420,7 @@
                                 <FontIcon Glyph="&#xE7F6;" FontSize="24"/>
                             </Button>
                         </Grid>
-                        <TextBlock Grid.Column="1" Text="{x:Bind Model.Title}"/>
+                        <TextBlock Grid.Column="1" Text="{x:Bind Model.Name}"/>
                         <TextBlock Grid.Column="2" Text="{x:Bind Model.TrackArtist}"/>
                         <TextBlock Grid.Column="3" Text="{x:Bind Model.Album.Name}"/>
                         <CheckBox Grid.Column="4" Margin="4,0,0,0" IsChecked="{x:Bind Model.IsLoved, Converter={StaticResource ToNullableConverter}, Mode=TwoWay}">

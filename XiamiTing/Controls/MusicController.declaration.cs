@@ -26,7 +26,7 @@ namespace JacobC.Xiami.Controls
             get { return GetValue(CurrentSongProperty) as SongViewModel; }
             private set { SetValue(CurrentSongProperty, value); }
         }
-        private static readonly SongViewModel _defaultCurrentSong = new SongViewModel(new SongModel { Album = new AlbumModel() });
+        private static readonly SongViewModel _defaultCurrentSong = null;
         /// <summary>
         /// 标识<see cref="CurrentSong"/>依赖属性
         /// </summary>

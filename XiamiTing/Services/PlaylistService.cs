@@ -47,18 +47,37 @@ namespace JacobC.Xiami.Services
         /// 应用程序开始时初始化播放列表
         /// </summary>
         /// <returns>上一次程序退出时的播放列表</returns>
-        public IEnumerable<SongViewModel> InitPlaylist()
+        public async void InitPlaylistAsync()
         {
             //TODO: 从应用设置中获取缓存的播放列表
             //以下为测试代码
+            //TODO: 如果从网络获取的话由于该方法不会被等待，因此需要考虑延后，如果从缓存中获取则取消async标志
+
+            //AlbumModel am = AlbumModel.GetNew(1311688232);
+            //int i = 0;
+            //System.Diagnostics.Debugger.Break();
+            //await JacobC.Xiami.Net.WebApi.Instance.GetAlbumInfo(am);
+            //_Playlist = am.SongList.Select((sm) => new SongViewModel(sm) { ListIndex = i++ }).ToObservableCollection();
+            _Playlist = new ObservableCollection<SongViewModel>();
+        }
+
+        public IEnumerable<SongViewModel> InitPlaylist()
+        {
+            //以下为测试代码
             for (int i = 0; i < 6; i++)
             {
-                SongViewModel vm = new SongViewModel(new SongModel() { Title = $"Give My Regards {i}", TrackArtist = "MitiS", Album = new AlbumModel() { Name = "Give My Regards", AlbumArtUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring01.jpg") }, MediaUri = new Uri(@"http://win.web.rb03.sycdn.kuwo.cn/3c7436b07688ca96d1cfb9bc6a547706/578f5562/resource/a3/73/65/3736166827.aac") });
-                vm.ListIndex = i;
-                yield return vm;
-                vm = new SongViewModel(new SongModel() { Title = $"Foundations {i}", TrackArtist = "MitiS", Album = new AlbumModel() { Name = "Foundations", AlbumArtUri=new Uri("http://blog.51cto.com/images/special/1306310178_index.jpg") }, MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring02.wma") });
-                vm.ListIndex = i;
-                yield return vm;
+                SongModel sm = SongModel.GetNew(1775616994);
+                sm.Name = $"Foundations (Original Mix){i}";
+                sm.Album = AlbumModel.GetNew(2100274906);
+                sm.MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring01.wma");
+                sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/21002749061455506376_2.jpg");
+                yield return new SongViewModel(sm) { ListIndex = 2 * i };
+                sm = SongModel.GetNew(1770914850);
+                sm.Name = $"Give My Regards{i}";
+                sm.Album = AlbumModel.GetNew(504506);
+                sm.MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring02.wma");
+                sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/5045061333262175_2.jpg");
+                yield return new SongViewModel(sm) { ListIndex = 2 * i + 1 };
             }
         }
         /// <summary>

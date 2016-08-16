@@ -232,7 +232,7 @@ namespace JacobC.Xiami.Net
                     {
                         var art = body.SelectSingleNode(".//img");
                         album.AlbumArtUri = new Uri(art.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif"));
-                        album.AlbumArtFullUri = new Uri(art.GetAttributeValue("href", "ms-appx:///Assets/Pictures/cd500.gif"));
+                        album.AlbumArtFullUri = new Uri(art.ParentNode.GetAttributeValue("href", "ms-appx:///Assets/Pictures/cd500.gif"));
                     }
                     if (album.Introduction == null || cover)
                         album.Introduction = body.SelectSingleNode(".//span[@property='v:summary']").InnerText.Replace("<br />","");
