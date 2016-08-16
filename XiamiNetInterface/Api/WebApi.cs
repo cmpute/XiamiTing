@@ -175,13 +175,14 @@ namespace JacobC.Xiami.Net
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(content);
                     var body = doc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
                     List<Task> process = new List<Task>();
                     process.Add(Task.Run(() => 
                     {
                         var listnode = body.SelectSingleNode(".//div[@class='chapter mgt10']");
                         if (album.SongList == null || cover)
-                            album.SongList = ParseAlbumSongs(listnode).ToList();
+                            album.SongList = ParseAlbumSongs(listnode, album).ToList();
                         else
                             ParseAlbumSongs(listnode, album.SongList);
                     }));
@@ -197,20 +198,20 @@ namespace JacobC.Xiami.Net
                     var ratings = info.SelectNodes(".//ul/li");
                     for (int i = 0; i < ratings.Count; i++)
                         album.RatingDetail[i] = int.Parse(ratings[i].LastChild.InnerText);
-                    var loveop = body.SelectSingleNode(".//ul[@id='acts_list']");
+                    var loveop = body.SelectSingleNode(".//ul[@class='acts_list']");
                     album.IsLoved = loveop.SelectSingleNode("./li[1]").GetAttributeValue("style", "") == "display:none";
                     var share = loveop.SelectSingleNode(".//em").InnerText;
-                    album.ShareCount = int.Parse(share.Substring(1, share.Length - 1));
+                    album.ShareCount = int.Parse(share.Substring(1, share.Length - 2));
                     foreach (var item in info.SelectNodes(".//tr"))
                     {
-                        switch(item.ChildNodes[1].InnerText)
+                        switch (item.ChildNodes[1].InnerText)
                         {
                             case "艺人：":
                                 if (album.Artist == null)
                                 {
                                     var linknode = item.SelectSingleNode(".//a");
                                     var id = linknode.GetAttributeValue("href", "/0");
-                                    album.Artist = ArtistModel.GetNew(uint.Parse(id.Substring(id.LastIndexOf('/'))));
+                                    album.Artist = ArtistModel.GetNew(uint.Parse(id.Substring(id.LastIndexOf('/') + 1)));
                                 }
                                 break;
                             case "语种：":
@@ -227,14 +228,14 @@ namespace JacobC.Xiami.Net
                                 break;
                         }
                     }
-                    if(album.AlbumArtUri.Host == "")
+                    if (album.AlbumArtUri.Host == "")
                     {
                         var art = body.SelectSingleNode(".//img");
                         album.AlbumArtUri = new Uri(art.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif"));
                         album.AlbumArtFullUri = new Uri(art.GetAttributeValue("href", "ms-appx:///Assets/Pictures/cd500.gif"));
                     }
                     if (album.Introduction == null || cover)
-                        album.Introduction = body.SelectSingleNode(".//span[@property='v.summary']").InnerText;
+                        album.Introduction = body.SelectSingleNode(".//span[@property='v:summary']").InnerText.Replace("<br />","");
 
                     await Task.WhenAll(process);
                     LogService.DebugWrite($"Finishi Getting info of Album {album.XiamiID}", nameof(WebApi));
@@ -247,9 +248,36 @@ namespace JacobC.Xiami.Net
             });
         }
 
-        internal IEnumerable<SongModel> ParseAlbumSongs(HtmlNode listnode)
+        internal IEnumerable<SongModel> ParseAlbumSongs(HtmlNode listnode, AlbumModel album)
         {
-            yield return null; // TODO: 暂时完成这部分功能
+            string disc = null;
+            foreach (var item in listnode.ChildNodes)
+            {
+                if (item.NodeType != HtmlNodeType.Element)
+                    continue;
+                if (item.Name == "strong")
+                    disc = item.InnerText;
+                else
+                    foreach (var songitem in item.SelectSingleNode("./tbody").ChildNodes)
+                    {
+                        if (songitem.NodeType != HtmlNodeType.Element)
+                            continue;
+                        SongModel song = SongModel.GetNew(uint.Parse(songitem.ChildNodes[1].FirstChild.GetAttributeValue("value", "0")));
+                        song.Album = album;
+                        song.DiscID = disc;
+                        song.TrackID = int.Parse(songitem.ChildNodes[3].InnerText);
+                        var title = songitem.SelectSingleNode(".//a");
+                        if (song.Name == null)
+                            song.Name = title.InnerText;
+                        if (song.TrackArtist == null)
+                        {
+                            string t = title.NextSibling.InnerText.Trim();
+                            if (t.Length > 0)
+                                song.TrackArtist = t;
+                        }
+                        yield return song;
+                    }
+            }
         }
         internal void ParseAlbumSongs(HtmlNode listnode, IEnumerable<SongModel> former)
         {//TODO: 待测试

@@ -54,8 +54,11 @@ namespace JacobC.Xiami.Net
                 {
                     _client = new HttpClient(Handler);
                     _client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
-                    _client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, sdch");
-                    _client.DefaultRequestHeaders.Referrer = new Uri("http://www.xiami.com/play?ids=/song/playlist/id/1/type/9");
+                    //_client.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                    //_client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, sdch");
+                    //_client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("zh-CN,zh;q=0.8");
+                    //_client.DefaultRequestHeaders.Referrer = new Uri("http://www.xiami.com/play?ids=/song/playlist/id/1/type/9");
+                    //_client.DefaultRequestHeaders.Connection.ParseAdd("keep-alive");
                 }
                 return _client;
             }

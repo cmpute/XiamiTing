@@ -25,6 +25,7 @@ namespace JacobC.Xiami.Net
             }
         }
 
+        //专辑信息比较复杂，只考虑Web
         public IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = false)
         {
             return Run(async (c) =>
