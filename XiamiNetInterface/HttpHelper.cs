@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace JacobC.Xiami.Net
             {
                 if(_handler == null)
                     _handler = new HttpClientHandler();
-                
+                _handler.AutomaticDecompression = System.Net.DecompressionMethods.GZip;
                 return _handler;
             }
         }
@@ -53,6 +54,8 @@ namespace JacobC.Xiami.Net
                 {
                     _client = new HttpClient(Handler);
                     _client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
+                    _client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, sdch");
+                    _client.DefaultRequestHeaders.Referrer = new Uri("http://www.xiami.com/play?ids=/song/playlist/id/1/type/9");
                 }
                 return _client;
             }
@@ -111,5 +114,28 @@ namespace JacobC.Xiami.Net
                 }
             });
         }
+        public static IAsyncOperation<Stream> GetAsyncAsStream(Uri uri)
+        {
+            return Run(async token =>
+            {
+                var postTask = Client.GetAsync(uri);
+                token.Register(() => postTask.AsAsyncOperation().Cancel());
+                try
+                {
+                    using (var get = await postTask)
+                    {
+                        if (!get.IsSuccessStatusCode)
+                            throw new ConnectException("在HttpRequest中出现错误", new System.Net.Http.HttpRequestException(get.StatusCode.ToString()));
+                        else
+                            return await get.Content.ReadAsStreamAsync();
+                    }
+                }
+                catch (System.Runtime.InteropServices.COMException ce)
+                {
+                    throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
+                }
+            });
+        }
+        //TODO: HTML解析的时候使用Stream进行解析
     }
 }

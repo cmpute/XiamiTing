@@ -41,7 +41,6 @@ namespace JacobC.Xiami.Net
 
         internal static string ParseDownloadLink(int row, string locationstring)
         {
-            //System.Diagnostics.Debugger.Break();
             int len = locationstring.Length;
             var cols = len / row;
             var rows_ex = len % row;
@@ -63,15 +62,17 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
-                    LogService.DebugWrite($"Get basic info of Song {songID}", nameof(DataApi));
+                    LogService.DebugWrite($"Get link of Song {songID}", nameof(DataApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/song/playlist?id={songID}"));
+                    var gettask = HttpHelper.GetAsync(new Uri(isHQ ? $"http://www.xiami.com/song/gethqsong/sid/{songID}" : $"http://www.xiami.com/song/playlist/id/{songID}"));
+
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
-                    var match = Regex.Match(content, @"(?<=location>).+?(?=</location)");
+                    var match = Regex.Match(content, isHQ? "(?<=location\":\").+?(?=\")" : "(?<=location>).+?(?=</location)");
                     if (!match.Success)
                         throw new Exception("获取下载地址出错");
-                    return System.Net.WebUtility.UrlDecode(ParseDownloadLink(int.Parse(match.Value[0].ToString()), match.Value.Substring(1)));
+                    var decry = ParseDownloadLink(int.Parse(match.Value[0].ToString()), match.Value.Substring(1));
+                    return System.Net.WebUtility.UrlDecode(decry).Replace('^','0');
                 }
                 catch (Exception e)
                 {
