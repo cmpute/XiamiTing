@@ -164,7 +164,7 @@
                                                 <VisualState.Setters>
                                                     <Setter Target="ContentPresenter.Tag">
                                                         <Setter.Value>
-                                                            <service:VisualStateSender>Normal</service:VisualStateSender>
+                                                            <service:VisualStateSender>Hover</service:VisualStateSender>
                                                         </Setter.Value>
                                                     </Setter>
                                                     <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
@@ -445,7 +445,7 @@
                                                 <VisualState x:Name="UncheckedDisabled"/>
                                                 <VisualState x:Name="CheckedNormal">
                                                     <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
                                                             <DiscreteObjectKeyFrame KeyTime="0">
                                                                 <DiscreteObjectKeyFrame.Value>
                                                                     <SolidColorBrush Color="Red"/>
@@ -488,14 +488,14 @@
                                       Visibility="{x:Bind IsHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
                                       Grid.Column="4" Glyph="&#xE169;" 
                                       Margin="28,0,0,0"/>
-                        <Button Grid.Column="4" Margin="52,0,0,0" Style="{StaticResource EmptyButtonForIcon}">
-                            <i:Interaction.Behaviors>
+                        <Button Grid.Column="4" Margin="52,0,0,0" Style="{StaticResource EmptyButtonForIcon}" Tapped="Button_Tapped">
+                            <!--<i:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="Tapped">
                                     <core:InvokeCommandAction Command="{x:Bind DeleteCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
                                 </core:EventTriggerBehavior>
-                            </i:Interaction.Behaviors>
+                            </i:Interaction.Behaviors>-->
                             <FontIcon Style="{StaticResource sFontIcon}"
-                                          Foreground="{x:Bind IsHovered , Converter={StaticResource ItemThemeColorConverter}, Mode=OneWay}"
+                                          Foreground="{x:Bind IsHovered, Converter={StaticResource ItemThemeColorConverter}, Mode=OneWay}"
                                           Visibility="{x:Bind IsHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
                                           Glyph="&#xE711;"
                                           />

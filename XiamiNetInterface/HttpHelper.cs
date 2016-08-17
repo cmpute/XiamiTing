@@ -102,7 +102,7 @@ namespace JacobC.Xiami.Net
                 try
                 {
                     var t = Client.GetAsync(uri, token);
-                    using (var get = await t)
+                    using (var get = await t) 
                     {
                         if (!get.IsSuccessStatusCode)
                             throw new ConnectException("在HttpRequest中出现错误", new System.Net.Http.HttpRequestException(get.StatusCode.ToString()));

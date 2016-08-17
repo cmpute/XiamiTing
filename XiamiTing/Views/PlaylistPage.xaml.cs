@@ -58,5 +58,11 @@ namespace JacobC.Xiami.Views
         {
             _DeleteCommand.RaiseCanExecuteChanged();
         }
+
+        private void Button_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            //System.Diagnostics.Debugger.Break();
+            listView.Items.Remove(((Button)sender).DataContext);
+        }
     }
 }

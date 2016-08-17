@@ -29,7 +29,7 @@ namespace JacobC.Xiami.Models
         }
         protected virtual void OnIsLovedChanged()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         IList<string> _Tags = default(IList<string>);
