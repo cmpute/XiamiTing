@@ -37,9 +37,7 @@ namespace JacobC.Xiami.Services
             get
             {
                 if (_Playlist == null)
-                {
-                    _Playlist = InitPlaylist().ToObservableCollection();
-                }
+                    InitPlaylist();
                 return _Playlist;
             }
         }
@@ -61,7 +59,30 @@ namespace JacobC.Xiami.Services
             _Playlist = new ObservableCollection<SongViewModel>();
         }
 
-        public IEnumerable<SongViewModel> InitPlaylist()
+        private MediaPlaybackList _Medialist;
+        /// <summary>
+        /// 获取用于后台Mediaplayer的播放列表的唯一实例
+        /// </summary>
+        public MediaPlaybackList Medialist
+        {
+            get
+            {
+                if (_Playlist == null)
+                    InitPlaylist();
+                return _Medialist;
+            }
+        }
+
+        public void InitPlaylist()
+        {
+            int i = 0;
+            var list = InitPlaylistE().ToList();
+            _Playlist = list.Select(sm=>new SongViewModel(sm) { ListIndex = i++}).ToObservableCollection();
+            _Medialist = new MediaPlaybackList();
+            _Medialist.AutoRepeatEnabled = true;//待从设置修改
+            _Medialist.Items.
+        }
+        public IEnumerable<SongModel> InitPlaylistE()
         {
             //以下为测试代码
             for (int i = 0; i < 6; i++)
@@ -71,13 +92,13 @@ namespace JacobC.Xiami.Services
                 sm.Album = AlbumModel.GetNew(2100274906);
                 sm.MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring01.wma");
                 sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/21002749061455506376_2.jpg");
-                yield return new SongViewModel(sm) { ListIndex = 2 * i };
+                yield return sm;
                 sm = SongModel.GetNew(1770914850);
                 sm.Name = $"Give My Regards{i}";
                 sm.Album = AlbumModel.GetNew(504506);
                 sm.MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring02.wma");
                 sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/5045061333262175_2.jpg");
-                yield return new SongViewModel(sm) { ListIndex = 2 * i + 1 };
+                yield return sm;
             }
         }
         /// <summary>
