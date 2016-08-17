@@ -80,7 +80,8 @@ namespace JacobC.Xiami.Services
             _Playlist = list.Select(sm=>new SongViewModel(sm) { ListIndex = i++}).ToObservableCollection();
             _Medialist = new MediaPlaybackList();
             _Medialist.AutoRepeatEnabled = true;//待从设置修改
-            _Medialist.Items.
+            foreach (var item in list)
+                _Medialist.Items.Add(new MediaPlaybackItem(Windows.Media.Core.MediaSource.CreateFromUri(new Uri(Net.DataApi.GetDownloadLinkSync(item.XiamiID, false)))));
         }
         public IEnumerable<SongModel> InitPlaylistE()
         {

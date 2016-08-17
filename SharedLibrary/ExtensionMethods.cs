@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Template10.Common;
 using Template10.Services.SettingsService;
 using Windows.UI.Xaml;
+using Windows.Foundation;
 
 namespace JacobC.Xiami
 {
@@ -12,9 +14,9 @@ namespace JacobC.Xiami
         /// <summary>
         /// 读取设置后删除该设置
         /// </summary>
-        public static T ReadAndReset<T>(this SettingsHelper setting,string key, T otherwise = default(T), SettingsStrategies strategy = SettingsStrategies.Local)
+        public static T ReadAndReset<T>(this SettingsHelper setting, string key, T otherwise = default(T), SettingsStrategies strategy = SettingsStrategies.Local)
         {
-            T val = setting.Read<T>(key,otherwise, strategy);
+            T val = setting.Read<T>(key, otherwise, strategy);
             setting.Remove(key, strategy);
             return val;
         }
@@ -28,5 +30,40 @@ namespace JacobC.Xiami
         /// <typeparam name="T">ChangedEventArgs参数类型</typeparam>
         public static ChangedEventArgs<T> ToChangedEventArgs<T>(this DependencyPropertyChangedEventArgs e)
             => new ChangedEventArgs<T>((T)e.OldValue, (T)e.NewValue);
+        /// <summary>
+        /// 使async方法同步运行
+        /// </summary>
+        /// <param name="asyncMethod">要同步运行的async方法</param>
+        public static void InvokeAndWait(Func<Task> asyncMethod)
+        {
+            Task.Run(() => asyncMethod())
+                .ContinueWith(task => task.Wait())
+                .Wait();
+        }
+        /// <summary>
+        /// 使返回<see cref="IAsyncAction"/>的无参方法同步运行
+        /// </summary>
+        /// <param name="asyncMethod">要同步运行的方法</param>
+        public static void InvokeAndWait(Func<IAsyncAction> asyncMethod) => InvokeAndWait(async () => await asyncMethod());
+        /// <summary>
+        /// 使async方法同步运行
+        /// </summary>
+        /// <param name="asyncMethod">要同步运行的async方法</param>
+        public static T InvokeAndWait<T>(Func<Task<T>> asyncMethod)
+        {
+            Task<T> t = Task.Run(() => asyncMethod())
+                .ContinueWith(task =>
+                {
+                    task.Wait();
+                    return task.Result;
+                });
+            t.Wait();
+            return t.Result;
+        }
+        /// <summary>
+        /// 使返回<see cref="IAsyncOperation{TResult}"/>的无参方法同步运行
+        /// </summary>
+        /// <param name="asyncMethod">要同步运行的方法</param>
+        public static T InvokeAndWait<T>(Func<IAsyncOperation<T>> asyncMethod) => InvokeAndWait(async () => await asyncMethod());
     }
 }
