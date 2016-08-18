@@ -21,22 +21,23 @@ namespace JacobC.Xiami.Controls
     {
         private void AddListeners()
         {
-            PlaybackService.Instance.CurrentIndexChanging += (sender, e) => CurrentSong = e.NewValue;
+            PlaylistService.Instance.CurrentIndexChanging += (sender, e) => CurrentSong = e.NewValue;
             PlaybackService.Instance.CurrentPlayer.CurrentStateChanged += async (sender, args) => await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => IsNowPlaying = sender.CurrentState == MediaPlayerState.Playing);
         }
 
         DelegateCommand _PlayCommand;
         public DelegateCommand PlayCommand => _PlayCommand ?? (_PlayCommand = new DelegateCommand(() =>
         {
-            var service = PlaybackService.Instance;
+            var lservice = PlaylistService.Instance;
             LogService.DebugWrite("Play button pressed from App");
-            if (service.CurrentPlaying == null)
-                if (PlaylistService.Instance.Playlist.Count == 0)
+            if (lservice.CurrentPlaying == null)
+                if (lservice.Playlist.Count == 0)
                     return;
                 else
-                    PlaybackService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[0];
-            var CurrentPlayer = service.CurrentPlayer;
-            if (service.IsBackgroundTaskRunning)
+                    lservice.CurrentPlaying = PlaylistService.Instance.Playlist[0];
+            var pservice = PlaybackService.Instance;
+            var CurrentPlayer = pservice.CurrentPlayer;
+            if (pservice.IsBackgroundTaskRunning)
             {
                 if (MediaPlayerState.Playing == CurrentPlayer.CurrentState)
                 {
@@ -48,14 +49,14 @@ namespace JacobC.Xiami.Controls
                 }
                 else if (MediaPlayerState.Closed == CurrentPlayer.CurrentState)
                 {
-                    service.StartBackgroundAudioTask();
-                    service.StartPlayback();
+                    pservice.StartBackgroundAudioTask();
+                    pservice.StartPlayback();
                 }
             }
             else
             {
-                service.StartBackgroundAudioTask();
-                service.StartPlayback();
+                pservice.StartBackgroundAudioTask();
+                pservice.StartPlayback();
             }
         }));
 
@@ -63,7 +64,7 @@ namespace JacobC.Xiami.Controls
         public DelegateCommand<object> PreviousCommand => _PreviousCommand ?? (_PreviousCommand = new DelegateCommand<object>((model) =>
         {
             MessageService.SendMediaMessageToBackground(MediaMessageTypes.SkipPrevious);
-            PlaybackService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) - 1];
+            PlaylistService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) - 1];
             //TODO: 判断是否循环/随机，并且设置Next的可用性
 
             // Prevent the user from repeatedly pressing the button and causing 
@@ -76,7 +77,7 @@ namespace JacobC.Xiami.Controls
         public DelegateCommand<object> NextCommand => _NextCommand ?? (_NextCommand = new DelegateCommand<object>((model) =>
         {
             MessageService.SendMediaMessageToBackground(MediaMessageTypes.SkipNext);
-            PlaybackService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) + 1];
+            PlaylistService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) + 1];
             //TODO: 判断是否循环/随机，并且设置Next的可用性
 
             // Prevent the user from repeatedly pressing the button and causing 

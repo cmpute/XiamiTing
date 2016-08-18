@@ -32,6 +32,39 @@ namespace JacobC.Xiami.Services
         /// </summary>
         public static PlaylistService Instance { get { return _instance ?? (_instance = new PlaylistService()); } }
 
+        SongViewModel _CurrentPlaying = null;
+        /// <summary>
+        /// 获取当前选中或播放的音轨
+        /// </summary>
+        public SongViewModel CurrentPlaying
+        {
+            get
+            {
+                if (Playlist.Count == 0)
+                    throw new ArgumentNullException(nameof(CurrentPlaying), "当前播放列表为空，无法获取音轨");
+                return _CurrentPlaying;
+            }
+            set
+            {
+                if (_CurrentPlaying != value)
+                {
+                    CurrentIndexChanging.Invoke(this, new ChangedEventArgs<SongViewModel>(_CurrentPlaying, value));
+                    InternalCurrentIndexChanging(value);
+                    if (_CurrentPlaying != null) _CurrentPlaying.IsPlaying = false;
+                    _CurrentPlaying = value;
+                    if (value != null) value.IsPlaying = true;
+                }
+            }
+        }
+        /// <summary>
+        /// 在当前播放的音轨发生改变时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<SongViewModel>> CurrentIndexChanging;
+        private void InternalCurrentIndexChanging(SongViewModel newsong)
+        {
+            //TODO: 向后台发送消息
+        }
+
         private ObservableCollection<SongViewModel> _Playlist;
         /// <summary>
         /// 获取播放列表的唯一实例

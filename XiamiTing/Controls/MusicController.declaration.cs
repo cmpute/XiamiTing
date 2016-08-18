@@ -42,7 +42,7 @@ namespace JacobC.Xiami.Controls
         /// </summary>
         public event EventHandler<ChangedEventArgs<SongViewModel>> CurrentSongChanged;
         partial void InternalCurrentSongChanged(ChangedEventArgs<SongViewModel> e);
-        
+
         //TODO: !!IsNowPlaying目前绑定失效
         /// <summary>
         /// 获取是否正在播放属性

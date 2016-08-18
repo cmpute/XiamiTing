@@ -76,6 +76,7 @@ namespace JacobC.Xiami.ViewModels
         public DelegateCommand<object> PlayTrackCommand => _PlayTrackCommand ?? (_PlayTrackCommand = new DelegateCommand<object>((model) =>
         {
             PlaybackService.Instance.PlayTrack(this.Model);
+            PlaylistService.Instance.CurrentPlaying = this;
         }));
     }
 }
