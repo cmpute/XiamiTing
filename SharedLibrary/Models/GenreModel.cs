@@ -9,12 +9,8 @@ namespace JacobC.Xiami.Models
 {
     public class GenreModel : XiamiModelBase<uint>
     {
-        static Dictionary<uint, GenreModel> _dict;
-        static GenreModel()
-        {
-            if (SettingsService.Instance.CacheItemsInDict)
-                _dict = new Dictionary<uint, GenreModel>();
-        }
+        static Dictionary<uint, GenreModel> _dict = new Dictionary<uint, GenreModel>();
+
         /// <summary>
         /// 获取一个新的<see cref="GenreModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>

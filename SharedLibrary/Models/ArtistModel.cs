@@ -16,12 +16,7 @@ namespace JacobC.Xiami.Models
     [DataContract]
     public class ArtistModel : LovableModelBase<uint>
     {
-        static Dictionary<uint, ArtistModel> _dict;
-        static ArtistModel()
-        {
-            if (SettingsService.Instance.CacheItemsInDict)
-                _dict = new Dictionary<uint, ArtistModel>();
-        }
+        static Dictionary<uint, ArtistModel> _dict = new Dictionary<uint, ArtistModel>();
         /// <summary>
         /// 获取一个新的<see cref="ArtistModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>

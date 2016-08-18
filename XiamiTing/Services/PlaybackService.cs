@@ -164,7 +164,8 @@ namespace JacobC.Xiami.Services
                 //Send message to initiate playback
                 if (result == true)
                 {
-                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.UpdatePlaylist, PlaylistService.Instance.GetModelList().ToList());//如果使用IEnumerable会产生Json转换错误，泛型出错
+                    //TODO: 发送第一条音轨
+                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartTask);
                 }
                 else
                 {
@@ -209,50 +210,55 @@ namespace JacobC.Xiami.Services
         }
         private async void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
         {
-            if (MessageService.GetTypeOfMediaMessage(e.Data) == MediaMessageTypes.TrackChanged)
+            switch (MessageService.GetTypeOfMediaMessage(e.Data))
             {
-                //When foreground app is active change track based on background message
-                await WindowWrapper.Current().Dispatcher.DispatchAsync(() =>
-                {
-                    // If playback stopped then clear the UI
-                    string trackid = MessageService.GetMediaMessage<string>(e.Data);
-                    if (trackid == null)
+                case MediaMessageTypes.TrackChanged:
+                    //When foreground app is active change track based on background message
+                    await WindowWrapper.Current().Dispatcher.DispatchAsync(() =>
                     {
+                        // If playback stopped then clear the UI
+                        string trackid = MessageService.GetMediaMessage<string>(e.Data);
+                        if (trackid == null)
+                        {
 
-                        CurrentPlaying = null;
-                        //albumArt.Source = null;
-                        //txtCurrentTrack.Text = string.Empty;
-                        //prevButton.IsEnabled = false;
-                        //nextButton.IsEnabled = false;
-                        return;
-                    }
+                            CurrentPlaying = null;
+                            //albumArt.Source = null;
+                            //txtCurrentTrack.Text = string.Empty;
+                            //prevButton.IsEnabled = false;
+                            //nextButton.IsEnabled = false;
+                            return;
+                        }
 
-                    //var songIndex = playlistView.GetSongIndexById(trackid);
-                    //var song = playlistView.Songs[songIndex];
+                        //var songIndex = playlistView.GetSongIndexById(trackid);
+                        //var song = playlistView.Songs[songIndex];
 
-                    //// Update list UI
-                    //playlistView.SelectedIndex = songIndex;
+                        //// Update list UI
+                        //playlistView.SelectedIndex = songIndex;
 
-                    //// Update the album art
-                    //albumArt.Source = albumArtCache[song.AlbumArtUri.ToString()];
+                        //// Update the album art
+                        //albumArt.Source = albumArtCache[song.AlbumArtUri.ToString()];
 
-                    //// Update song title
-                    //txtCurrentTrack.Text = song.Title;
+                        //// Update song title
+                        //txtCurrentTrack.Text = song.Title;
 
-                    //// Ensure track buttons are re-enabled since they are disabled when pressed
-                    //prevButton.IsEnabled = true;
-                    //nextButton.IsEnabled = true;
-                });
-                return;
-            }
+                        //// Ensure track buttons are re-enabled since they are disabled when pressed
+                        //prevButton.IsEnabled = true;
+                        //nextButton.IsEnabled = true;
+                    });
+                    return;
 
-            if (MessageService.GetTypeOfMediaMessage(e.Data) == MediaMessageTypes.BackgroundAudioTaskStarted)
-            {
-                // StartBackgroundAudioTask is waiting for this signal to know when the task is up and running
-                // and ready to receive messages
-                DebugWrite("BackgroundAudioTask started");
-                backgroundAudioTaskStarted.Set();
-                return;
+                case MediaMessageTypes.BackgroundAudioTaskStarted:
+                    // StartBackgroundAudioTask is waiting for this signal to know when the task is up and running
+                    // and ready to receive messages
+                    DebugWrite("BackgroundAudioTask started");
+                    backgroundAudioTaskStarted.Set();
+                    return;
+                case MediaMessageTypes.SkipNext:
+                    SkipNext();
+                    return;
+                case MediaMessageTypes.SkipPrevious:
+                    SkipPrevious();
+                    return;
             }
         }
         private async void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args)
@@ -267,6 +273,9 @@ namespace JacobC.Xiami.Services
                 //UpdateTransportControls(currentState);
             });
         }
+
+        #endregion
+
 
         public void PlayTrack(SongModel song)
         {
@@ -283,15 +292,12 @@ namespace JacobC.Xiami.Services
             else
             {
                 // Switch to the selected track
-                MessageService.SendMediaMessageToBackground(MediaMessageTypes.TrackChanged, song.MediaUri);
-            }
-
-            if (MediaPlayerState.Paused == CurrentPlayer.CurrentState)
-            {
-                CurrentPlayer.Play();
+                MessageService.SendMediaMessageToBackground(MediaMessageTypes.PlaySong, song);
             }
         }
-
-        #endregion
+        public void SkipNext()
+        { }
+        public void SkipPrevious()
+        { }
     }
 }

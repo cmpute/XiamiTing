@@ -13,12 +13,7 @@ namespace JacobC.Xiami.Models
     public class CollectionModel : LovableModelBase<uint>
     {
 
-        static Dictionary<uint, CollectionModel> _dict;
-        static CollectionModel()
-        {
-            if (SettingsService.Instance.CacheItemsInDict)
-                _dict = new Dictionary<uint, CollectionModel>();
-        }
+        static Dictionary<uint, CollectionModel> _dict = new Dictionary<uint, CollectionModel>();
         /// <summary>
         /// 获取一个新的<see cref="CollectionModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>

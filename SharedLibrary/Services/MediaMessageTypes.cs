@@ -1,24 +1,23 @@
 ﻿namespace JacobC.Xiami.Services
 {
     /*
-     * 将播放方法改成仅仅播放当前轨和下一轨，在更改下一轨时通知后台
-     * 这样的话消息类型仅有Resumed,Suspended,BackgroundAudioTaskStarted
-     * SkipNext,SkipPrevious,StartPlayback
-     * TrackChanged,NextTrackChanged
-     * 
+     * 播放只用传递Xiamiid即可
      */
     /// <summary>
     /// 确定消息类型的枚举
     /// </summary>
     public enum MediaMessageTypes
     {
+        //发向后台
         AppResumed,
         AppSuspended,
+        StartTask,
+        PlaySong,
+        StartPlayback,
+        //发向前台
         BackgroundAudioTaskStarted,
         SkipNext,
         SkipPrevious,
-        StartPlayback,
-        TrackChanged,
-        UpdatePlaylist
+        TrackChanged
     }
 }

@@ -10,6 +10,7 @@ using Template10.Common;
 using Template10.Utils;
 using System.Threading;
 using Windows.Media.Playback;
+using Windows.Media.Core;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -22,6 +23,9 @@ namespace JacobC.Xiami.Services
     /// </summary>
     public class PlaylistService
     {
+        //TODO: 尝试其他方法完成无缝播放，系统的mediaplayer是不会缓存下一轨的(如果缓存可以将所有播放任务均交给后台)
+        readonly Uri IdleSongPath = new Uri("http://www.tonycuffe.com/mp3/tail%20toddle.mp3");
+
         static PlaylistService _instance;
         /// <summary>
         /// 获取当前播放列表实例
@@ -56,32 +60,21 @@ namespace JacobC.Xiami.Services
             //System.Diagnostics.Debugger.Break();
             //await JacobC.Xiami.Net.WebApi.Instance.GetAlbumInfo(am);
             //_Playlist = am.SongList.Select((sm) => new SongViewModel(sm) { ListIndex = i++ }).ToObservableCollection();
-            _Playlist = new ObservableCollection<SongViewModel>();
+            //_Playlist = new ObservableCollection<SongViewModel>();
+            await Task.CompletedTask;
         }
 
-        private MediaPlaybackList _Medialist;
-        /// <summary>
-        /// 获取用于后台Mediaplayer的播放列表的唯一实例
-        /// </summary>
-        public MediaPlaybackList Medialist
+        //获取下一首播放的歌曲，提前计算地址
+        private SongModel GetNext()
         {
-            get
-            {
-                if (_Playlist == null)
-                    InitPlaylist();
-                return _Medialist;
-            }
+            throw new NotImplementedException();
         }
 
-        public void InitPlaylist()
+        private void InitPlaylist()
         {
             int i = 0;
             var list = InitPlaylistE().ToList();
-            _Playlist = list.Select(sm=>new SongViewModel(sm) { ListIndex = i++}).ToObservableCollection();
-            _Medialist = new MediaPlaybackList();
-            _Medialist.AutoRepeatEnabled = true;//待从设置修改
-            foreach (var item in list)
-                _Medialist.Items.Add(new MediaPlaybackItem(Windows.Media.Core.MediaSource.CreateFromUri(new Uri(Net.DataApi.GetDownloadLinkSync(item.XiamiID, false)))));
+            _Playlist = list.Select(sm => new SongViewModel(sm) { ListIndex = i++ }).ToObservableCollection();
         }
         public IEnumerable<SongModel> InitPlaylistE()
         {
@@ -97,7 +90,7 @@ namespace JacobC.Xiami.Services
                 sm = SongModel.GetNew(1770914850);
                 sm.Name = $"Give My Regards{i}";
                 sm.Album = AlbumModel.GetNew(504506);
-                sm.MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring02.wma");
+                sm.MediaUri = IdleSongPath;
                 sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/5045061333262175_2.jpg");
                 yield return sm;
             }

@@ -13,12 +13,8 @@ namespace JacobC.Xiami.Models
     public class SongModel : LovableModelBase<uint>
     {
 
-        static Dictionary<uint, SongModel> _dict;
-        static SongModel()
-        {
-            if (SettingsService.Instance.CacheItemsInDict)
-                _dict = new Dictionary<uint, SongModel>();
-        }
+        //TODO: 在Artist,Album,Song之间使用弱引用WeakReference
+        static Dictionary<uint, SongModel> _dict = new Dictionary<uint, SongModel>();
         /// <summary>
         /// 获取一个新的<see cref="SongModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>

@@ -62,7 +62,7 @@ namespace JacobC.Xiami.Views
         private void Button_Tapped(object sender, TappedRoutedEventArgs e)
         {
             //System.Diagnostics.Debugger.Break();
-            listView.Items.Remove(((Button)sender).DataContext);
+            PlaylistService.Instance.Playlist.Remove(((Button)sender).DataContext as SongViewModel);
         }
     }
 }

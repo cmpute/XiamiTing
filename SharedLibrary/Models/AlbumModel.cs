@@ -14,12 +14,8 @@ namespace JacobC.Xiami.Models
     [DataContract]
     public class AlbumModel : LovableModelBase<uint>
     {
-        static Dictionary<uint, AlbumModel> _dict;
-        static AlbumModel()
-        {
-            if (SettingsService.Instance.CacheItemsInDict)
-                _dict = new Dictionary<uint, AlbumModel>();
-        }
+        static Dictionary<uint, AlbumModel> _dict = new Dictionary<uint, AlbumModel>();
+
         /// <summary>
         /// 获取一个新的<see cref="AlbumModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>

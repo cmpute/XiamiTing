@@ -13,7 +13,6 @@ namespace JacobC.Xiami.Services
         private SettingsService()
         {
             _helper = new SettingsHelper();
-            _CacheItemsInDict = _helper.Read(nameof(CacheItemsInDict), false);
         }
 
         public SettingsHelper Helper
@@ -66,27 +65,6 @@ namespace JacobC.Xiami.Services
             }
         }
 
-        bool _CacheItemsInDict = true;
-        /// <summary>
-        /// 是否用<see cref="System.Collections.Generic.Dictionary{TKey, TValue}"/>存储歌曲专辑等信息
-        /// </summary>
-        /// <remarks>
-        /// 如果采用字典存储会减少请求次数，但是所有对象由于存在引用不会被清除
-        /// 如果不采用字典存储会每次加载都请求API，但离开后对象被清楚的可能性更高
-        /// </remarks>
-        public bool CacheItemsInDict
-        {
-            get { return _CacheItemsInDict; }
-            set
-            {
-                if (_CacheItemsInDict != value)
-                {
-                    _CacheItemsInDict = value;
-                    _helper.Write(nameof(CacheItemsInDict), value);
-                }
-            }
-        }
-        //TODO: 在Artist,Album,Song之间使用弱引用WeakReference
     }
 }
 

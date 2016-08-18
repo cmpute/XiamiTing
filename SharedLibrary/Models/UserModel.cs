@@ -10,12 +10,8 @@ namespace JacobC.Xiami.Models
     public class UserModel : XiamiModelBase<uint>
     {
         
-        static Dictionary<uint, UserModel> _dict;
-        static UserModel()
-        {
-            if (SettingsService.Instance.CacheItemsInDict)
-                _dict = new Dictionary<uint, UserModel>();
-        }
+        static Dictionary<uint, UserModel> _dict = new Dictionary<uint, UserModel>();
+
         /// <summary>
         /// 获取一个新的<see cref="UserModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>

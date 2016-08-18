@@ -146,9 +146,9 @@ namespace JacobC.Xiami.Services
 
         #region SysteMediaTransportControls related functions and handlers
         /// <summary>
-        /// 通过SystemMediaTransPortControl的API更新Universal Volume Control (UVC)
+        /// 通过<see cref="SystemMediaTransportControls"/>的API更新Universal Volume Control (UVC)
         /// </summary>
-        private void UpdateUVCOnNewTrack(MediaPlaybackItem item)
+        private void UpdateUVCOnNewTrack(SongModel item)
         {
             if (item == null)
             {
@@ -157,17 +157,10 @@ namespace JacobC.Xiami.Services
                 smtc.DisplayUpdater.Update();
                 return;
             }
-
             smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
             smtc.DisplayUpdater.Type = MediaPlaybackType.Music;
-            smtc.DisplayUpdater.MusicProperties.Title = item.Source.CustomProperties[TitleKey] as string;
-
-            var albumArtUri = item.Source.CustomProperties[AlbumArtKey] as Uri;
-            if (albumArtUri != null)
-                smtc.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(albumArtUri);
-            else
-                smtc.DisplayUpdater.Thumbnail = null;
-
+            smtc.DisplayUpdater.MusicProperties.Title = item.Name;
+            smtc.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(item.Album.AlbumArtUri);
             smtc.DisplayUpdater.Update();
         }
 
@@ -208,11 +201,11 @@ namespace JacobC.Xiami.Services
                     break;
                 case SystemMediaTransportControlsButton.Next:
                     DebugWrite("UVC next button pressed", "BackgroundPlayer");
-                    SkipToNext();
+                    MessageService.SendMediaMessageToForeground(MediaMessageTypes.SkipNext);
                     break;
                 case SystemMediaTransportControlsButton.Previous:
                     DebugWrite("UVC previous button pressed", "BackgroundPlayer");
-                    SkipToPrevious();
+                    MessageService.SendMediaMessageToForeground(MediaMessageTypes.SkipPrevious);
                     break;
             }
         }
@@ -296,8 +289,8 @@ namespace JacobC.Xiami.Services
             var item = args.NewItem;
             DebugWrite("PlaybackList_CurrentItemChanged: " + (item == null ? "null" : GetTrackId(item).ToString()), "BackgroundPlayer");
             //System.Diagnostics.Debugger.Break();
-            // 更新UVC
-            UpdateUVCOnNewTrack(item);
+            if (item == null)
+                UpdateUVCOnNewTrack(null);
 
             // 获取当前播放轨
             Uri currentTrackId = null;
@@ -311,16 +304,16 @@ namespace JacobC.Xiami.Services
                 settinghelper.Write(TrackIdKey, currentTrackId?.ToString());
         }
 
-        private void SkipToPrevious()
+        private void PlaySong(SongModel song)
         {
-            smtc.PlaybackStatus = MediaPlaybackStatus.Changing;
-            playbackList.MovePrevious();
-        }
-
-        private void SkipToNext()
-        {
-            smtc.PlaybackStatus = MediaPlaybackStatus.Changing;
-            playbackList.MoveNext();
+            var current = BackgroundMediaPlayer.Current;
+            current.SetUriSource(song.MediaUri);
+            DebugWrite(current.CurrentState.ToString());
+            if (current.CurrentState != MediaPlayerState.Playing && current.CurrentState != MediaPlayerState.Closed)
+            {
+                current.Play();
+            }
+            UpdateUVCOnNewTrack(song);
         }
         #endregion
 
@@ -361,23 +354,21 @@ namespace JacobC.Xiami.Services
                     DebugWrite("Starting Playback", "BackgroundPlayer");
                     StartPlayback();
                     return;
-                case MediaMessageTypes.SkipNext:
-                    DebugWrite("Skipping to next", "BackgroundPlayer");
-                    SkipToNext();
+                case MediaMessageTypes.StartTask:
+                    CreatePlaybackList();
                     return;
-                case MediaMessageTypes.SkipPrevious:
-                    DebugWrite("Skipping to previous", "BackgroundPlayer");
-                    SkipToPrevious();
-                    return;
-                case MediaMessageTypes.TrackChanged:
-                    var index = playbackList.Items.ToList().FindIndex(i => (Uri)i.Source.CustomProperties[TrackIdKey] == MessageService.GetMediaMessage<Uri>(e.Data));
-                    DebugWrite("Skipping to track " + index, "BackgroundPlayer");
+                case MediaMessageTypes.PlaySong:
+                    var song = MessageService.GetMediaMessage<SongModel>(e.Data);
                     smtc.PlaybackStatus = MediaPlaybackStatus.Changing;
-                    playbackList.MoveTo((uint)index);
+                    PlaySong(song);
+                    DebugWrite($"PlaySong ID {song.XiamiID}", "BackgroundPlayer");
                     return;
-                case MediaMessageTypes.UpdatePlaylist:
-                    CreatePlaybackList(MessageService.GetMediaMessage<IEnumerable<SongModel>>(e.Data));
-                    return;
+                //case MediaMessageTypes.TrackChanged:
+                //    var index = playbackList.Items.ToList().FindIndex(i => (Uri)i.Source.CustomProperties[TrackIdKey] == MessageService.GetMediaMessage<Uri>(e.Data));
+                //    DebugWrite("Skipping to track " + index, "BackgroundPlayer");
+                //    smtc.PlaybackStatus = MediaPlaybackStatus.Changing;
+                //    playbackList.MoveTo((uint)index);
+                //    return;
             }
 
         }
@@ -386,20 +377,11 @@ namespace JacobC.Xiami.Services
         /// 为从前台任务收到的列表创建播放列表
         /// </summary>
         /// <param name="songs"></param>
-        void CreatePlaybackList(IEnumerable<SongModel> songs)
+        void CreatePlaybackList()
         {
             // 生成新的列表并开启循环
             playbackList = new MediaPlaybackList();
-            playbackList.AutoRepeatEnabled = true;
-            foreach (var song in songs)
-            {
-                var source = MediaSource.CreateFromUri(song.MediaUri);
-                source.CustomProperties[TrackIdKey] = song.MediaUri;
-                source.CustomProperties[TitleKey] = song.Name;
-                source.CustomProperties[AlbumArtKey] = song.Album.AlbumArtUri;
-                playbackList.Items.Add(new MediaPlaybackItem(source));
-                DebugWrite($"song added {song.MediaUri.ToString()}", "BackgroundPlayer");
-            }
+            //playbackList.AutoRepeatEnabled = true;
             BackgroundMediaPlayer.Current.AutoPlay = false;// 关闭自动播放
             BackgroundMediaPlayer.Current.Source = playbackList;
             playbackList.CurrentItemChanged += PlaybackList_CurrentItemChanged;
