@@ -12,7 +12,7 @@ using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Data ;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -63,6 +63,14 @@ namespace JacobC.Xiami.Views
         {
             //System.Diagnostics.Debugger.Break();
             PlaylistService.Instance.Playlist.Remove(((Button)sender).DataContext as SongViewModel);
+            //判断是否在播放
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var target = ((Button)sender).DataContext as SongViewModel;
+            PlaybackService.Instance.PlayTrack(target.Model);
+            PlaylistService.Instance.CurrentPlaying = target;
         }
     }
 }

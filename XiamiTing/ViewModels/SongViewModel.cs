@@ -58,25 +58,5 @@ namespace JacobC.Xiami.ViewModels
         /// 获取或设置是否正在播放
         /// </summary>
         public bool IsPlaying { get { return _IsPlaying; } set { Set(ref _IsPlaying, value); } }
-
-        private DelegateCommand<object> _DeleteCommand;
-        public DelegateCommand<object> DeleteCommand => _DeleteCommand ?? (_DeleteCommand = new DelegateCommand<object>((model) =>
-        {
-            //TODO: 判断是否在播放
-            Services.PlaylistService.Instance.Playlist.Remove(this);
-        }));
-
-        private DelegateCommand<object> _LoveCommand;
-        public DelegateCommand<object> LoveCommand => _LoveCommand ?? (_LoveCommand = new DelegateCommand<object>((model) =>
-        {
-            Model.IsLoved = !Model.IsLoved;
-        }));
-
-        private DelegateCommand<object> _PlayTrackCommand;
-        public DelegateCommand<object> PlayTrackCommand => _PlayTrackCommand ?? (_PlayTrackCommand = new DelegateCommand<object>((model) =>
-        {
-            PlaybackService.Instance.PlayTrack(this.Model);
-            PlaylistService.Instance.CurrentPlaying = this;
-        }));
     }
 }

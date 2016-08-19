@@ -107,6 +107,9 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\SongItemPresenter.xaml.cs">
+      <DependentUpon>SongItemPresenter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="IncrementalLoadingBase.cs" />
     <Compile Include="Models\AlbumModel.cs" />
     <Compile Include="Models\ArtistModel.cs" />
@@ -129,6 +132,16 @@
     <Compile Include="Services\StateEnum.cs" />
     <Compile Include="Services\VisualStateSender.cs" />
     <EmbeddedResource Include="Properties\SharedLibrary.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Controls\SongItemPresenter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

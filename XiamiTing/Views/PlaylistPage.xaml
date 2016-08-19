@@ -138,7 +138,7 @@
                     <TextBlock Grid.Column="3" Text="Album" Style="{StaticResource TitleText}"/>
                 </Grid>
             </ListView.Header>
-            <!--相当于ListViewItem的Style-->
+            <!--相当于ListView的ItemPresenter的Style-->
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Template">
@@ -416,7 +416,7 @@
                                            Text="{x:Bind ListIndex}" HorizontalAlignment="Center"/>
                             <Button Style="{StaticResource EmptyButtonForIcon}" HorizontalAlignment="Left"
                                         Visibility="{x:Bind IsHovered, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
-                                        Command="{x:Bind PlayTrackCommand}">
+                                        Click="Button_Click">
                                 <FontIcon Glyph="&#xE7F6;" FontSize="24"/>
                             </Button>
                         </Grid>
