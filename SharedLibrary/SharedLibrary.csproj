@@ -107,6 +107,9 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\SongItem.xaml.cs">
+      <DependentUpon>SongItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SongItemPresenter.xaml.cs">
       <DependentUpon>SongItemPresenter.xaml</DependentUpon>
     </Compile>
@@ -134,6 +137,10 @@
     <EmbeddedResource Include="Properties\SharedLibrary.rd.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\SongItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\SongItemPresenter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -9,16 +9,4 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <ContentControl.Template>
-        <ControlTemplate TargetType="ContentControl">
-            <Grid>
-                <ContentPresenter Content="{TemplateBinding Content}"
-                                      ContentTemplate="{TemplateBinding ContentTemplate}"
-                                      Margin="{TemplateBinding Padding}"
-                                      ContentTransitions="{TemplateBinding ContentTransitions}"
-                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-            </Grid>
-        </ControlTemplate>
-    </ContentControl.Template>
 </ContentControl>
