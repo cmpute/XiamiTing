@@ -176,9 +176,9 @@ namespace JacobC.Xiami.Controls
         private void DeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             if (ListIndex == 0)
-                (_LinkedCollection as Collection<SongModel>).RemoveAt(_LinkedList.IndexFromContainer(_LinkedItem));
-            if (_LinkedCollection is Collection<SongModel>)
-                (_LinkedCollection as Collection<SongModel>).RemoveAt(ListIndex - 1); ;
+                (_LinkedCollection as IList<SongModel>).RemoveAt(_LinkedList.IndexFromContainer(_LinkedItem));
+            if (_LinkedCollection is IList<SongModel>)
+                (_LinkedCollection as IList<SongModel>).RemoveAt(ListIndex - 1);
         }
     }
 }

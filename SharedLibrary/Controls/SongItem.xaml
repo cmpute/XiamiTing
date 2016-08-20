@@ -70,13 +70,13 @@
                        VerticalAlignment="Center"
                        Foreground="{x:Bind NormalIconForeground}"
                        Text="{x:Bind ListIndex, Mode=OneWay}" HorizontalAlignment="Center"/>
-            <Button x:Name="PlayButton"  Style="{StaticResource EmptyButtonForIcon}" HorizontalAlignment="Left" Visibility="Collapsed">
+            <Button x:Name="PlayButton"  Style="{StaticResource EmptyButtonForIcon}" HorizontalAlignment="Left" Visibility="Collapsed" Margin="-4,0,0,-4">
                 <FontIcon Glyph="&#xE7F6;" FontSize="24"/>
             </Button>
         </Grid>
-        <TextBlock Grid.Column="1" Text="{x:Bind ItemSource.Name, Mode=OneWay}"/>
-        <TextBlock Grid.Column="2" Text="ItemSource.TrackArtist"/>
-        <TextBlock Grid.Column="3" Text="ItemSource.Album.Name"/>
+        <TextBlock Grid.Column="1" Text="{x:Bind ItemSource.Name, Mode=OneWay}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="2" Text="ItemSource.TrackArtist" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="3" Text="ItemSource.Album.Name" VerticalAlignment="Center"/>
         <CheckBox Grid.Column="4" Margin="4,0,0,0" IsChecked="{x:Bind ItemSource.IsLoved, Converter={StaticResource ToNullableConverter}, Mode=TwoWay}">
             <Control.Template>
                 <ControlTemplate>

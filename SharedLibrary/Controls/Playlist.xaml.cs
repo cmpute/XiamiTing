@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JacobC.Xiami.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,6 +42,7 @@ namespace JacobC.Xiami.Controls
                   }));
         private void InternalListTypeChanged(DependencyPropertyChangedEventArgs e)
         {
+            //TODO:完成模式更改的更新
             switch((PlaylistType)(e.NewValue))
             {
                 case PlaylistType.LocalPlaylist:
@@ -49,8 +51,9 @@ namespace JacobC.Xiami.Controls
             }
         }
 
-
-
+        /// <summary>
+        /// 获取或设置列表的歌曲来源
+        /// </summary>
         public object SongSource
         {
             get { return (object)GetValue(SongSourceProperty); }
@@ -58,8 +61,6 @@ namespace JacobC.Xiami.Controls
         } 
         public static readonly DependencyProperty SongSourceProperty =
             DependencyProperty.Register("SongSource", typeof(object), typeof(Playlist), new PropertyMetadata(null));
-
-
 
         /// <summary>
         /// 获取或设置列表的选择模式属性
@@ -85,16 +86,86 @@ namespace JacobC.Xiami.Controls
         //public event EventHandler<ChangedEventArgs<ListViewSelectionMode>> SelectionModeChanged;
         private void InternalSelectionModeChanged(DependencyPropertyChangedEventArgs e)
         {
-
+            
         }
 
+        /// <summary>
+        /// 对选中歌曲项进行操作
+        /// </summary>
+        /// <param name="operation">操作内容</param>
+        public void OperateSelectedItems(SelectionOperation operation)
+        {
+            if(operation == SelectionOperation.Delete)
+            {
+                while (Songlist.SelectedIndex > 0)
+                    (Songlist.ItemsSource as IList<SongModel>).RemoveAt(Songlist.SelectedIndex);
+                return;
+            }
+            //Action<SongModel> action = null;
+            
+            //switch(operation)
+            //{
+            //}
+            //foreach (var item in Songlist.SelectedItems)
+            //    action?.Invoke(item as SongModel);
+        }
+
+        /// <summary>
+        /// 判断是否允许对歌曲项进行操作
+        /// </summary>
+        /// <param name="operation">操作内容</param>
+        public bool CanOperateItem(SelectionOperation operation)
+        {
+            switch(operation)
+            {
+                case SelectionOperation.Delete:
+                    return Songlist.SelectedIndex > 0;
+                default:
+                    return false;
+            }
+        }
 
     }
 
+    /// <summary>
+    /// 标识播放列表的类别
+    /// </summary>
     public enum PlaylistType
     {
+        /// <summary>
+        /// 专辑的曲目列表
+        /// </summary>
         AlbumPlaylist,
+        /// <summary>
+        /// 精选集歌曲列表
+        /// </summary>
         CollectionPlaylist,
+        /// <summary>
+        /// 本地播放列表
+        /// </summary>
         LocalPlaylist
+    }
+
+    /// <summary>
+    /// 标识对选中播放列表项的操作类型
+    /// </summary>
+    public enum SelectionOperation
+    {
+        /// <summary>
+        /// 从列表中删除选中歌曲
+        /// </summary>
+        Delete,
+        /// <summary>
+        /// 收藏选中歌曲
+        /// </summary>
+        Love,
+        /// <summary>
+        /// 播放选中歌曲
+        /// </summary>
+        Play,
+        /// <summary>
+        /// 添加到本地播放列表
+        /// </summary>
+        AddToPlaylist
     }
 }

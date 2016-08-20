@@ -37,7 +37,8 @@
                   SelectionMode="{x:Bind SelectionMode, Mode=TwoWay}"
                   CanReorderItems="True" AllowDrop="True"
                   HorizontalContentAlignment="Stretch"
-                  ItemsSource="{x:Bind SongSource}">
+                  ItemsSource="{x:Bind SongSource}"
+                  Padding="0">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Template">
@@ -111,16 +112,16 @@
                                                     <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectCheckBoxTransform"
                                                                         Storyboard.TargetProperty="X">
                                                         <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
-                                                        <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="-24" KeySpline="0.1,0.9,0.2,1"/>
+                                                        <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="-16" KeySpline="0.1,0.9,0.2,1"/>
                                                     </DoubleAnimationUsingKeyFrames>
                                                     <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectClipTransform"
                                                                        Storyboard.TargetProperty="X">
                                                         <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
-                                                        <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="24" KeySpline="0.1,0.9,0.2,1"/>
+                                                        <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="16" KeySpline="0.1,0.9,0.2,1"/>
                                                     </DoubleAnimationUsingKeyFrames>
                                                     <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenterTranslateTransform"
                                                                        Storyboard.TargetProperty="X">
-                                                        <EasingDoubleKeyFrame KeyTime="0:0:0" Value="24"/>
+                                                        <EasingDoubleKeyFrame KeyTime="0:0:0" Value="16"/>
                                                         <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="0" KeySpline="0.1,0.9,0.2,1"/>
                                                     </DoubleAnimationUsingKeyFrames>
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare" Storyboard.TargetProperty="Visibility">
@@ -133,22 +134,22 @@
                                                 <Storyboard>
                                                     <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectCheckBoxTransform"
                                                                         Storyboard.TargetProperty="X">
-                                                        <EasingDoubleKeyFrame KeyTime="0:0:0" Value="-24"/>
+                                                        <EasingDoubleKeyFrame KeyTime="0:0:0" Value="-16"/>
                                                         <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="0" KeySpline="0.1,0.9,0.2,1"/>
                                                     </DoubleAnimationUsingKeyFrames>
                                                     <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectClipTransform"
                                                                        Storyboard.TargetProperty="X">
-                                                        <EasingDoubleKeyFrame KeyTime="0:0:0" Value="24"/>
+                                                        <EasingDoubleKeyFrame KeyTime="0:0:0" Value="16"/>
                                                         <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="0" KeySpline="0.1,0.9,0.2,1"/>
                                                     </DoubleAnimationUsingKeyFrames>
                                                     <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenterTranslateTransform"
                                                                        Storyboard.TargetProperty="X">
-                                                        <EasingDoubleKeyFrame KeyTime="0:0:0" Value="-24"/>
+                                                        <EasingDoubleKeyFrame KeyTime="0:0:0" Value="-16"/>
                                                         <SplineDoubleKeyFrame KeyTime="0:0:0.333" Value="0" KeySpline="0.1,0.9,0.2,1"/>
                                                     </DoubleAnimationUsingKeyFrames>
                                                 </Storyboard>
                                                 <VisualState.Setters>
-                                                    <Setter Target="ContentPresenterGrid.Margin" Value="24,0,0,0"/>
+                                                    <Setter Target="ContentPresenterGrid.Margin" Value="16,0,0,0"/>
                                                     <Setter Target="MultiSelectSquare.Visibility" Value="Visible"/>
                                                     <Setter Target="MultiSelectCheck.Visibility" Value="Visible"/>
                                                 </VisualState.Setters>
