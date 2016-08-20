@@ -107,11 +107,12 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\FontIconButton.cs" />
+    <Compile Include="Controls\Playlist.xaml.cs">
+      <DependentUpon>Playlist.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SongItem.xaml.cs">
       <DependentUpon>SongItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SongItemPresenter.xaml.cs">
-      <DependentUpon>SongItemPresenter.xaml</DependentUpon>
     </Compile>
     <Compile Include="IncrementalLoadingBase.cs" />
     <Compile Include="Models\AlbumModel.cs" />
@@ -137,11 +138,16 @@
     <EmbeddedResource Include="Properties\SharedLibrary.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\SongItem.xaml">
+    <Page Include="Controls\FontIconButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Controls\Playlist.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\SongItemPresenter.xaml">
+    <Page Include="Controls\SongItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

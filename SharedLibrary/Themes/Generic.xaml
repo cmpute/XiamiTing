@@ -4,5 +4,7 @@
     xmlns:local="using:JacobC.Xiami.Controls">
 
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ms-appx:///SharedLibrary/Controls/FontIconButton.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
+ 

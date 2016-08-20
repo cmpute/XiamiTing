@@ -18,7 +18,17 @@
             <Setter Property="HorizontalAlignment" Value="Left"/>
         </Style>
         <t10c:ChangeTypeConverter x:Key="ToNullableConverter"/>
+        <Style TargetType="Button" x:Key="EmptyButtonForIcon">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
+    
     <Grid x:Name="RootGrid">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="General">
@@ -26,6 +36,14 @@
                 <VisualState x:Name="Selected">
                 </VisualState>
                 <VisualState x:Name="PointerOver">
+                    <VisualState.Setters>
+                        <Setter Target="IndexNumber.Visibility" Value="Collapsed"/>
+                        <Setter Target="PlayButton.Visibility" Value="Visible"/>
+                        <Setter Target="FlyoutButton.Visibility" Value="Visible"/>
+                        <Setter Target="DeleteButton.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="PointerOverSelected">
                     <VisualState.Setters>
                         <Setter Target="IndexNumber.Visibility" Value="Collapsed"/>
                         <Setter Target="PlayButton.Visibility" Value="Visible"/>
@@ -52,7 +70,7 @@
                        VerticalAlignment="Center"
                        Foreground="{x:Bind NormalIconForeground}"
                        Text="{x:Bind ListIndex, Mode=OneWay}" HorizontalAlignment="Center"/>
-            <Button x:Name="PlayButton" HorizontalAlignment="Left" Visibility="Collapsed">
+            <Button x:Name="PlayButton"  Style="{StaticResource EmptyButtonForIcon}" HorizontalAlignment="Left" Visibility="Collapsed">
                 <FontIcon Glyph="&#xE7F6;" FontSize="24"/>
             </Button>
         </Grid>
@@ -116,12 +134,18 @@
                 </ControlTemplate>
             </Control.Template>
         </CheckBox>
-        <FontIcon Style="{StaticResource sFontIcon}" x:Name="FlyoutButton"
-                  Foreground="{x:Bind NormalIconForeground}"
-                  Visibility="Collapsed"
-                  Grid.Column="4" Glyph="&#xE169;" 
-                  Margin="28,0,0,0"/>
-        <Button x:Name="DeleteButton" Grid.Column="4" Margin="52,0,0,0" Tapped="DeleteButton_Tapped">
+        <Button x:Name="FlyoutButton" Margin="28,0,0,0" 
+                Style="{StaticResource EmptyButtonForIcon}"
+                Visibility="Collapsed"
+                Grid.Column="4" >
+            <Button.Flyout>
+                <Flyout>
+                    
+                </Flyout>
+            </Button.Flyout>
+            <FontIcon Style="{StaticResource sFontIcon}" Foreground="{x:Bind NormalIconForeground}" Glyph="&#xE169;" />
+        </Button>
+        <Button x:Name="DeleteButton" Grid.Column="4" Margin="52,0,0,0" Tapped="DeleteButton_Tapped" Style="{StaticResource EmptyButtonForIcon}" Visibility="Collapsed">
             <FontIcon Style="{StaticResource sFontIcon}" Foreground="{x:Bind NormalIconForeground}" Glyph="&#xE711;"/>
         </Button>
     </Grid>
