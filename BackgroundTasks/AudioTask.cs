@@ -29,7 +29,6 @@ namespace JacobC.Xiami.Services
         private const string TitleKey = "title";
         private const string AlbumArtKey = "albumart";
         private SystemMediaTransportControls smtc;
-        private MediaPlaybackList playbackList = new MediaPlaybackList();
         private BackgroundTaskDeferral deferral; // 保持任务活动
         private AppState foregroundAppState = AppState.Unknown;
         private ManualResetEvent backgroundTaskStarted = new ManualResetEvent(false);
@@ -38,13 +37,6 @@ namespace JacobC.Xiami.Services
         #endregion
 
         #region Helper methods
-        Uri GetCurrentTrackId()
-        {
-            if (playbackList == null)
-                return null;
-
-            return GetTrackId(playbackList.CurrentItem);
-        }
 
         Uri GetTrackId(MediaPlaybackItem item)
         {
@@ -118,13 +110,6 @@ namespace JacobC.Xiami.Services
                 settinghelper.Write(nameof(BackgroundMediaPlayer.Current.Position), BackgroundMediaPlayer.Current.Position.ToString());
                 settinghelper.Write(nameof(BackgroundTaskState), BackgroundTaskState.Canceled.ToString());
                 settinghelper.Write(nameof(AppState), Enum.GetName(typeof(AppState), foregroundAppState));
-
-                // 取消列表更改事件
-                if (playbackList != null)
-                {
-                    playbackList.CurrentItemChanged -= PlaybackList_CurrentItemChanged;
-                    playbackList = null;
-                }
 
                 // 取消其他事件的Handler
                 BackgroundMediaPlayer.MessageReceivedFromForeground -= BackgroundMediaPlayer_MessageReceivedFromForeground;
@@ -268,14 +253,6 @@ namespace JacobC.Xiami.Services
             //    settinghelper.Write(TrackIdKey, currentTrackId?.ToString());
         }
 
-        private void PlaySong(SongModel song)
-        {
-            var current = BackgroundMediaPlayer.Current;
-            current.SetUriSource(song.MediaUri);
-            if (current.CurrentState != MediaPlayerState.Playing && current.CurrentState != MediaPlayerState.Closed)
-                StartPlayback();
-            UpdateUVCOnNewTrack(song);
-        }
         #endregion
 
         #region Background Media Player Handlers
@@ -307,8 +284,8 @@ namespace JacobC.Xiami.Services
                 case MediaMessageTypes.AppSuspended:
                     DebugWrite("App suspending", "BackgroundPlayer"); // 应用被挂起，在此处保存应用状态
                     foregroundAppState = AppState.Suspended;
-                    var currentTrackId = GetCurrentTrackId();
-                    settinghelper.Write(TrackIdKey, currentTrackId?.ToString());
+                    //var currentTrackId = GetCurrentTrackId();
+                    //settinghelper.Write(TrackIdKey, currentTrackId?.ToString());
                     return;
                 case MediaMessageTypes.AppResumed:
                     DebugWrite("App resuming", "BackgroundPlayer"); // 应用继续
@@ -319,10 +296,14 @@ namespace JacobC.Xiami.Services
                     DebugWrite("Starting Playback", "BackgroundPlayer");
                     StartPlayback();
                     return;
-                case MediaMessageTypes.PlaySong:
+                case MediaMessageTypes.SetSong:
                     var song = MessageService.GetMediaMessage<SongModel>(e.Data);
                     smtc.PlaybackStatus = MediaPlaybackStatus.Changing;
-                    PlaySong(song);
+                    var current = BackgroundMediaPlayer.Current;
+                    current.SetUriSource(song.MediaUri);
+                    //if (current.CurrentState != MediaPlayerState.Playing && current.CurrentState != MediaPlayerState.Closed)
+                    //    StartPlayback();
+                    UpdateUVCOnNewTrack(song);
                     DebugWrite($"PlaySong {song.XiamiID}", "BackgroundPlayer");
                     return;
             }

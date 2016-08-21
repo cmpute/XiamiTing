@@ -93,7 +93,7 @@ namespace JacobC.Xiami.Services
             //prevButton.IsEnabled = true;
             //nextButton.IsEnabled = true;
             SettingsService.Instance.Playback.Write(nameof(BackgroundTaskState), BackgroundTaskState.Unknown.ToString());
-            //playButton.Content = "| |";
+            //playButton.Content = "||";
 
             AddMessageHandler();
         }
@@ -101,6 +101,7 @@ namespace JacobC.Xiami.Services
         {
             CurrentPlayer.CurrentStateChanged += this.MediaPlayer_CurrentStateChanged;
             AddMessageHandler();
+            BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
             //TODO: 发送第一条音轨
         }
         public void StartPlayback()
@@ -189,8 +190,30 @@ namespace JacobC.Xiami.Services
                 StartBackgroundAudioTask();
             }
             else
-                MessageService.SendMediaMessageToBackground(MediaMessageTypes.PlaySong, song);
+            {
+                MessageService.SendMediaMessageToBackground(MediaMessageTypes.SetSong, song);
+                MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartPlayback);
+
+                PlaylistService.Instance.CurrentPlaying = song;
+            }
         }
+
+        private void Current_CurrentStateChanged(MediaPlayer sender, object args)
+        {
+            var e = new ChangedEventArgs<MediaPlayerState>(CurrentState, sender.CurrentState);
+            StateChanged.Invoke(null, e);
+            CurrentState = sender.CurrentState;
+        }
+
+        /// <summary>
+        /// 获取后台播放器当前的状态
+        /// </summary>
+        public MediaPlayerState CurrentState { get; set; }
+        /// <summary>
+        /// 当<see cref="CurrentState"/>属性发生改变时发生
+        /// </summary>
+        public EventHandler<ChangedEventArgs<MediaPlayerState>> StateChanged;
+
         public void SkipNext()
         { }
         public void SkipPrevious()

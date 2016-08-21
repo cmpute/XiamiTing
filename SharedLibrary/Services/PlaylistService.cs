@@ -103,13 +103,6 @@ namespace JacobC.Xiami.Services
         private void InitPlaylist()
         {
             _Playlist = InitPlaylistE().ToObservableCollection();
-            _Playlist.CollectionChanged += InternalCollectionChanged;
-        }
-
-        private void InternalCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            //Windows.Storage.ApplicationData.Current.LocalSettings
-            //throw new NotImplementedException();
         }
 
         public IEnumerable<SongModel> InitPlaylistE()

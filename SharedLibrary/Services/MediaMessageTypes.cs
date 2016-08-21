@@ -11,7 +11,7 @@
         //发向后台
         AppResumed,
         AppSuspended,
-        PlaySong,
+        SetSong,
         StartPlayback,
 
         //发向前台

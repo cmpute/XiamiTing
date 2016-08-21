@@ -20,15 +20,6 @@
             <Setter Property="HorizontalAlignment" Value="Left"/>
         </Style>
         <t10c:ChangeTypeConverter x:Key="ToNullableConverter"/>
-        <Style TargetType="Button" x:Key="EmptyButtonForIcon">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <ContentPresenter/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </UserControl.Resources>
     
     <Grid x:Name="RootGrid">

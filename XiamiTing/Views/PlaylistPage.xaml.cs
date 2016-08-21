@@ -62,7 +62,7 @@ namespace JacobC.Xiami.Views
         private void Button_Tapped(object sender, TappedRoutedEventArgs e)
         {
             //System.Diagnostics.Debugger.Break();
-            PlaylistService.Instance.Playlist.Remove(((Button)sender).DataContext as SongItem);
+            PlaylistService.Instance.Playlist.Remove(((Button)sender).DataContext as SongModel);
             //判断是否在播放
         }
 

@@ -192,7 +192,6 @@ namespace JacobC.Xiami.Controls
             //在NetTest中貌似不能使用
             var target = ((Button)sender).DataContext as SongModel;
             PlaybackService.Instance.PlayTrack(target);
-            PlaylistService.Instance.CurrentPlaying = target;
         }
     }
 }

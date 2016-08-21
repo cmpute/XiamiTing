@@ -107,6 +107,15 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\MusicController.declaration.cs">
+      <DependentUpon>MusicController.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MusicController.implement.cs">
+      <DependentUpon>MusicController.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MusicController.xaml.cs">
+      <DependentUpon>MusicController.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Playlist.xaml.cs">
       <DependentUpon>Playlist.xaml</DependentUpon>
     </Compile>
@@ -138,6 +147,10 @@
     <EmbeddedResource Include="Properties\SharedLibrary.rd.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\MusicController.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Playlist.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
