@@ -34,23 +34,23 @@ namespace JacobC.Xiami.Views
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            Grid source = sender as Grid;
-            source.RegisterPropertyChangedCallback(Grid.TagProperty, (dpsender, dp) => 
-            {
-                int val = (int)(dpsender.GetValue(dp) ?? 0);
-                SongViewModel target = source.DataContext as SongViewModel;
-                target.IsHovered = val > 1;
-                target.IsSelected = (val % 2) != 0;
-            });
+            //Grid source = sender as Grid;
+            //source.RegisterPropertyChangedCallback(Grid.TagProperty, (dpsender, dp) => 
+            //{
+            //    int val = (int)(dpsender.GetValue(dp) ?? 0);
+            //    SongViewModel target = source.DataContext as SongViewModel;
+            //    target.IsHovered = val > 1;
+            //    target.IsSelected = (val % 2) != 0;
+            //});
         }
 
         private DelegateCommand<object> _DeleteCommand;
         public DelegateCommand<object> DeleteCommand => _DeleteCommand ?? (_DeleteCommand = new DelegateCommand<object>((model) =>
         {
-            var Playlist = PlaylistService.Instance.Playlist;
-            for (int i = Playlist.Count - 1; i >= 0; i--)
-                if (Playlist[i].IsSelected)
-                    Playlist.RemoveAt(i);
+            //var Playlist = PlaylistService.Instance.Playlist;
+            //for (int i = Playlist.Count - 1; i >= 0; i--)
+            //    if (Playlist[i].IsSelected)
+            //        Playlist.RemoveAt(i);
         }, (model) => { return listView.SelectedItems.Count != 0; }));
 
 
@@ -68,8 +68,8 @@ namespace JacobC.Xiami.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var target = ((Button)sender).DataContext as SongViewModel;
-            PlaybackService.Instance.PlayTrack(target.Model);
+            var target = ((Button)sender).DataContext as SongModel;
+            PlaybackService.Instance.PlayTrack(target);
             PlaylistService.Instance.CurrentPlaying = target;
         }
     }

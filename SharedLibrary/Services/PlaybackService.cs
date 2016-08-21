@@ -13,7 +13,6 @@ using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
-using JacobC.Xiami.ViewModels;
 
 namespace JacobC.Xiami.Services
 {
@@ -136,7 +135,7 @@ namespace JacobC.Xiami.Services
                 }
                 else
                 {
-                    throw new Exception("Background Audio Task didn't start in expected time");
+                    //throw new Exception("Background Audio Task didn't start in expected time");
                 }
             }).ContinueWith((task) => {
                 if (task.IsCompleted)

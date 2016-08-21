@@ -26,9 +26,7 @@ namespace JacobC.Xiami.Controls
     {
         public SongItem()
         {
-            this.InitializeComponent();
-            this.Loaded += SongItem_Loaded;
-            this.Unloaded += SongItem_Unloaded;
+            this.InitializeComponent();  
         }
 
         #region Link to Parent
@@ -164,7 +162,6 @@ namespace JacobC.Xiami.Controls
               DependencyProperty.Register(nameof(ListIndex), typeof(int),
                   typeof(SongItem), new PropertyMetadata(0));
 
-
         public Brush NormalIconForeground
         {
             get { return (Brush)GetValue(NormalIconForegroundProperty); }
@@ -179,6 +176,15 @@ namespace JacobC.Xiami.Controls
                 (_LinkedCollection as IList<SongModel>).RemoveAt(_LinkedList.IndexFromContainer(_LinkedItem));
             if (_LinkedCollection is IList<SongModel>)
                 (_LinkedCollection as IList<SongModel>).RemoveAt(ListIndex - 1);
+        }
+
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("PlayButton Pressed");
+            //在NetTest中貌似不能使用
+            //var target = ((Button)sender).DataContext as SongModel;
+            //PlaybackService.Instance.PlayTrack(target);
+            //PlaylistService.Instance.CurrentPlaying = target;
         }
     }
 }

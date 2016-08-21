@@ -95,19 +95,29 @@ namespace JacobC.Xiami.Controls
         /// <param name="operation">操作内容</param>
         public void OperateSelectedItems(SelectionOperation operation)
         {
-            if(operation == SelectionOperation.Delete)
+            Action<SongModel> action = null;
+            switch (operation)
             {
-                while (Songlist.SelectedIndex > 0)
-                    (Songlist.ItemsSource as IList<SongModel>).RemoveAt(Songlist.SelectedIndex);
-                return;
+                case SelectionOperation.Delete:
+                    while (Songlist.SelectedIndex >= 0)
+                        (Songlist.ItemsSource as IList<SongModel>).RemoveAt(Songlist.SelectedIndex);
+                    return;
+                case SelectionOperation.Love:
+                    action = model => model.IsLoved = true; // TODO: 在这更改设置的时候会抛出错误
+                    break;
+                case SelectionOperation.SelectAll:
+                    Songlist.SelectAll();
+                    return;
+                case SelectionOperation.SelectOther:
+                    for (int i = 0; i < Songlist.Items.Count; i++)
+                    {
+                        var item = (Songlist.ContainerFromIndex(i) as ListViewItem);
+                        item.IsSelected = !item.IsSelected;
+                    }
+                    return;
             }
-            //Action<SongModel> action = null;
-            
-            //switch(operation)
-            //{
-            //}
-            //foreach (var item in Songlist.SelectedItems)
-            //    action?.Invoke(item as SongModel);
+            foreach (var item in Songlist.SelectedItems)
+                action?.Invoke(item as SongModel);
         }
 
         /// <summary>
@@ -116,10 +126,16 @@ namespace JacobC.Xiami.Controls
         /// <param name="operation">操作内容</param>
         public bool CanOperateItem(SelectionOperation operation)
         {
-            switch(operation)
+            if (operation == SelectionOperation.SelectAll || operation == SelectionOperation.SelectOther)
+                return true;
+            if (Songlist.SelectedIndex < 0)
+                return false;
+            switch (operation)
             {
-                case SelectionOperation.Delete:
-                    return Songlist.SelectedIndex > 0;
+                //case SelectionOperation.Delete:
+                //    return Songlist.SelectedIndex > 0;
+                //case SelectionOperation.Love:
+                //    return true;
                 default:
                     return false;
             }
@@ -156,16 +172,33 @@ namespace JacobC.Xiami.Controls
         /// </summary>
         Delete,
         /// <summary>
+        /// 全选
+        /// </summary>
+        SelectAll,
+        /// <summary>
+        /// 反选
+        /// </summary>
+        SelectOther,
+        /// <summary>
+        /// 取消全部选择(通过全选+反选或者切换选择模式可以完成)
+        /// </summary>
+        //UnSelectAll,
+
+        /// <summary>
         /// 收藏选中歌曲
         /// </summary>
         Love,
         /// <summary>
-        /// 播放选中歌曲
+        /// 添加到精选集
         /// </summary>
-        Play,
+        AddToCollection,
         /// <summary>
         /// 添加到本地播放列表
         /// </summary>
-        AddToPlaylist
+        AddToPlaylist,
+        /// <summary>
+        /// 下载选中歌曲
+        /// </summary>
+        Download
     }
 }

@@ -14,7 +14,6 @@ using Windows.Media.Core;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
-using JacobC.Xiami.ViewModels;
 
 namespace JacobC.Xiami.Services
 {
@@ -32,11 +31,11 @@ namespace JacobC.Xiami.Services
         /// </summary>
         public static PlaylistService Instance { get { return _instance ?? (_instance = new PlaylistService()); } }
 
-        SongViewModel _CurrentPlaying = null;
+        SongModel _CurrentPlaying = null;
         /// <summary>
         /// 获取当前选中或播放的音轨
         /// </summary>
-        public SongViewModel CurrentPlaying
+        public SongModel CurrentPlaying
         {
             get
             {
@@ -48,28 +47,26 @@ namespace JacobC.Xiami.Services
             {
                 if (_CurrentPlaying != value)
                 {
-                    CurrentIndexChanging.Invoke(this, new ChangedEventArgs<SongViewModel>(_CurrentPlaying, value));
+                    CurrentIndexChanging.Invoke(this, new ChangedEventArgs<SongModel>(_CurrentPlaying, value));
                     InternalCurrentIndexChanging(value);
-                    if (_CurrentPlaying != null) _CurrentPlaying.IsPlaying = false;
                     _CurrentPlaying = value;
-                    if (value != null) value.IsPlaying = true;
                 }
             }
         }
         /// <summary>
         /// 在当前播放的音轨发生改变时发生
         /// </summary>
-        public event EventHandler<ChangedEventArgs<SongViewModel>> CurrentIndexChanging;
-        private void InternalCurrentIndexChanging(SongViewModel newsong)
+        public event EventHandler<ChangedEventArgs<SongModel>> CurrentIndexChanging;
+        private void InternalCurrentIndexChanging(SongModel newsong)
         {
             //TODO: 向后台发送消息
         }
 
-        private ObservableCollection<SongViewModel> _Playlist;
+        private ObservableCollection<SongModel> _Playlist;
         /// <summary>
         /// 获取播放列表的唯一实例
         /// </summary>
-        public ObservableCollection<SongViewModel> Playlist
+        public ObservableCollection<SongModel> Playlist
         {
             get
             {
@@ -92,8 +89,8 @@ namespace JacobC.Xiami.Services
             //int i = 0;
             //System.Diagnostics.Debugger.Break();
             //await JacobC.Xiami.Net.WebApi.Instance.GetAlbumInfo(am);
-            //_Playlist = am.SongList.Select((sm) => new SongViewModel(sm) { ListIndex = i++ }).ToObservableCollection();
-            //_Playlist = new ObservableCollection<SongViewModel>();
+            //_Playlist = am.SongList.Select((sm) => new SongModel(sm) { ListIndex = i++ }).ToObservableCollection();
+            //_Playlist = new ObservableCollection<SongModel>();
             await Task.CompletedTask;
         }
 
@@ -105,9 +102,7 @@ namespace JacobC.Xiami.Services
 
         private void InitPlaylist()
         {
-            int i = 0;
-            var list = InitPlaylistE().ToList();
-            _Playlist = list.Select(sm => new SongViewModel(sm) { ListIndex = i++ }).ToObservableCollection();
+            _Playlist = InitPlaylistE().ToObservableCollection();
         }
         public IEnumerable<SongModel> InitPlaylistE()
         {
@@ -128,10 +123,25 @@ namespace JacobC.Xiami.Services
                 yield return sm;
             }
         }
-        /// <summary>
-        /// 获取播放列表的Model列表
-        /// </summary>
-        public IEnumerable<SongModel> GetModelList() => Playlist.Select((source) => source.Model);
 
+    }
+
+    /// <summary>
+    /// 标识播放顺序
+    /// </summary>
+    public enum PlayOrder
+    {
+        /// <summary>
+        /// 顺序播放
+        /// </summary>
+        Default,
+        /// <summary>
+        /// 重复单轨
+        /// </summary>
+        Repeat,
+        /// <summary>
+        /// 循环播放列表
+        /// </summary>
+        RepeatList
     }
 }
