@@ -21,18 +21,14 @@ namespace JacobC.Xiami.Services
     /// </summary>
     public class PlaybackService
     {
-
         static PlaybackService _instance;
         /// <summary>
         /// 获取当前播放列表实例
         /// </summary>
         public static PlaybackService Instance { get { return _instance ?? (_instance = new PlaybackService()); } }
 
+        #region Codes for BackgroundTask
 
-        #region Codes for Playback
-
-        private AutoResetEvent backgroundAudioTaskStarted = new AutoResetEvent(false);
-        private Dictionary<string, BitmapImage> albumArtCache = new Dictionary<string, BitmapImage>();
         const int RPC_S_SERVER_UNAVAILABLE = -2147023174; // 0x800706BA
 
         private bool _isBackgroundTaskRunning = false;
@@ -66,7 +62,6 @@ namespace JacobC.Xiami.Services
             {
                 MediaPlayer mp = null;
                 int retryCount = 2;//重试次数
-
                 while (mp == null && --retryCount >= 0)
                 {
                     try
@@ -81,81 +76,39 @@ namespace JacobC.Xiami.Services
                             StartBackgroundAudioTask();
                         }
                         else
-                        {
                             throw;
-                        }
                     }
                 }
 
                 if (mp == null)
-                {
                     throw new Exception("Failed to get a MediaPlayer instance.");
-                }
-
                 return mp;
             }
         }
+        //TODO: 完善后台获取失败的方法
         private void ResetAfterLostBackground()
         {
             BackgroundMediaPlayer.Shutdown();
             _isBackgroundTaskRunning = false;
-            backgroundAudioTaskStarted.Reset();
             //prevButton.IsEnabled = true;
             //nextButton.IsEnabled = true;
             SettingsService.Instance.Helper.Write(nameof(BackgroundTaskState), BackgroundTaskState.Unknown.ToString());
             //playButton.Content = "| |";
 
-            try
-            {
-                BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground;
-            }
-            catch (Exception ex)
-            {
-                if (ex.HResult == RPC_S_SERVER_UNAVAILABLE)
-                {
-                    throw new Exception("Failed to get a MediaPlayer instance.");
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            AddMessageHandler();
         }
         public void StartBackgroundAudioTask()
         {
-            AddMediaPlayerEventHandlers();
-            WindowWrapper.Current().Dispatcher.DispatchAsync(() =>
-            {
-                bool result = backgroundAudioTaskStarted.WaitOne(10000);
-                //Send message to initiate playback
-                if (result == true)
-                {
-                    //TODO: 发送第一条音轨
-                    MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartTask);
-                }
-                else
-                {
-                    //throw new Exception("Background Audio Task didn't start in expected time");
-                }
-            }).ContinueWith((task) => {
-                if (task.IsCompleted)
-                {
-                    DebugWrite("Background Audio Task initialized", "MediaPlayer");
-                }
-                else
-                {
-                    DebugWrite("Background Audio Task could not initialized due to an error ::" + task.Exception.ToString(), "MediaPlayer");
-                }
-            });
+            CurrentPlayer.CurrentStateChanged += this.MediaPlayer_CurrentStateChanged;
+            AddMessageHandler();
+            //TODO: 发送第一条音轨
         }
         public void StartPlayback()
         {
             MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartPlayback);
         }
-        private void AddMediaPlayerEventHandlers()
+        private void AddMessageHandler()
         {
-            CurrentPlayer.CurrentStateChanged += this.MediaPlayer_CurrentStateChanged;
-
             try
             {
                 BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground;
@@ -169,15 +122,15 @@ namespace JacobC.Xiami.Services
                     ResetAfterLostBackground();
                 }
                 else
-                {
                     throw;
-                }
             }
         }
+
         private async void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
         {
             switch (MessageService.GetTypeOfMediaMessage(e.Data))
             {
+                /*
                 case MediaMessageTypes.TrackChanged:
                     //When foreground app is active change track based on background message
                     await WindowWrapper.Current().Dispatcher.DispatchAsync(() =>
@@ -194,31 +147,9 @@ namespace JacobC.Xiami.Services
                             //nextButton.IsEnabled = false;
                             return;
                         }
-
-                        //var songIndex = playlistView.GetSongIndexById(trackid);
-                        //var song = playlistView.Songs[songIndex];
-
-                        //// Update list UI
-                        //playlistView.SelectedIndex = songIndex;
-
-                        //// Update the album art
-                        //albumArt.Source = albumArtCache[song.AlbumArtUri.ToString()];
-
-                        //// Update song title
-                        //txtCurrentTrack.Text = song.Title;
-
-                        //// Ensure track buttons are re-enabled since they are disabled when pressed
-                        //prevButton.IsEnabled = true;
-                        //nextButton.IsEnabled = true;
                     });
                     return;
-
-                case MediaMessageTypes.BackgroundAudioTaskStarted:
-                    // StartBackgroundAudioTask is waiting for this signal to know when the task is up and running
-                    // and ready to receive messages
-                    DebugWrite("BackgroundAudioTask started");
-                    backgroundAudioTaskStarted.Set();
-                    return;
+                    */
                 case MediaMessageTypes.SkipNext:
                     SkipNext();
                     return;
@@ -230,14 +161,14 @@ namespace JacobC.Xiami.Services
         private async void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args)
         {
             var currentState = sender.CurrentState; // cache outside of completion or you might get a different value
-            await WindowWrapper.Current().Dispatcher.DispatchAsync(() =>
-            {
-                //// Update state label
-                //txtCurrentState.Text = currentState.ToString();
+            //await WindowWrapper.Current().Dispatcher.DispatchAsync(() =>
+            //{
+            //    // Update state label
+            //    txtCurrentState.Text = currentState.ToString();
 
-                //// Update controls
-                //UpdateTransportControls(currentState);
-            });
+            //    // Update controls
+            //    UpdateTransportControls(currentState);
+            //});
         }
 
         #endregion
@@ -246,7 +177,8 @@ namespace JacobC.Xiami.Services
         public void PlayTrack(SongModel song)
         {
             // Start the background task if it wasn't running
-            if (!IsBackgroundTaskRunning || MediaPlayerState.Closed == CurrentPlayer.CurrentState)
+            //if (!IsBackgroundTaskRunning || MediaPlayerState.Closed == CurrentPlayer.CurrentState)
+            if (!IsBackgroundTaskRunning)
             {
                 // First update the persisted start track
                 SettingsService.Instance.Helper.Write("TrackId", song.MediaUri.ToString());
@@ -256,10 +188,7 @@ namespace JacobC.Xiami.Services
                 StartBackgroundAudioTask();
             }
             else
-            {
-                // Switch to the selected track
                 MessageService.SendMediaMessageToBackground(MediaMessageTypes.PlaySong, song);
-            }
         }
         public void SkipNext()
         { }

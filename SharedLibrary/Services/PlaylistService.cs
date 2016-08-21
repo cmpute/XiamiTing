@@ -23,7 +23,7 @@ namespace JacobC.Xiami.Services
     public class PlaylistService
     {
         //TODO: 尝试其他方法完成无缝播放，系统的mediaplayer是不会缓存下一轨的(如果缓存可以将所有播放任务均交给后台)
-        readonly Uri IdleSongPath = new Uri("http://www.tonycuffe.com/mp3/tail%20toddle.mp3");
+        readonly Uri IdleSongPath = new Uri("http://win.web.rh03.sycdn.kuwo.cn/5732a6217291881c369bc1b89b620f1b/57b99dd7/resource/a1/7/41/1607541714.aac");
 
         static PlaylistService _instance;
         /// <summary>
@@ -47,7 +47,7 @@ namespace JacobC.Xiami.Services
             {
                 if (_CurrentPlaying != value)
                 {
-                    CurrentIndexChanging.Invoke(this, new ChangedEventArgs<SongModel>(_CurrentPlaying, value));
+                    CurrentIndexChanging?.Invoke(this, new ChangedEventArgs<SongModel>(_CurrentPlaying, value));
                     InternalCurrentIndexChanging(value);
                     _CurrentPlaying = value;
                 }

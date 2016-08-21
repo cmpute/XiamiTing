@@ -71,13 +71,12 @@ namespace JacobC.Xiami.Services
             smtc.IsPlayEnabled = true;
             smtc.IsNextEnabled = true;
             smtc.IsPreviousEnabled = true;
-
-            foregroundAppState = settinghelper.ReadAndReset(nameof(AppState), AppState.Unknown); //读取APP状态
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged; //为播放器添加后台控制句柄
             BackgroundMediaPlayer.MessageReceivedFromForeground += BackgroundMediaPlayer_MessageReceivedFromForeground; //初始化消息通道
 
-            if (foregroundAppState != AppState.Suspended)
-                MessageService.SendMediaMessageToForeground(MediaMessageTypes.BackgroundAudioTaskStarted);
+            foregroundAppState = settinghelper.ReadAndReset(nameof(AppState), AppState.Unknown); //读取APP状态
+            //if (foregroundAppState != AppState.Suspended)
+            //    settinghelper.Write("BackgroundAudioStarted", true);
             settinghelper.Write(nameof(BackgroundTaskState), BackgroundTaskState.Running.ToString());
 
             deferral = taskInstance.GetDeferral(); // 这个必须比注册用到了它的event先进行
@@ -87,18 +86,16 @@ namespace JacobC.Xiami.Services
 
             // 关联任务取消和完成的handler
             taskInstance.Task.Completed += TaskCompleted;
-            taskInstance.Canceled += new BackgroundTaskCanceledEventHandler(OnCanceled); // event may raise immediately before continung thread excecution so must be at the end
+            taskInstance.Canceled += OnCanceled;
         }
-
         /// <summary>
         /// 指示后台任务结束
         /// </summary>       
         private void TaskCompleted(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
         {
-            DebugWrite("MyBackgroundAudioTask " + sender.TaskId + " Completed...", "BackgroundPlayer");
+            DebugWrite("BackgroundAudioTask " + sender.TaskId + " Completed...", "BackgroundPlayer");
             deferral.Complete();
         }
-
         /// <summary>
         /// 处理后台任务的取消
         /// </summary>
@@ -109,7 +106,6 @@ namespace JacobC.Xiami.Services
         /// </remarks>
         private void OnCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
-            // You get some time here to save your state before process and resources are reclaimed
             // 在此处可以在进程和资源被收回时保存状态
             DebugWrite("MyBackgroundAudioTask " + sender.Task.TaskId + " Cancel Requested...", "BackgroundPlayer");
             try
@@ -118,7 +114,7 @@ namespace JacobC.Xiami.Services
                 backgroundTaskStarted.Reset();
 
                 // 保存现有状态
-                settinghelper.Write(TrackIdKey, GetCurrentTrackId()?.ToString());
+                //settinghelper.Write(TrackIdKey, GetCurrentTrackId()?.ToString());
                 settinghelper.Write(nameof(BackgroundMediaPlayer.Current.Position), BackgroundMediaPlayer.Current.Position.ToString());
                 settinghelper.Write(nameof(BackgroundTaskState), BackgroundTaskState.Canceled.ToString());
                 settinghelper.Write(nameof(AppState), Enum.GetName(typeof(AppState), foregroundAppState));
@@ -130,7 +126,7 @@ namespace JacobC.Xiami.Services
                     playbackList = null;
                 }
 
-                // 取消其他时间的Handler
+                // 取消其他事件的Handler
                 BackgroundMediaPlayer.MessageReceivedFromForeground -= BackgroundMediaPlayer_MessageReceivedFromForeground;
                 smtc.ButtonPressed -= smtc_ButtonPressed;
                 smtc.PropertyChanged -= smtc_PropertyChanged;
@@ -139,8 +135,9 @@ namespace JacobC.Xiami.Services
             {
                 ErrorWrite(ex, "BackgroundPlayer");
             }
+            //settinghelper.Remove("BackgroundAudioStarted");
             deferral.Complete(); //给出任务完成信号
-            DebugWrite("MyBackgroundAudioTask Cancel complete...", "BackgroundPlayer");
+            DebugWrite("BackgroundAudioTask Cancel complete...", "BackgroundPlayer");
         }
         #endregion
 
@@ -166,7 +163,7 @@ namespace JacobC.Xiami.Services
 
         private void smtc_PropertyChanged(SystemMediaTransportControls sender, SystemMediaTransportControlsPropertyChangedEventArgs args)
         {
-            // 如果音量调至静音，应用可以选择暂停音乐
+            // TODO: 如果音量调至静音，应用可以选择暂停音乐
         }
 
         /// <summary>
@@ -185,7 +182,7 @@ namespace JacobC.Xiami.Services
                     // 等待后台任务开始。一旦开始后，保持信号直到被关闭，使得不用再次等待，除非其他需要
                     bool result = backgroundTaskStarted.WaitOne(5000);
                     if (!result)
-                        throw new Exception("Background Task didnt initialize in time");
+                        throw new Exception("Background Task didn't initialize in time");
                     StartPlayback();
                     break;
                 case SystemMediaTransportControlsButton.Pause:
@@ -225,44 +222,11 @@ namespace JacobC.Xiami.Services
                 if (!playbackStartedPreviously)
                 {
                     playbackStartedPreviously = true;
-                    // 如果任务被取消了，则从保存的音轨和位置开始播放
                     var currentTrackId = settinghelper.ReadAndReset<string>(TrackIdKey);
                     var currentTrackPosition = settinghelper.ReadAndReset<string>(nameof(BackgroundMediaPlayer.Current.Position));
-                    if (currentTrackId != null)
+                    if (currentTrackPosition != null)
                     {
-                        DebugWrite("has current track", "BackgroundPlayer");
-                        // 通过名称找到索引
-                        var index = playbackList.Items.ToList().FindIndex(item =>
-                            GetTrackId(item).ToString() == currentTrackId);
-                        if (currentTrackPosition == null)
-                        {
-                            // 如果没有保存过则从头开始播放
-                            DebugWrite("StartPlayback: Switching to track " + index, "BackgroundPlayer");
-                            playbackList.MoveTo((uint)index);
-                            BackgroundMediaPlayer.Current.Play();
-                        }
-                        else
-                        {
-                            // 否则从保存的位置开始
-                            TypedEventHandler<MediaPlaybackList, CurrentMediaPlaybackItemChangedEventArgs> handler = null;
-                            handler = (MediaPlaybackList list, CurrentMediaPlaybackItemChangedEventArgs args) =>
-                            {
-                                if (args.NewItem == playbackList.Items[index])
-                                {
-                                    // 删除订阅，因为对当前项只需要运行一次
-                                    playbackList.CurrentItemChanged -= handler;
-
-                                    var position = TimeSpan.Parse((string)currentTrackPosition);
-                                    DebugWrite("StartPlayback: Setting Position " + position, "BackgroundPlayer");
-                                    BackgroundMediaPlayer.Current.Position = position;
-                                    BackgroundMediaPlayer.Current.Play();
-                                }
-                            };
-                            playbackList.CurrentItemChanged += handler;
-                            // 切换到当前音轨会触发ItemChanged事件
-                            DebugWrite("StartPlayback: Switching to track " + index, "BackgroundPlayer");
-                            playbackList.MoveTo((uint)index);
-                        }
+                        // 如果任务被取消了，则从保存的音轨和位置开始播放
                     }
                     else
                     {
@@ -289,19 +253,19 @@ namespace JacobC.Xiami.Services
             var item = args.NewItem;
             DebugWrite("PlaybackList_CurrentItemChanged: " + (item == null ? "null" : GetTrackId(item).ToString()), "BackgroundPlayer");
             //System.Diagnostics.Debugger.Break();
-            if (item == null)
-                UpdateUVCOnNewTrack(null);
+            //if (item == null)
+            //    UpdateUVCOnNewTrack(null);
 
-            // 获取当前播放轨
-            Uri currentTrackId = null;
-            if (item != null)
-                currentTrackId = item.Source.CustomProperties[TrackIdKey] as Uri;
+            //// 获取当前播放轨
+            //Uri currentTrackId = null;
+            //if (item != null)
+            //    currentTrackId = item.Source.CustomProperties[TrackIdKey] as Uri;
 
-            // 通知前台切换或者保持
-            if (foregroundAppState == AppState.Active)
-                MessageService.SendMediaMessageToForeground<Uri>(MediaMessageTypes.TrackChanged, currentTrackId);
-            else
-                settinghelper.Write(TrackIdKey, currentTrackId?.ToString());
+            //// 通知前台切换或者保持
+            //if (foregroundAppState == AppState.Active)
+            //    MessageService.SendMediaMessageToForeground<Uri>(MediaMessageTypes.TrackChanged, currentTrackId);
+            //else
+            //    settinghelper.Write(TrackIdKey, currentTrackId?.ToString());
         }
 
         private void PlaySong(SongModel song)
@@ -310,9 +274,7 @@ namespace JacobC.Xiami.Services
             current.SetUriSource(song.MediaUri);
             DebugWrite(current.CurrentState.ToString());
             if (current.CurrentState != MediaPlayerState.Playing && current.CurrentState != MediaPlayerState.Closed)
-            {
-                current.Play();
-            }
+                StartPlayback();
             UpdateUVCOnNewTrack(song);
         }
         #endregion
@@ -336,6 +298,7 @@ namespace JacobC.Xiami.Services
 
         private void BackgroundMediaPlayer_MessageReceivedFromForeground(object sender, MediaPlayerDataReceivedEventArgs e)
         {
+            //System.Diagnostics.Debugger.Break();
             DebugWrite($"Message {e.Data["MessageType"]} get", "BackgroundPlayer");
             switch(MessageService.GetTypeOfMediaMessage(e.Data))
             {
@@ -354,14 +317,11 @@ namespace JacobC.Xiami.Services
                     DebugWrite("Starting Playback", "BackgroundPlayer");
                     StartPlayback();
                     return;
-                case MediaMessageTypes.StartTask:
-                    CreatePlaybackList();
-                    return;
                 case MediaMessageTypes.PlaySong:
                     var song = MessageService.GetMediaMessage<SongModel>(e.Data);
                     smtc.PlaybackStatus = MediaPlaybackStatus.Changing;
                     PlaySong(song);
-                    DebugWrite($"PlaySong ID {song.XiamiID}", "BackgroundPlayer");
+                    DebugWrite($"PlaySong {song.Name}", "BackgroundPlayer");
                     return;
                 //case MediaMessageTypes.TrackChanged:
                 //    var index = playbackList.Items.ToList().FindIndex(i => (Uri)i.Source.CustomProperties[TrackIdKey] == MessageService.GetMediaMessage<Uri>(e.Data));
@@ -373,24 +333,9 @@ namespace JacobC.Xiami.Services
 
         }
 
-        /// <summary>
-        /// 为从前台任务收到的列表创建播放列表
-        /// </summary>
-        /// <param name="songs"></param>
-        void CreatePlaybackList()
-        {
-            // 生成新的列表并开启循环
-            playbackList = new MediaPlaybackList();
-            //playbackList.AutoRepeatEnabled = true;
-            BackgroundMediaPlayer.Current.AutoPlay = false;// 关闭自动播放
-            BackgroundMediaPlayer.Current.Source = playbackList;
-            playbackList.CurrentItemChanged += PlaybackList_CurrentItemChanged;
-            playbackList.ItemFailed += PlaybackList_ItemFailed;
-        }
-
         private void PlaybackList_ItemFailed(MediaPlaybackList sender, MediaPlaybackItemFailedEventArgs args)
         {
-            DebugWrite(args.Error.ErrorCode.ToString(), "BackgroundPlayer ItemError");
+            DebugWrite(args.Error.ErrorCode.ToString(), "BackgroundPlayer ItemFailed");
         }
         #endregion
     }

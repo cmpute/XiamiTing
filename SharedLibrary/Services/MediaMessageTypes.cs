@@ -11,13 +11,11 @@
         //发向后台
         AppResumed,
         AppSuspended,
-        StartTask,
         PlaySong,
         StartPlayback,
+
         //发向前台
-        BackgroundAudioTaskStarted,
         SkipNext,
         SkipPrevious,
-        TrackChanged
     }
 }
