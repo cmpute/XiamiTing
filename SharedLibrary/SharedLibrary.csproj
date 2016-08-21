@@ -107,7 +107,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\FontIconButton.cs" />
     <Compile Include="Controls\Playlist.xaml.cs">
       <DependentUpon>Playlist.xaml</DependentUpon>
     </Compile>
@@ -140,11 +139,6 @@
     <EmbeddedResource Include="Properties\SharedLibrary.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\FontIconButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Page>
     <Page Include="Controls\Playlist.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

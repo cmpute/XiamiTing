@@ -110,18 +110,61 @@ namespace JacobC.Xiami.Services
             for (int i = 0; i < 6; i++)
             {
                 SongModel sm = SongModel.GetNew(1775616994);
-                sm.Name = $"Foundations (Original Mix){i}";
+                sm.Name = $"Foundations (Original Mix){2*i}";
                 sm.Album = AlbumModel.GetNew(2100274906);
                 sm.MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring01.wma");
                 sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/21002749061455506376_2.jpg");
                 yield return sm;
                 sm = SongModel.GetNew(1770914850);
-                sm.Name = $"Give My Regards{i}";
+                sm.Name = $"Give My Regards{2*i+1}";
                 sm.Album = AlbumModel.GetNew(504506);
                 sm.MediaUri = IdleSongPath;
                 sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/5045061333262175_2.jpg");
                 yield return sm;
             }
+        }
+
+        public void ShuffleListInPlace()
+        {
+            //var t = ShuffleList();
+            //List<SongModel> temp = new List<SongModel>();
+            //foreach (var item in t)
+            //    temp.Add(_Playlist[item]);
+            //_Playlist.AddRange(temp, true);
+            
+            int total = _Playlist.Count, i;
+            Random random = new Random();
+            while (total > 0)
+            {
+                i = random.Next(total--);
+                var t = _Playlist[total];
+                _Playlist[total] = _Playlist[i];
+                _Playlist[i] = t;
+            }
+        }
+
+        public IList<int> ShuffleList()
+        {
+            int total = _Playlist.Count;
+            int[] sequence = new int[total];
+            int[] output = new int[total];
+
+            for (int i = 0; i < total; i++)
+                sequence[i] = i;
+
+            Random random = new Random();
+
+            int end = total - 1;
+
+            for (int i = 0; i < total; i++)
+            {
+                int num = random.Next(0, end + 1);
+                output[i] = sequence[num];
+                sequence[num] = sequence[end];
+                end--;
+            }
+
+            return output;
         }
 
     }

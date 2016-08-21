@@ -77,8 +77,8 @@
             </Button>
         </Grid>
         <TextBlock Grid.Column="1" Text="{x:Bind ItemSource.Name, Mode=OneWay}" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="2" Text="ItemSource.TrackArtist" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="3" Text="ItemSource.Album.Name" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="2" Text="{x:Bind ItemSource.TrackArtist, Mode=OneWay}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="3" Text="{x:Bind ItemSource.Album.Name, Mode=OneWay}" VerticalAlignment="Center"/>
         <CheckBox Grid.Column="4" Margin="4,0,0,0" IsChecked="{x:Bind ItemSource.IsLoved, Converter={StaticResource ToNullableConverter}, Mode=TwoWay}">
             <Control.Template>
                 <ControlTemplate>

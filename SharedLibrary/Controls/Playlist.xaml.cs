@@ -109,17 +109,12 @@ namespace JacobC.Xiami.Controls
                     Songlist.SelectAll();
                     return;
                 case SelectionOperation.SelectOther:
-                    for (int i = 0; i < Songlist.Items.Count; i++)
-                    {
-                        var item = (Songlist.ContainerFromIndex(i) as ListViewItem);
-                        item.IsSelected = !item.IsSelected;
-                    }
+                    OperateAllItems((item) => item.IsSelected = !item.IsSelected);
                     return;
             }
             foreach (var item in Songlist.SelectedItems)
                 action?.Invoke(item as SongModel);
         }
-
         /// <summary>
         /// 判断是否允许对歌曲项进行操作
         /// </summary>
@@ -140,7 +135,27 @@ namespace JacobC.Xiami.Controls
                     return false;
             }
         }
-
+        /// <summary>
+        /// 更新所有项目的索引
+        /// </summary>
+        public void UpdateItemsIndex()
+        {
+            OperateAllItems((item) =>
+            {
+                if (item.Tag is SongItem)
+                    (item.Tag as SongItem).UpdateIndex();
+            });
+        }
+        private void OperateAllItems(Action<ListViewItem> action)
+        {
+            for (int i = 0; i < Songlist.Items.Count; i++)
+            {
+                var item = Songlist.ContainerFromIndex(i) as ListViewItem;
+                if (item == null)
+                    continue;
+                action.Invoke(item);
+            }
+        }
     }
 
     /// <summary>

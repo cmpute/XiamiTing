@@ -58,6 +58,7 @@ namespace JacobC.Xiami.Controls
                 if (item is ListViewItem)
                 {
                     _LinkedItem = item;
+                    (item as ListViewItem).Tag = this;//用Tag传递对SongItem的引用
                     _LinkedList = ItemsControl.ItemsControlFromItemContainer(item) as ListView;
                     ListIndex = _LinkedList.IndexFromContainer(item) + 1;
                     if(_LinkedList.ItemsSource is INotifyCollectionChanged)
@@ -103,14 +104,17 @@ namespace JacobC.Xiami.Controls
                     if (ListIndex == -1)
                         ListIndex = e.NewStartingIndex + 1;
                     else if (ListIndex >= e.NewStartingIndex || ListIndex == -1)
-                        ListIndex = _LinkedList.IndexFromContainer(_LinkedItem) + 1;
+                        UpdateIndex();
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     if (ListIndex > e.OldStartingIndex)
                         if (ListIndex == e.OldStartingIndex + 1)
                             ListIndex = -1;
                         else
-                            ListIndex = _LinkedList.IndexFromContainer(_LinkedItem) + 1;
+                            UpdateIndex();
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    //由外部进行更新
                     break;
             }
             //LogService.DebugWrite($"[{ListIndex}]{e.Action.ToString()} {e.OldStartingIndex} to {e.NewStartingIndex}[{temp}]", nameof(SongItem));
@@ -118,8 +122,12 @@ namespace JacobC.Xiami.Controls
             if (ListIndex == 0)
                 Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
                     Task.Delay(100);
-                    ListIndex = _LinkedList.IndexFromContainer(_LinkedItem) + 1;
+                    UpdateIndex();
                 });
+        }
+        public void UpdateIndex()
+        {
+            ListIndex = _LinkedList.IndexFromContainer(_LinkedItem) + 1;
         }
 
         #endregion

@@ -18,7 +18,11 @@
         </Style>
     </UserControl.Resources>
 
-    <StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid x:Name="Header" Margin="16,4">
             <!--TODO: 增加是否显示多选框按钮-->
             <!--TODO: 响应按下标题进行排序-->
@@ -37,7 +41,8 @@
                   SelectionMode="{x:Bind SelectionMode, Mode=TwoWay}"
                   CanReorderItems="True" AllowDrop="True"
                   HorizontalContentAlignment="Stretch"
-                  ItemsSource="{x:Bind SongSource}"
+                  ItemsSource="{x:Bind SongSource, Mode=OneWay}"
+                  Grid.Row="2"
                   Padding="0">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
@@ -307,9 +312,9 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="m:SongModel">
-                    <local:SongItem ItemSource="{x:Bind}" VerticalAlignment="Stretch"/>
+                    <local:SongItem x:Name="SongPresenter" ItemSource="{x:Bind}" VerticalAlignment="Stretch"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </StackPanel>
+    </Grid>
 </UserControl>
