@@ -74,6 +74,7 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取或设置在虾米中的编号
         /// </summary>
+        [JsonProperty]
         public TID XiamiID { get; set; }
 
         string _Description = default(string);

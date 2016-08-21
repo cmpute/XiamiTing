@@ -34,7 +34,7 @@ namespace JacobC.Xiami.Services
         private AppState foregroundAppState = AppState.Unknown;
         private ManualResetEvent backgroundTaskStarted = new ManualResetEvent(false);
         private bool playbackStartedPreviously = false;
-        Template10.Services.SettingsService.SettingsHelper settinghelper = SettingsService.Instance.Helper;
+        Template10.Services.SettingsService.ISettingsService settinghelper = SettingsService.Instance.Playback;
         #endregion
 
         #region Helper methods
@@ -272,7 +272,6 @@ namespace JacobC.Xiami.Services
         {
             var current = BackgroundMediaPlayer.Current;
             current.SetUriSource(song.MediaUri);
-            DebugWrite(current.CurrentState.ToString());
             if (current.CurrentState != MediaPlayerState.Playing && current.CurrentState != MediaPlayerState.Closed)
                 StartPlayback();
             UpdateUVCOnNewTrack(song);
@@ -282,17 +281,20 @@ namespace JacobC.Xiami.Services
         #region Background Media Player Handlers
         void Current_CurrentStateChanged(MediaPlayer sender, object args)
         {
-            if (sender.CurrentState == MediaPlayerState.Playing)
+            //DebugWrite($"PlayerStateChanged to {sender.CurrentState.ToString()}", "BackgroundPlayer");
+            switch(sender.CurrentState)
             {
-                smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
-            }
-            else if (sender.CurrentState == MediaPlayerState.Paused)
-            {
-                smtc.PlaybackStatus = MediaPlaybackStatus.Paused;
-            }
-            else if (sender.CurrentState == MediaPlayerState.Closed)
-            {
-                smtc.PlaybackStatus = MediaPlaybackStatus.Closed;
+                case MediaPlayerState.Playing:
+                    smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
+                    break;
+                case MediaPlayerState.Paused://中途的暂停或播放完毕的暂停
+                    smtc.PlaybackStatus = MediaPlaybackStatus.Paused;
+                    break;
+                case MediaPlayerState.Closed:
+                    smtc.PlaybackStatus = MediaPlaybackStatus.Closed;
+                    break;
+                case MediaPlayerState.Opening://打开文件
+                    break;
             }
         }
 
@@ -321,14 +323,8 @@ namespace JacobC.Xiami.Services
                     var song = MessageService.GetMediaMessage<SongModel>(e.Data);
                     smtc.PlaybackStatus = MediaPlaybackStatus.Changing;
                     PlaySong(song);
-                    DebugWrite($"PlaySong {song.Name}", "BackgroundPlayer");
+                    DebugWrite($"PlaySong {song.XiamiID}", "BackgroundPlayer");
                     return;
-                //case MediaMessageTypes.TrackChanged:
-                //    var index = playbackList.Items.ToList().FindIndex(i => (Uri)i.Source.CustomProperties[TrackIdKey] == MessageService.GetMediaMessage<Uri>(e.Data));
-                //    DebugWrite("Skipping to track " + index, "BackgroundPlayer");
-                //    smtc.PlaybackStatus = MediaPlaybackStatus.Changing;
-                //    playbackList.MoveTo((uint)index);
-                //    return;
             }
 
         }

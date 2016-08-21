@@ -39,7 +39,7 @@ namespace JacobC.Xiami.Services
                 if (_isBackgroundTaskRunning)
                     return true;
 
-                string value = SettingsService.Instance.Helper.ReadAndReset<string>(nameof(BackgroundTaskState));
+                string value = SettingsService.Instance.Playback.ReadAndReset<string>(nameof(BackgroundTaskState));
                 if (value == null)
                     return false;
                 else
@@ -92,7 +92,7 @@ namespace JacobC.Xiami.Services
             _isBackgroundTaskRunning = false;
             //prevButton.IsEnabled = true;
             //nextButton.IsEnabled = true;
-            SettingsService.Instance.Helper.Write(nameof(BackgroundTaskState), BackgroundTaskState.Unknown.ToString());
+            SettingsService.Instance.Playback.Write(nameof(BackgroundTaskState), BackgroundTaskState.Unknown.ToString());
             //playButton.Content = "| |";
 
             AddMessageHandler();
@@ -173,6 +173,7 @@ namespace JacobC.Xiami.Services
 
         #endregion
 
+        #region Public Controlling Methods 
 
         public void PlayTrack(SongModel song)
         {
@@ -181,8 +182,8 @@ namespace JacobC.Xiami.Services
             if (!IsBackgroundTaskRunning)
             {
                 // First update the persisted start track
-                SettingsService.Instance.Helper.Write("TrackId", song.MediaUri.ToString());
-                SettingsService.Instance.Helper.Write("Position", new TimeSpan().ToString());
+                SettingsService.Instance.Playback.Write("TrackId", song.MediaUri.ToString());
+                SettingsService.Instance.Playback.Write("Position", new TimeSpan().ToString());
 
                 // Start task
                 StartBackgroundAudioTask();
@@ -194,5 +195,7 @@ namespace JacobC.Xiami.Services
         { }
         public void SkipPrevious()
         { }
+
+        #endregion
     }
 }

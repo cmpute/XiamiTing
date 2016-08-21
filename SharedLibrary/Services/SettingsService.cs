@@ -9,15 +9,23 @@ namespace JacobC.Xiami.Services
     public class SettingsService
     {
         public static SettingsService Instance { get; } = new SettingsService();
-        SettingsHelper _helper;
-        private SettingsService()
+        private SettingsService() { }
+
+        /// <summary>
+        /// 普通设置
+        /// </summary>
+        public ISettingsService General
         {
-            _helper = new SettingsHelper();
+            get { return Template10.Services.SettingsService.SettingsService.Local; }
         }
 
-        public SettingsHelper Helper
+        ISettingsService _playback = Template10.Services.SettingsService.SettingsService.Local.Open("Playback");
+        /// <summary>
+        /// 播放相关设置
+        /// </summary>
+        public ISettingsService Playback
         {
-            get { return _helper; }
+            get { return _playback; }
         }
 
         /// <summary>
@@ -25,10 +33,10 @@ namespace JacobC.Xiami.Services
         /// </summary>
         public bool UseShellBackButton
         {
-            get { return _helper.Read<bool>(nameof(UseShellBackButton), true); }
+            get { return General.Read<bool>(nameof(UseShellBackButton), true); }
             set
             {
-                _helper.Write(nameof(UseShellBackButton), value);
+                General.Write(nameof(UseShellBackButton), value);
                 BootStrapper.Current.NavigationService.Dispatcher.Dispatch(() =>
                 {
                     BootStrapper.Current.ShowShellBackButton = value;
@@ -43,12 +51,12 @@ namespace JacobC.Xiami.Services
             get
             {
                 var theme = ApplicationTheme.Light;
-                var value = _helper.Read<string>(nameof(AppTheme), theme.ToString());
+                var value = General.Read<string>(nameof(AppTheme), theme.ToString());
                 return Enum.TryParse<ApplicationTheme>(value, out theme) ? theme : ApplicationTheme.Dark;
             }
             set
             {
-                _helper.Write(nameof(AppTheme), value.ToString());
+                General.Write(nameof(AppTheme), value.ToString());
                 (Window.Current.Content as FrameworkElement).RequestedTheme = value.ToElementTheme();
                 AppThemeChanged?.Invoke(value);
             }
@@ -57,10 +65,10 @@ namespace JacobC.Xiami.Services
 
         public TimeSpan CacheMaxDuration
         {
-            get { return _helper.Read<TimeSpan>(nameof(CacheMaxDuration), TimeSpan.FromDays(2)); }
+            get { return General.Read<TimeSpan>(nameof(CacheMaxDuration), TimeSpan.FromDays(2)); }
             set
             {
-                _helper.Write(nameof(CacheMaxDuration), value);
+                General.Write(nameof(CacheMaxDuration), value);
                 BootStrapper.Current.CacheMaxDuration = value;
             }
         }

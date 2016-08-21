@@ -103,22 +103,30 @@ namespace JacobC.Xiami.Services
         private void InitPlaylist()
         {
             _Playlist = InitPlaylistE().ToObservableCollection();
+            _Playlist.CollectionChanged += InternalCollectionChanged;
         }
+
+        private void InternalCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            //Windows.Storage.ApplicationData.Current.LocalSettings
+            //throw new NotImplementedException();
+        }
+
         public IEnumerable<SongModel> InitPlaylistE()
         {
             //以下为测试代码
             for (int i = 0; i < 6; i++)
             {
                 SongModel sm = SongModel.GetNew(1775616994);
-                sm.Name = $"Foundations (Original Mix){2*i}";
+                sm.Name = $"Foundations (Original Mix)";
                 sm.Album = AlbumModel.GetNew(2100274906);
-                sm.MediaUri = new Uri(@"ms-appx:///Assets/TestMedia/Ring01.wma");
+                sm.MediaUri = new Uri(@"ms-appx:///Assets/Ring01.wma");
                 sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/21002749061455506376_2.jpg");
                 yield return sm;
                 sm = SongModel.GetNew(1770914850);
-                sm.Name = $"Give My Regards{2*i+1}";
+                sm.Name = $"Give My Regards";
                 sm.Album = AlbumModel.GetNew(504506);
-                sm.MediaUri = IdleSongPath;
+                sm.MediaUri = new Uri(@"ms-appx:///Assets/Ring02.wma");
                 sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/5045061333262175_2.jpg");
                 yield return sm;
             }

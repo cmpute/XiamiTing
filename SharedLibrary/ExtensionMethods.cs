@@ -14,10 +14,10 @@ namespace JacobC.Xiami
         /// <summary>
         /// 读取设置后删除该设置
         /// </summary>
-        public static T ReadAndReset<T>(this SettingsHelper setting, string key, T otherwise = default(T), SettingsStrategies strategy = SettingsStrategies.Local)
+        public static T ReadAndReset<T>(this ISettingsService setting, string key, T otherwise = default(T))
         {
-            T val = setting.Read<T>(key, otherwise, strategy);
-            setting.Remove(key, strategy);
+            T val = setting.Read<T>(key, otherwise);
+            setting.Remove(key);
             return val;
         }
         /// <summary>
