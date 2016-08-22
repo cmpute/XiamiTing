@@ -104,6 +104,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <None Include="Net\Api\Api Compare.xlsx" />
+    <None Include="Net\WebAnalysis.log" />
+    <None Include="Net\xiami.py" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +135,15 @@
     <Compile Include="Models\MVModel.cs" />
     <Compile Include="Models\SongModel.cs" />
     <Compile Include="Models\UserModel.cs" />
+    <Compile Include="Net\Api\CombinedApi.cs" />
+    <Compile Include="Net\Api\DataApi.cs" />
+    <Compile Include="Net\Api\IXiamiApi.cs" />
+    <Compile Include="Net\Api\WapApi.cs" />
+    <Compile Include="Net\Api\WebApi.cs" />
+    <Compile Include="Net\Api\WindowsDesktopApi.cs" />
+    <Compile Include="Net\ConnectException.cs" />
+    <Compile Include="Net\HttpHelper.cs" />
+    <Compile Include="Net\XiamiLogin.cs" />
     <Compile Include="PageItemsCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
@@ -142,6 +154,7 @@
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\PlaylistService.cs" />
+    <Compile Include="Services\RadioService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\StateEnum.cs" />
     <EmbeddedResource Include="Properties\SharedLibrary.rd.xml" />

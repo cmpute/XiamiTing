@@ -129,6 +129,7 @@ namespace JacobC.Xiami.Services
 
         private async void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
         {
+            await Task.CompletedTask;
             switch (MessageService.GetTypeOfMediaMessage(e.Data))
             {
                 /*
@@ -161,6 +162,7 @@ namespace JacobC.Xiami.Services
         }
         private async void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args)
         {
+            await Task.CompletedTask;
             var currentState = sender.CurrentState; // cache outside of completion or you might get a different value
             //await WindowWrapper.Current().Dispatcher.DispatchAsync(() =>
             //{
@@ -174,6 +176,22 @@ namespace JacobC.Xiami.Services
 
         #endregion
 
+        private void Current_CurrentStateChanged(MediaPlayer sender, object args)
+        {
+            var e = new ChangedEventArgs<MediaPlayerState>(CurrentState, sender.CurrentState);
+            StateChanged.Invoke(null, e);
+            CurrentState = sender.CurrentState;
+        }
+
+        /// <summary>
+        /// 获取后台播放器当前的状态
+        /// </summary>
+        public MediaPlayerState CurrentState { get; set; }
+        /// <summary>
+        /// 当<see cref="CurrentState"/>属性发生改变时发生
+        /// </summary>
+        public EventHandler<ChangedEventArgs<MediaPlayerState>> StateChanged;
+        
         #region Public Controlling Methods 
 
         /// <summary>
@@ -223,21 +241,6 @@ namespace JacobC.Xiami.Services
             }
         }
 
-        private void Current_CurrentStateChanged(MediaPlayer sender, object args)
-        {
-            var e = new ChangedEventArgs<MediaPlayerState>(CurrentState, sender.CurrentState);
-            StateChanged.Invoke(null, e);
-            CurrentState = sender.CurrentState;
-        }
-
-        /// <summary>
-        /// 获取后台播放器当前的状态
-        /// </summary>
-        public MediaPlayerState CurrentState { get; set; }
-        /// <summary>
-        /// 当<see cref="CurrentState"/>属性发生改变时发生
-        /// </summary>
-        public EventHandler<ChangedEventArgs<MediaPlayerState>> StateChanged;
 
         public void SkipNext()
         { }
@@ -245,5 +248,14 @@ namespace JacobC.Xiami.Services
         { }
 
         #endregion
+
+        /// <summary>
+        /// 设置播放内容为播放列表或电台
+        /// </summary>
+        /// <param name="source">播放来源，null代表播放列表</param>
+        public void SetPlaybackSource(RadioService source)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

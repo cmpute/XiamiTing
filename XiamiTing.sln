@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XiamiNetInterface", "XiamiNetInterface\XiamiNetInterface.csproj", "{D0189BC6-65E9-4A22-A653-81D14BDD1F88}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XiamiTing", "XiamiTing\XiamiTing.csproj", "{4BB2D05A-1EC6-4310-BF33-D1B82DBBC184}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundTasks", "BackgroundTasks\BackgroundTasks.csproj", "{F2048935-B853-4F7A-AC91-CA10BA0128B3}"
@@ -25,22 +23,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Debug|ARM.ActiveCfg = Debug|ARM
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Debug|ARM.Build.0 = Debug|ARM
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Debug|x64.ActiveCfg = Debug|x64
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Debug|x64.Build.0 = Debug|x64
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Debug|x86.ActiveCfg = Debug|x86
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Debug|x86.Build.0 = Debug|x86
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Release|ARM.ActiveCfg = Release|ARM
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Release|ARM.Build.0 = Release|ARM
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Release|x64.ActiveCfg = Release|x64
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Release|x64.Build.0 = Release|x64
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Release|x86.ActiveCfg = Release|x86
-		{D0189BC6-65E9-4A22-A653-81D14BDD1F88}.Release|x86.Build.0 = Release|x86
 		{4BB2D05A-1EC6-4310-BF33-D1B82DBBC184}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{4BB2D05A-1EC6-4310-BF33-D1B82DBBC184}.Debug|ARM.ActiveCfg = Debug|ARM
 		{4BB2D05A-1EC6-4310-BF33-D1B82DBBC184}.Debug|ARM.Build.0 = Debug|ARM

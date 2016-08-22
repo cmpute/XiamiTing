@@ -95,7 +95,7 @@ namespace JacobC.Xiami.Controls
             _LinkedList = null;
             _LinkedItem = null;
         }
-        private void _Linkedlist_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private async void _Linkedlist_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             int temp = ListIndex;
             switch (e.Action)
@@ -120,7 +120,7 @@ namespace JacobC.Xiami.Controls
             //LogService.DebugWrite($"[{ListIndex}]{e.Action.ToString()} {e.OldStartingIndex} to {e.NewStartingIndex}[{temp}]", nameof(SongItem));
             //不知为何可能会出现ListIndex被初始化为0的情况
             if (ListIndex == 0)
-                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
                     Task.Delay(100);
                     UpdateIndex();
                 });

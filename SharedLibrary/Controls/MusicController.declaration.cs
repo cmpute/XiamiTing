@@ -25,6 +25,31 @@ namespace JacobC.Xiami.Controls
         public static readonly DependencyProperty CurrentSongProperty =
             DependencyProperty.Register("CurrentSong", typeof(SongModel), typeof(MusicController), new PropertyMetadata(SongModel.Null));
 
+        /// <summary>
+        /// 获取或设置是否播放内容为电台属性
+        /// </summary>
+        public bool IsPlayingRadio
+        {
+            get { return (bool)GetValue(IsPlayingRadioProperty); }
+            private set { SetValue(IsPlayingRadioProperty, value); }
+        }
+        private static readonly bool _defaultIsPlayingRadio = default(bool);
+        /// <summary>
+        /// 标识<see cref="IsPlayingRadio"/>依赖属性
+        /// </summary>
+        public static readonly DependencyProperty IsPlayingRadioProperty =
+              DependencyProperty.Register(nameof(IsPlayingRadio), typeof(bool),
+                  typeof(MusicController), new PropertyMetadata(_defaultIsPlayingRadio, (d, e) =>
+                  {
+                      (d as MusicController).IsPlayingRadioChanged?.Invoke(d, e.ToChangedEventArgs<bool>());
+                      (d as MusicController).InternalIsPlayingRadioChanged(e.ToChangedEventArgs<bool>());
+                  }));
+        /// <summary>
+        /// 在<see cref="IsPlayingRadio"/>属性发生变更时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<bool>> IsPlayingRadioChanged;
+        partial void InternalIsPlayingRadioChanged(ChangedEventArgs<bool> e);
+
 
         #endregion
 

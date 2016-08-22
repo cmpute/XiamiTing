@@ -215,10 +215,6 @@
       <Project>{e94e3312-8c4b-42b1-b05c-201591a0c9be}</Project>
       <Name>SharedLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XiamiNetInterface\XiamiNetInterface.csproj">
-      <Project>{d0189bc6-65e9-4a22-a653-81d14bdd1f88}</Project>
-      <Name>XiamiNetInterface</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

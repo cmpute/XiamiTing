@@ -1,5 +1,6 @@
 ﻿{
   "dependencies": {
+    "HtmlAgilityPack.NetCore": "1.5.0.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.1",
     "Template10": "1.1.11"
   },
