@@ -30,47 +30,20 @@ namespace JacobC.Xiami.Views
         public PlaylistPage()
         {
             this.InitializeComponent();
-        }
-
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
-        {
-            //Grid source = sender as Grid;
-            //source.RegisterPropertyChangedCallback(Grid.TagProperty, (dpsender, dp) => 
-            //{
-            //    int val = (int)(dpsender.GetValue(dp) ?? 0);
-            //    SongViewModel target = source.DataContext as SongViewModel;
-            //    target.IsHovered = val > 1;
-            //    target.IsSelected = (val % 2) != 0;
-            //});
+            Songlist.SongSource = PlaylistService.Instance;
+            Songlist.SelectionUpdated += listView_SelectionChanged;
         }
 
         private DelegateCommand<object> _DeleteCommand;
         public DelegateCommand<object> DeleteCommand => _DeleteCommand ?? (_DeleteCommand = new DelegateCommand<object>((model) =>
         {
-            //var Playlist = PlaylistService.Instance.Playlist;
-            //for (int i = Playlist.Count - 1; i >= 0; i--)
-            //    if (Playlist[i].IsSelected)
-            //        Playlist.RemoveAt(i);
-        }, (model) => { return listView.SelectedItems.Count != 0; }));
+            Songlist.OperateSelectedItems(SelectionOperation.Delete);
+        }, (model) => { return Songlist.CanOperateItem(SelectionOperation.Delete); }));
 
 
-        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void listView_SelectionChanged(object sender, RoutedEventArgs e)
         {
             _DeleteCommand.RaiseCanExecuteChanged();
-        }
-
-        private void Button_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            //System.Diagnostics.Debugger.Break();
-            PlaylistService.Instance.Playlist.Remove(((Button)sender).DataContext as SongModel);
-            //判断是否在播放
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var target = ((Button)sender).DataContext as SongModel;
-            PlaybackService.Instance.PlayTrack(target);
-            //PlaylistService.Instance.CurrentPlaying = target;
         }
     }
 }

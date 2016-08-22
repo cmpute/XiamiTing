@@ -18,11 +18,5 @@ namespace JacobC.Xiami.ViewModels
         public PlaylistPageViewModel()
         {
         }
-
-        public ObservableCollection<SongViewModel> Playlist
-        {
-            get { return PlaylistService.Instance.Playlist; }
-        }
-
     }
 }

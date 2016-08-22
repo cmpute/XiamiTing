@@ -23,6 +23,7 @@ namespace JacobC.Xiami.Controls
         {
             this.InitializeComponent();
             PlaylistService.Instance.CurrentIndexChanged += Instance_CurrentIndexChanged;
+            Songlist.SelectionChanged += (sender, e) => SelectionUpdated.Invoke(sender, e);
         }
 
         private void Instance_CurrentIndexChanged(object sender, Template10.Common.ChangedEventArgs<int> e)
@@ -150,7 +151,7 @@ namespace JacobC.Xiami.Controls
                 //case SelectionOperation.Love:
                 //    return true;
                 default:
-                    return false;
+                    return true;
             }
         }
         /// <summary>
@@ -174,6 +175,8 @@ namespace JacobC.Xiami.Controls
                 action.Invoke(item);
             }
         }
+
+        public event RoutedEventHandler SelectionUpdated;
     }
 
     /// <summary>

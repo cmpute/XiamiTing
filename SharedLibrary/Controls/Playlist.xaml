@@ -38,6 +38,7 @@
             <TextBlock Grid.Column="3" Text="Album" Style="{StaticResource TitleText}"/>
         </Grid>
         <ListView x:Name="Songlist"
+                  x:FieldModifier="Public"
                   SelectionMode="{x:Bind SelectionMode, Mode=TwoWay}"
                   CanReorderItems="True" AllowDrop="True"
                   HorizontalContentAlignment="Stretch"

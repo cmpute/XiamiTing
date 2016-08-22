@@ -13,7 +13,6 @@
     Unloaded="SongItem_Unloaded">
 
     <UserControl.Resources>
-        
         <SolidColorBrush x:Name="HoverItemForeBrush" Color="Black"/>
         <Style x:Key="sFontIcon" TargetType="FontIcon">
             <Setter Property="VerticalAlignment" Value="Center"/>

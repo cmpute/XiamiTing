@@ -35,7 +35,6 @@ namespace JacobC.Xiami
         {
             //自定义代码段
             SetTitleColor();
-            LogService.DebugWrite(PlaylistService.Instance.Playlist.Count.ToString(), "Starting"); // Initialize Playlist
             PlaybackService.Instance.StartBackgroundAudioTask();
 
             if (Window.Current.Content as ModalDialog == null)
@@ -59,7 +58,7 @@ namespace JacobC.Xiami
             // long-running startup tasks go here
             //await Task.Delay(5000);
 
-            NavigationService.Navigate(typeof(Views.MainPage));
+            NavigationService.Navigate(typeof(Views.DiscoveryPage));
             await Task.CompletedTask;
         }
 
