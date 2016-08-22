@@ -33,13 +33,12 @@ namespace JacobC.Xiami.Controls
             get { return (bool)GetValue(IsPlayingRadioProperty); }
             private set { SetValue(IsPlayingRadioProperty, value); }
         }
-        private static readonly bool _defaultIsPlayingRadio = default(bool);
         /// <summary>
         /// 标识<see cref="IsPlayingRadio"/>依赖属性
         /// </summary>
         public static readonly DependencyProperty IsPlayingRadioProperty =
               DependencyProperty.Register(nameof(IsPlayingRadio), typeof(bool),
-                  typeof(MusicController), new PropertyMetadata(_defaultIsPlayingRadio, (d, e) =>
+                  typeof(MusicController), new PropertyMetadata(false, (d, e) =>
                   {
                       (d as MusicController).IsPlayingRadioChanged?.Invoke(d, e.ToChangedEventArgs<bool>());
                       (d as MusicController).InternalIsPlayingRadioChanged(e.ToChangedEventArgs<bool>());
@@ -49,6 +48,22 @@ namespace JacobC.Xiami.Controls
         /// </summary>
         public event EventHandler<ChangedEventArgs<bool>> IsPlayingRadioChanged;
         partial void InternalIsPlayingRadioChanged(ChangedEventArgs<bool> e);
+
+        /// <summary>
+        /// 获取或设置是否禁用下载ProgressBar属性
+        /// </summary>
+        public bool IsDownloadBarDisabled
+        {
+            get { return (bool)GetValue(IsDownloadBarDisabledProperty); }
+            set { SetValue(IsDownloadBarDisabledProperty, value); }
+        }
+        /// <summary>
+        /// 标识<see cref="IsDownloadBarDisabled"/>依赖属性
+        /// </summary>
+        public static readonly DependencyProperty IsDownloadBarDisabledProperty =
+              DependencyProperty.Register(nameof(IsDownloadBarDisabled), typeof(bool),
+                  typeof(MusicController), new PropertyMetadata(true));
+
 
 
         #endregion

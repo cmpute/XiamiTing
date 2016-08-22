@@ -9,21 +9,9 @@
     mc:Ignorable="d"
     x:Name="This"
     d:DesignHeight="60"
-    d:DesignWidth="400">
+    d:DesignWidth="600">
 
     <Control.Resources>
-
-        <t10c:ValueWhenConverter x:Key="PlayButtonConverter">
-            <t10c:ValueWhenConverter.When>
-                <x:Boolean>True</x:Boolean>
-            </t10c:ValueWhenConverter.When>
-            <t10c:ValueWhenConverter.Value>
-                <x:String></x:String>
-            </t10c:ValueWhenConverter.Value>
-            <t10c:ValueWhenConverter.Otherwise>
-                <x:String></x:String>
-            </t10c:ValueWhenConverter.Otherwise>
-        </t10c:ValueWhenConverter>
     </Control.Resources>
     <Grid x:Name="root">
         <VisualStateManager.VisualStateGroups>
@@ -43,13 +31,12 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <!--TODO: 第一行插入拖动控制条-->
+            <!--TODO: 在窄视图中，拖动控制条进入第一行-->
             <Grid Grid.Row="1" Background="{StaticResource ForeColorBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition />
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <!--插入一个控制栏背景层-->
                 <Image Height="60" Width="60" Stretch="UniformToFill">
@@ -82,19 +69,107 @@
                         <FontIcon FontSize="28" Glyph="&#xE101;" Foreground="{StaticResource BackColorBrush}"/>
                     </Button>
                 </StackPanel>
-                <StackPanel Grid.Column="2">
-                    <RelativePanel Margin="8,4">
+                <Grid Grid.Column="2" Padding="4,4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <RelativePanel Margin="8,8,8,0">
                         <TextBlock x:Name="trackTitle" Text="{x:Bind CurrentSong.Name, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}"/>
                         <TextBlock x:Name="split" Margin="8,0" Text="/" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="trackTitle" />
                         <TextBlock x:Name="artistName" Text="{x:Bind CurrentSong.TrackArtist, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="split"/>
+                        <Button x:Name="list" Style="{StaticResource EmptyButtonForIcon}" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" RelativePanel.AlignRightWithPanel="True">
+                            <FontIcon FontSize="20" Glyph="&#xE142;" />
+                        </Button>
                     </RelativePanel>
-                    <Slider Margin="4,0"></Slider>
-                </StackPanel>
-                <StackPanel Grid.Column="3" Orientation="Horizontal">
-                    <Button x:Name="list" Style="{StaticResource EmptyButtonForIcon}" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center">
-                        <FontIcon FontSize="20" Glyph="&#xE142;" />
-                    </Button>
-                </StackPanel>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="CurrentPosition"/>
+                        <Slider x:Name="ProgressBar" IsEnabled="{x:Bind IsDownloadBarDisabled, Mode=OneWay}" Grid.Column="1" Margin="0,-4,0,0" Value="0" Foreground="White">
+                            <Slider.Template>
+                                <ControlTemplate TargetType="Slider">
+                                    <Grid Margin="{TemplateBinding Padding}">
+                                        <Grid.Resources>
+                                            <SolidColorBrush Color="DimGray" x:Key="HoverColor"/>
+                                            <Style TargetType="Thumb" x:Key="SliderThumbStyle">
+                                                <Setter Property="Background" Value="White" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Thumb">
+                                                            <Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource ThemeColorBrush}" BorderThickness="1" CornerRadius="6" />
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Grid.Resources>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal">
+                                                    <Storyboard>
+                                                        <DoubleAnimation To="0" Duration="0:0:1" BeginTime="0:0:1" Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="Opacity"/>
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Pressed">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="HorizontalThumb.Background" Value="{StaticResource ThemeColorBrush}"/>
+                                                        <Setter Target="HorizontalThumb.Opacity" Value="1"/>
+                                                        <Setter Target="HorizontalTrackRect.Fill" Value="{StaticResource HoverColor}"/>
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="Disabled">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="HorizontalTemplate.Visibility" Value="Collapsed"/>
+                                                        <Setter Target="DownloadProgressIndicator.ShowPaused" Value="False"/>
+                                                        <Setter Target="DownloadProgressIndicator.Visibility" Value="Visible"/>
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="PointerOver">
+                                                    <Storyboard>
+                                                        <DoubleAnimation To="1" Duration="0:0:0.2" Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="Opacity"/>
+                                                    </Storyboard>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                        <Grid x:Name="SliderContainer" Background="Transparent" Grid.Row="1" Control.IsTemplateFocusTarget="True">
+                                            <Grid x:Name="HorizontalTemplate" Margin="6,0,-6,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="12" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="12" />
+                                                </Grid.RowDefinitions>
+                                                <Rectangle x:Name="HorizontalTrackRect" Fill="{TemplateBinding Background}" Height="{ThemeResource SliderTrackThemeHeight}" Margin="0,0,12,0"
+                                                           Grid.Row="1" Grid.ColumnSpan="3" />
+                                                <Rectangle x:Name="HorizontalDecreaseRect" Fill="{TemplateBinding Foreground}" Grid.Row="1" />
+                                                <Thumb x:Name="HorizontalThumb"
+                                                       Style="{StaticResource SliderThumbStyle}"
+                                                       DataContext="{TemplateBinding Value}"
+                                                       Opacity="0" Margin="-6,0,0,0"
+                                                       Height="12" Width="12"
+                                                       Grid.Row="0" Grid.RowSpan="3" Grid.Column="1"
+                                                       AutomationProperties.AccessibilityView="Raw" />
+                                            </Grid>
+                                            <ProgressBar x:Name="DownloadProgressIndicator" MinHeight="0" Height="{ThemeResource SliderTrackThemeHeight}" IsIndeterminate="True" Visibility="Collapsed" ShowPaused="True"/>
+                                        </Grid>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Slider.Template>
+                        </Slider>
+                        <TextBlock Grid.Column="2" x:Name="Duration"/>
+                    </Grid>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>
