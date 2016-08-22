@@ -23,7 +23,7 @@ namespace JacobC.Xiami.Controls
             set { SetValue(CurrentSongProperty, value); }
         }
         public static readonly DependencyProperty CurrentSongProperty =
-            DependencyProperty.Register("CurrentSong", typeof(SongModel), typeof(MusicController), new PropertyMetadata(null));
+            DependencyProperty.Register("CurrentSong", typeof(SongModel), typeof(MusicController), new PropertyMetadata(SongModel.Null));
 
 
         #endregion

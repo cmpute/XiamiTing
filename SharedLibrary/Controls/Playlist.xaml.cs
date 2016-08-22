@@ -194,10 +194,11 @@ namespace JacobC.Xiami.Controls
         /// 反选
         /// </summary>
         SelectOther,
+        //UnSelectAll, //取消全部选择(通过全选+反选或者切换选择模式可以完成)
         /// <summary>
-        /// 取消全部选择(通过全选+反选或者切换选择模式可以完成)
+        /// 将选中歌曲顺序颠倒
         /// </summary>
-        //UnSelectAll,
+        UpSideDown,
 
         /// <summary>
         /// 收藏选中歌曲

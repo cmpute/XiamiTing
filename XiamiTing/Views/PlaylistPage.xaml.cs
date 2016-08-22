@@ -70,7 +70,7 @@ namespace JacobC.Xiami.Views
         {
             var target = ((Button)sender).DataContext as SongModel;
             PlaybackService.Instance.PlayTrack(target);
-            PlaylistService.Instance.CurrentPlaying = target;
+            //PlaylistService.Instance.CurrentPlaying = target;
         }
     }
 }

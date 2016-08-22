@@ -20,18 +20,24 @@ namespace JacobC.Xiami.Services
     /// <summary>
     /// 维护全局的播放列表集合
     /// </summary>
-    public class PlaylistService
+    public class PlaylistService// : ObservableCollection<SongModel>
     {
         //TODO: 尝试其他方法完成无缝播放，系统的mediaplayer是不会缓存下一轨的(如果缓存可以将所有播放任务均交给后台)
         readonly Uri IdleSongPath = new Uri("http://win.web.rh03.sycdn.kuwo.cn/5732a6217291881c369bc1b89b620f1b/57b99dd7/resource/a1/7/41/1607541714.aac");
 
+        #region Ctor
         static PlaylistService _instance;
         /// <summary>
         /// 获取当前播放列表实例
         /// </summary>
         public static PlaylistService Instance { get { return _instance ?? (_instance = new PlaylistService()); } }
 
-        SongModel _CurrentPlaying = null;
+        private PlaylistService()
+        {
+            CurrentIndex = SettingsService.Instance.Playback.ReadAndReset("TrackID", -1);
+        }
+        #endregion
+
         /// <summary>
         /// 获取当前选中或播放的音轨
         /// </summary>
@@ -39,25 +45,45 @@ namespace JacobC.Xiami.Services
         {
             get
             {
+                if (CurrentIndex == -1)
+                    return null;
+                    //throw new ArgumentNullException(nameof(CurrentPlaying), "当前播放列表为空，无法获取音轨");
+                return Playlist[CurrentIndex];
+            }
+        }
+
+        int _currentIndex = -1;
+        /// <summary>
+        /// 获取或设置当前播放的音轨号
+        /// </summary>
+        /// <remarks>
+        /// 暂停的时候音轨号保留，但是单次播放以后音轨号不保留
+        /// 音轨号与音轨的显示状态有关
+        /// </remarks>
+        public int CurrentIndex
+        {
+            get
+            {
                 if (Playlist.Count == 0)
-                    throw new ArgumentNullException(nameof(CurrentPlaying), "当前播放列表为空，无法获取音轨");
-                return _CurrentPlaying;
+                    return -1;
+                return _currentIndex;
             }
             set
             {
-                if (_CurrentPlaying != value)
+                if(_currentIndex != value)
                 {
-                    CurrentIndexChanging?.Invoke(this, new ChangedEventArgs<SongModel>(_CurrentPlaying, value));
-                    InternalCurrentIndexChanging(value);
-                    _CurrentPlaying = value;
+                    var e = new ChangedEventArgs<int>(_currentIndex, value);
+                    _currentIndex = value;
+                    CurrentIndexChanged?.Invoke(this, e);
+                    InternalCurrentIndexChanged(value);
                 }
             }
         }
         /// <summary>
         /// 在当前播放的音轨发生改变时发生
         /// </summary>
-        public event EventHandler<ChangedEventArgs<SongModel>> CurrentIndexChanging;
-        private void InternalCurrentIndexChanging(SongModel newsong)
+        public event EventHandler<ChangedEventArgs<int>> CurrentIndexChanged;
+        private void InternalCurrentIndexChanged(int newindex)
         {
             //TODO: 向后台发送消息
         }
@@ -125,6 +151,13 @@ namespace JacobC.Xiami.Services
             }
         }
 
+        #region Playback Order
+
+        //TODO: 打乱时保证正在播放的项目为第一首
+        //TODO: 打乱后更改CurrentIndex
+        /// <summary>
+        /// 打乱当前的播放列表
+        /// </summary>
         public void ShuffleListInPlace()
         {
             //var t = ShuffleList();
@@ -143,20 +176,19 @@ namespace JacobC.Xiami.Services
                 _Playlist[i] = t;
             }
         }
-
+        /// <summary>
+        /// 获取一个随机播放的序号表
+        /// </summary>
+        /// <returns>用于随机播放的不重复编号列表</returns>
         public IList<int> ShuffleList()
         {
+            Random random = new Random();
             int total = _Playlist.Count;
             int[] sequence = new int[total];
             int[] output = new int[total];
-
             for (int i = 0; i < total; i++)
                 sequence[i] = i;
-
-            Random random = new Random();
-
             int end = total - 1;
-
             for (int i = 0; i < total; i++)
             {
                 int num = random.Next(0, end + 1);
@@ -164,9 +196,17 @@ namespace JacobC.Xiami.Services
                 sequence[num] = sequence[end];
                 end--;
             }
-
             return output;
         }
+        /// <summary>
+        /// 获取或设置列表的播放顺序
+        /// </summary>
+        public PlayOrder PlaybackOrder
+        {
+            get; set;
+        }
+
+        #endregion
 
     }
 

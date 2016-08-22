@@ -15,7 +15,7 @@ namespace JacobC.Xiami.Models
     public class AlbumModel : LovableModelBase<uint>
     {
         static Dictionary<uint, AlbumModel> _dict = new Dictionary<uint, AlbumModel>();
-
+        public static readonly AlbumModel Null = new AlbumModel() { };
         /// <summary>
         /// 获取一个新的<see cref="AlbumModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>

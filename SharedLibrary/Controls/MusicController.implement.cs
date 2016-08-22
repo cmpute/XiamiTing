@@ -21,7 +21,8 @@ namespace JacobC.Xiami.Controls
     {
         private void AddListeners()
         {
-            PlaylistService.Instance.CurrentIndexChanging += (sender, e) => CurrentSong = e.NewValue;
+            PlaylistService.Instance.CurrentIndexChanged += (sender, e) =>
+                CurrentSong = e.NewValue == -1 ? SongModel.Null : PlaylistService.Instance.Playlist[e.NewValue];
             PlaybackService.Instance.StateChanged += async (sender, args) =>
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
@@ -41,7 +42,7 @@ namespace JacobC.Xiami.Controls
                 if (lservice.Playlist.Count == 0)
                     return;
                 else
-                    lservice.CurrentPlaying = PlaylistService.Instance.Playlist[0];
+                    lservice.CurrentIndex = 0;
             var pservice = PlaybackService.Instance;
             var CurrentPlayer = pservice.CurrentPlayer;
             if (pservice.IsBackgroundTaskRunning)
@@ -71,7 +72,7 @@ namespace JacobC.Xiami.Controls
         public DelegateCommand<object> PreviousCommand => _PreviousCommand ?? (_PreviousCommand = new DelegateCommand<object>((model) =>
         {
             MessageService.SendMediaMessageToBackground(MediaMessageTypes.SkipPrevious);
-            PlaylistService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) - 1];
+            PlaylistService.Instance.CurrentIndex = PlaylistService.Instance.Playlist.IndexOf(CurrentSong) - 1;
             //TODO: 判断是否循环/随机，并且设置Next的可用性
 
             // Prevent the user from repeatedly pressing the button and causing 
@@ -84,7 +85,7 @@ namespace JacobC.Xiami.Controls
         public DelegateCommand<object> NextCommand => _NextCommand ?? (_NextCommand = new DelegateCommand<object>((model) =>
         {
             MessageService.SendMediaMessageToBackground(MediaMessageTypes.SkipNext);
-            PlaylistService.Instance.CurrentPlaying = PlaylistService.Instance.Playlist[PlaylistService.Instance.Playlist.IndexOf(CurrentSong) + 1];
+            PlaylistService.Instance.CurrentIndex = PlaylistService.Instance.Playlist.IndexOf(CurrentSong) + 1;
             //TODO: 判断是否循环/随机，并且设置Next的可用性
 
             // Prevent the user from repeatedly pressing the button and causing 

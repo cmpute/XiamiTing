@@ -176,7 +176,31 @@ namespace JacobC.Xiami.Services
 
         #region Public Controlling Methods 
 
+        /// <summary>
+        /// 播放指定歌曲
+        /// </summary>
+        /// <param name="song">需要播放的歌曲，如果不在列表中的话将加入列表</param>
         public void PlayTrack(SongModel song)
+        {
+            if (!PlaylistService.Instance.Playlist.Contains(song))
+            {
+                PlaylistService.Instance.Playlist.Add(song);
+                PlayTrack(PlaylistService.Instance.Playlist.Count - 1);
+            }
+            else
+                PlayTrack(PlaylistService.Instance.Playlist.IndexOf(song));
+        }
+        /// <summary>
+        /// 播放列表指定位置的歌曲
+        /// </summary>
+        /// <param name="trackIndex">播放的歌曲位置</param>
+        public void PlayTrack(int trackIndex)
+        {
+            if(PlayTrackInternal(PlaylistService.Instance.Playlist[trackIndex]))
+                PlaylistService.Instance.CurrentIndex = trackIndex;
+        }
+        /// <returns>是否成功开始播放</returns>
+        private bool PlayTrackInternal(SongModel song)
         {
             // Start the background task if it wasn't running
             //if (!IsBackgroundTaskRunning || MediaPlayerState.Closed == CurrentPlayer.CurrentState)
@@ -188,13 +212,14 @@ namespace JacobC.Xiami.Services
 
                 // Start task
                 StartBackgroundAudioTask();
+                return false;
             }
             else
             {
                 MessageService.SendMediaMessageToBackground(MediaMessageTypes.SetSong, song);
                 MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartPlayback);
-
-                PlaylistService.Instance.CurrentPlaying = song;
+                return true;
+                
             }
         }
 
