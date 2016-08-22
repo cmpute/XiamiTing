@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -28,6 +29,15 @@ namespace JacobC.Xiami.Controls
             this.InitializeComponent();
             Instance = this;
             this.AddListeners();
+        }
+
+        //TODO: 区分是Timer改变的ProgressBar还是进度条自行变化，自行变化时需要改变时间显示。可以考虑用VisualTree获取子控件然后用Tag属性作为是否按下的传递
+        private void ProgressBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            //Debug.WriteLine(e.NewValue - e.OldValue);
+            if (timerblocked)
+                return;
+            PlaybackService.Instance.CurrentPlayer.Position = TimeSpan.FromSeconds(e.NewValue);
         }
     }   
 }

@@ -21,18 +21,35 @@ namespace JacobC.Xiami.Controls
     /// </summary>
     public sealed partial class MusicController : UserControl
     {
+        DispatcherTimer songtimer = new DispatcherTimer();
+        bool timerblocked = false;
+
         private void AddListeners()
         {
             PlaylistService.Instance.CurrentIndexChanged += (sender, e) =>
                 CurrentSong = e.NewValue == -1 ? SongModel.Null : PlaylistService.Instance.Playlist[e.NewValue];
-            PlaybackService.Instance.StateChanged += async (sender, args) =>
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        if (args.NewValue == MediaPlayerState.Playing)
-                            VisualStateManager.GoToState(this, "Playing", true);
-                        else
-                            VisualStateManager.GoToState(this, "Paused", true);
-                    });
+            PlaybackService.Instance.StateChanged += MediaPlayer_StateChanged;
+            songtimer.Interval = TimeSpan.FromMilliseconds(300);
+            songtimer.Tick += Songtimer_Tick;
+            this.Unloaded += (sender, e) => songtimer.Stop();
+        }
+
+        private async void MediaPlayer_StateChanged(object sender, Template10.Common.ChangedEventArgs<MediaPlayerState> e)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (e.NewValue == MediaPlayerState.Playing || e.NewValue == MediaPlayerState.Buffering)
+                {
+                    VisualStateManager.GoToState(this, "Playing", true);
+                    songtimer.Start();
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, "Paused", true);
+                    if (e.NewValue != MediaPlayerState.Opening)
+                        songtimer.Stop();
+                }
+            });
         }
 
         DelegateCommand _PlayCommand;
@@ -82,6 +99,16 @@ namespace JacobC.Xiami.Controls
             // in the TrackReady Playstate handler.
             //nextButton.IsEnabled = false;
         }));
-        
+
+        private void Songtimer_Tick(object sender, object e)
+        {
+            timerblocked = true;
+            var player = PlaybackService.Instance.CurrentPlayer;
+            ProgressBar.Maximum = player.NaturalDuration.TotalSeconds;
+            ProgressBar.Value = player.Position.TotalSeconds;
+            //Debug.WriteLine(player.Position.TotalSeconds);
+            timerblocked = false;
+        }
+
     }
 }

@@ -89,7 +89,17 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock x:Name="CurrentPosition"/>
-                        <Slider x:Name="ProgressBar" IsEnabled="{x:Bind IsDownloadBarDisabled, Mode=OneWay}" Grid.Column="1" Margin="0,-4,0,0" Value="0" Foreground="White">
+                        <Slider x:Name="ProgressBar"
+                                IsEnabled="{x:Bind IsDownloadBarDisabled, Mode=OneWay}"
+                                Grid.Column="1"
+                                Margin="0,-4,0,0"
+                                Value="0" IsThumbToolTipEnabled="False"
+                                Foreground="White"
+                                ValueChanged="ProgressBar_ValueChanged"
+                                >
+                            <Slider.Tag>
+                                <x:Boolean>False</x:Boolean>
+                            </Slider.Tag>
                             <Slider.Template>
                                 <ControlTemplate TargetType="Slider">
                                     <Grid Margin="{TemplateBinding Padding}">

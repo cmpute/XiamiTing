@@ -190,7 +190,7 @@ namespace JacobC.Xiami.Services
         /// <summary>
         /// 当<see cref="CurrentState"/>属性发生改变时发生
         /// </summary>
-        public EventHandler<ChangedEventArgs<MediaPlayerState>> StateChanged;
+        public event EventHandler<ChangedEventArgs<MediaPlayerState>> StateChanged;
         
         #region Public Controlling Methods 
 

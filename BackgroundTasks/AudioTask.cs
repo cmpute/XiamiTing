@@ -212,6 +212,7 @@ namespace JacobC.Xiami.Services
                     if (currentTrackPosition != null)
                     {
                         // 如果任务被取消了，则从保存的音轨和位置开始播放
+                        BackgroundMediaPlayer.Current.Play();
                     }
                     else
                     {
@@ -258,7 +259,7 @@ namespace JacobC.Xiami.Services
         #region Background Media Player Handlers
         void Current_CurrentStateChanged(MediaPlayer sender, object args)
         {
-            //DebugWrite($"PlayerStateChanged to {sender.CurrentState.ToString()}", "BackgroundPlayer");
+            DebugWrite($"PlayerStateChanged to {sender.CurrentState.ToString()}", "BackgroundPlayer");
             switch(sender.CurrentState)
             {
                 case MediaPlayerState.Playing:
