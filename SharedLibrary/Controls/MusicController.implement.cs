@@ -27,7 +27,7 @@ namespace JacobC.Xiami.Controls
         private void AddListeners()
         {
             PlaylistService.Instance.CurrentIndexChanged += (sender, e) =>
-                CurrentSong = e.NewValue == -1 ? SongModel.Null : PlaylistService.Instance.Playlist[e.NewValue];
+                CurrentSong = e.NewValue == -1 ? SongModel.Null : PlaylistService.Instance[e.NewValue];
             PlaybackService.Instance.StateChanged += MediaPlayer_StateChanged;
             songtimer.Interval = TimeSpan.FromMilliseconds(300);
             songtimer.Tick += Songtimer_Tick;

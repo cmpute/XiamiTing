@@ -200,13 +200,13 @@ namespace JacobC.Xiami.Services
         /// <param name="song">需要播放的歌曲，如果不在列表中的话将加入列表</param>
         public void PlayTrack(SongModel song)
         {
-            if (!PlaylistService.Instance.Playlist.Contains(song))
+            if (!PlaylistService.Instance.Contains(song))
             {
-                PlaylistService.Instance.Playlist.Add(song);
-                PlayTrack(PlaylistService.Instance.Playlist.Count - 1);
+                PlaylistService.Instance.Add(song);
+                PlayTrack(PlaylistService.Instance.Count - 1);
             }
             else
-                PlayTrack(PlaylistService.Instance.Playlist.IndexOf(song));
+                PlayTrack(PlaylistService.Instance.IndexOf(song));
         }
         /// <summary>
         /// 播放列表指定位置的歌曲
@@ -214,7 +214,7 @@ namespace JacobC.Xiami.Services
         /// <param name="trackIndex">播放的歌曲位置</param>
         public void PlayTrack(int trackIndex)
         {
-            if(PlayTrackInternal(PlaylistService.Instance.Playlist[trackIndex]))
+            if(PlayTrackInternal(PlaylistService.Instance[trackIndex]))
                 PlaylistService.Instance.CurrentIndex = trackIndex;
         }
         /// <summary>
@@ -224,7 +224,7 @@ namespace JacobC.Xiami.Services
         {
             var lservice = PlaylistService.Instance;
             if (lservice.CurrentPlaying == null)
-                if (lservice.Playlist.Count == 0)
+                if (lservice.Count == 0)
                     return;
                 else
                     lservice.CurrentIndex = 0;
@@ -263,7 +263,7 @@ namespace JacobC.Xiami.Services
             //TODO:判断暂停状态
             //TODO:判断是播放列表还是电台
             var list = PlaylistService.Instance;
-            if (list.CurrentIndex == list.Playlist.Count - 1)
+            if (list.CurrentIndex == list.Count - 1)
                 PlayTrack(0);
             else
                 PlayTrack(list.CurrentIndex + 1);
@@ -275,7 +275,7 @@ namespace JacobC.Xiami.Services
         {
             var list = PlaylistService.Instance;
             if (list.CurrentIndex == 0)
-                PlayTrack(list.Playlist.Count - 1);
+                PlayTrack(list.Count - 1);
             else
                 PlayTrack(list.CurrentIndex - 1);
         }

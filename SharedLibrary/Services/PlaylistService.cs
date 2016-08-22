@@ -23,7 +23,7 @@ namespace JacobC.Xiami.Services
     /// <remarks>
     /// 系统的mediaplayer是不会缓存下一轨的(如果缓存可以将所有播放任务均交给后台)，并且也无法在生成list以后更改MediaPlaybackItem的Source，因此无缝播放暂时无法实现
     /// </remarks>
-    public class PlaylistService// : ObservableCollection<SongModel>
+    public class PlaylistService : ObservableCollection<SongModel>
     {
         #region Ctor
         static PlaylistService _instance;
@@ -34,7 +34,9 @@ namespace JacobC.Xiami.Services
 
         private PlaylistService()
         {
+            //TODO: 读取上一次播放的位置
             CurrentIndex = SettingsService.Instance.Playback.ReadAndReset("TrackID", -1);
+            InitPlaylist();
         }
         #endregion
 
@@ -48,7 +50,7 @@ namespace JacobC.Xiami.Services
                 if (CurrentIndex == -1)
                     return null;
                     //throw new ArgumentNullException(nameof(CurrentPlaying), "当前播放列表为空，无法获取音轨");
-                return Playlist[CurrentIndex];
+                return this[CurrentIndex];
             }
         }
 
@@ -64,7 +66,7 @@ namespace JacobC.Xiami.Services
         {
             get
             {
-                if (Playlist.Count == 0)
+                if (this.Count == 0)
                     return -1;
                 return _currentIndex;
             }
@@ -88,19 +90,7 @@ namespace JacobC.Xiami.Services
             //TODO: 向后台发送消息
         }
 
-        private ObservableCollection<SongModel> _Playlist;
-        /// <summary>
-        /// 获取播放列表的唯一实例
-        /// </summary>
-        public ObservableCollection<SongModel> Playlist
-        {
-            get
-            {
-                if (_Playlist == null)
-                    InitPlaylist();
-                return _Playlist;
-            }
-        }
+
         /// <summary>
         /// 应用程序开始时初始化播放列表
         /// </summary>
@@ -128,7 +118,7 @@ namespace JacobC.Xiami.Services
 
         private void InitPlaylist()
         {
-            _Playlist = InitPlaylistE().ToObservableCollection();
+            this.AddRange(InitPlaylistE());
         }
 
         public IEnumerable<SongModel> InitPlaylistE()
@@ -166,14 +156,14 @@ namespace JacobC.Xiami.Services
             //    temp.Add(_Playlist[item]);
             //_Playlist.AddRange(temp, true);
             
-            int total = _Playlist.Count, i;
+            int total = Count, i;
             Random random = new Random();
             while (total > 0)
             {
                 i = random.Next(total--);
-                var t = _Playlist[total];
-                _Playlist[total] = _Playlist[i];
-                _Playlist[i] = t;
+                var t = this[total];
+                this[total] = this[i];
+                this[i] = t;
             }
         }
         /// <summary>
@@ -183,7 +173,7 @@ namespace JacobC.Xiami.Services
         public IList<int> ShuffleList()
         {
             Random random = new Random();
-            int total = _Playlist.Count;
+            int total = Count;
             int[] sequence = new int[total];
             int[] output = new int[total];
             for (int i = 0; i < total; i++)

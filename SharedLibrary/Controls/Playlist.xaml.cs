@@ -27,6 +27,7 @@ namespace JacobC.Xiami.Controls
 
         private void Instance_CurrentIndexChanged(object sender, Template10.Common.ChangedEventArgs<int> e)
         {
+            //TODO: 针对播放中的打乱顺序进行处理
             ListViewItem t;
             if (e.OldValue >= 0)
             {
