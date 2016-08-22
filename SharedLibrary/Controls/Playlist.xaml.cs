@@ -1,5 +1,4 @@
-﻿using JacobC.Xiami.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,6 +12,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using JacobC.Xiami.Models;
+using JacobC.Xiami.Services;
 
 namespace JacobC.Xiami.Controls
 {
@@ -21,6 +22,22 @@ namespace JacobC.Xiami.Controls
         public Playlist()
         {
             this.InitializeComponent();
+            PlaylistService.Instance.CurrentIndexChanged += Instance_CurrentIndexChanged;
+        }
+
+        private void Instance_CurrentIndexChanged(object sender, Template10.Common.ChangedEventArgs<int> e)
+        {
+            ListViewItem t;
+            if (e.OldValue >= 0)
+            {
+                t = Songlist.ContainerFromIndex(e.OldValue) as ListViewItem;
+                VisualStateManager.GoToState((t.Tag as SongItem), "NotPlaying", true);
+            }
+            if (e.NewValue >= 0)
+            {
+                t = Songlist.ContainerFromIndex(e.NewValue) as ListViewItem;
+                VisualStateManager.GoToState((t.Tag as SongItem), "Playing", true);
+            }
         }
 
         /// <summary>

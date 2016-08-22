@@ -16,7 +16,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace JacobC.Xiami.Controls
 {
-    //MusicController不负责列表切歌的功能
+    /// <summary>
+    /// 播放控制器，相当于MediaTransportControl
+    /// </summary>
     public sealed partial class MusicController : UserControl
     {
         private void AddListeners()
@@ -36,43 +38,31 @@ namespace JacobC.Xiami.Controls
         DelegateCommand _PlayCommand;
         public DelegateCommand PlayCommand => _PlayCommand ?? (_PlayCommand = new DelegateCommand(() =>
         {
-            var lservice = PlaylistService.Instance;
-            LogService.DebugWrite("Play button pressed from App");
-            if (lservice.CurrentPlaying == null)
-                if (lservice.Playlist.Count == 0)
-                    return;
-                else
-                    lservice.CurrentIndex = 0;
             var pservice = PlaybackService.Instance;
             var CurrentPlayer = pservice.CurrentPlayer;
-            if (pservice.IsBackgroundTaskRunning)
+            if (MediaPlayerState.Playing == CurrentPlayer.CurrentState)
             {
-                if (MediaPlayerState.Playing == CurrentPlayer.CurrentState)
-                {
-                    CurrentPlayer.Pause();
-                }
-                else if (MediaPlayerState.Paused == CurrentPlayer.CurrentState)
-                {
-                    CurrentPlayer.Play();
-                }
-                else if (MediaPlayerState.Closed == CurrentPlayer.CurrentState)
-                {
-                    pservice.StartBackgroundAudioTask();
-                    pservice.StartPlayback();
-                }
+                CurrentPlayer.Pause();
+            }
+            else if (MediaPlayerState.Paused == CurrentPlayer.CurrentState)
+            {
+                pservice.StartPlayback();
             }
             else
             {
-                pservice.StartBackgroundAudioTask();
-                pservice.StartPlayback();
+                pservice.PlayTrack();
+                //else if (MediaPlayerState.Closed == CurrentPlayer.CurrentState)
+                //{
+                //    pservice.StartBackgroundAudioTask();
+                //    pservice.StartPlayback();
+                //}
             }
         }));
 
         private DelegateCommand<object> _PreviousCommand;
         public DelegateCommand<object> PreviousCommand => _PreviousCommand ?? (_PreviousCommand = new DelegateCommand<object>((model) =>
         {
-            MessageService.SendMediaMessageToBackground(MediaMessageTypes.SkipPrevious);
-            PlaylistService.Instance.CurrentIndex = PlaylistService.Instance.Playlist.IndexOf(CurrentSong) - 1;
+            PlaybackService.Instance.SkipPrevious();
             //TODO: 判断是否循环/随机，并且设置Next的可用性
 
             // Prevent the user from repeatedly pressing the button and causing 
@@ -84,8 +74,7 @@ namespace JacobC.Xiami.Controls
         private DelegateCommand<object> _NextCommand;
         public DelegateCommand<object> NextCommand => _NextCommand ?? (_NextCommand = new DelegateCommand<object>((model) =>
         {
-            MessageService.SendMediaMessageToBackground(MediaMessageTypes.SkipNext);
-            PlaylistService.Instance.CurrentIndex = PlaylistService.Instance.Playlist.IndexOf(CurrentSong) + 1;
+            PlaybackService.Instance.SkipNext();
             //TODO: 判断是否循环/随机，并且设置Next的可用性
 
             // Prevent the user from repeatedly pressing the button and causing 

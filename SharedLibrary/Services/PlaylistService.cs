@@ -20,11 +20,11 @@ namespace JacobC.Xiami.Services
     /// <summary>
     /// 维护全局的播放列表集合
     /// </summary>
+    /// <remarks>
+    /// 系统的mediaplayer是不会缓存下一轨的(如果缓存可以将所有播放任务均交给后台)，并且也无法在生成list以后更改MediaPlaybackItem的Source，因此无缝播放暂时无法实现
+    /// </remarks>
     public class PlaylistService// : ObservableCollection<SongModel>
     {
-        //TODO: 尝试其他方法完成无缝播放，系统的mediaplayer是不会缓存下一轨的(如果缓存可以将所有播放任务均交给后台)
-        readonly Uri IdleSongPath = new Uri("http://win.web.rh03.sycdn.kuwo.cn/5732a6217291881c369bc1b89b620f1b/57b99dd7/resource/a1/7/41/1607541714.aac");
-
         #region Ctor
         static PlaylistService _instance;
         /// <summary>

@@ -217,6 +217,19 @@ namespace JacobC.Xiami.Services
             if(PlayTrackInternal(PlaylistService.Instance.Playlist[trackIndex]))
                 PlaylistService.Instance.CurrentIndex = trackIndex;
         }
+        /// <summary>
+        /// 播放当前轨
+        /// </summary>
+        public void PlayTrack()
+        {
+            var lservice = PlaylistService.Instance;
+            if (lservice.CurrentPlaying == null)
+                if (lservice.Playlist.Count == 0)
+                    return;
+                else
+                    lservice.CurrentIndex = 0;
+            PlayTrack(lservice.CurrentIndex);
+        }
         /// <returns>是否成功开始播放</returns>
         private bool PlayTrackInternal(SongModel song)
         {
@@ -241,11 +254,31 @@ namespace JacobC.Xiami.Services
             }
         }
 
-
+        /// <summary>
+        /// 播放下一首
+        /// </summary>
         public void SkipNext()
-        { }
+        {
+            //TODO:判断播放模式
+            //TODO:判断暂停状态
+            //TODO:判断是播放列表还是电台
+            var list = PlaylistService.Instance;
+            if (list.CurrentIndex == list.Playlist.Count - 1)
+                PlayTrack(0);
+            else
+                PlayTrack(list.CurrentIndex + 1);
+        }
+        /// <summary>
+        /// 播放上一首
+        /// </summary>
         public void SkipPrevious()
-        { }
+        {
+            var list = PlaylistService.Instance;
+            if (list.CurrentIndex == 0)
+                PlayTrack(list.Playlist.Count - 1);
+            else
+                PlayTrack(list.CurrentIndex - 1);
+        }
 
         #endregion
 

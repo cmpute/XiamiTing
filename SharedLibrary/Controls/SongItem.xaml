@@ -48,6 +48,9 @@
             <VisualStateGroup x:Name="Play">
                 <VisualState x:Name="NotPlaying"/>
                 <VisualState x:Name="Playing">
+                    <VisualState.Setters>
+                        <Setter Target="IndexNumber.FontWeight" Value="Bold"/>
+                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>

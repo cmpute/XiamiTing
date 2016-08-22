@@ -188,10 +188,8 @@ namespace JacobC.Xiami.Controls
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            //System.Diagnostics.Debug.WriteLine("PlayButton Pressed");
-            //在NetTest中貌似不能使用
-            var target = ((Button)sender).DataContext as SongModel;
-            PlaybackService.Instance.PlayTrack(target);
+            if (ListIndex == 0) return;
+            PlaybackService.Instance.PlayTrack(ListIndex - 1);
         }
     }
 }
