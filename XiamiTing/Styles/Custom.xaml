@@ -49,11 +49,6 @@
 
             <Style TargetType="controls:HamburgerMenu">
 
-                
-
-                <!--Windows 10 2015 (1511) Hamburger Menu Style
-                Simply replace AccentColor with the follow setters.-->
-
                 <Setter Property="HamburgerBackground" Value="{StaticResource ThemeColorBrush}" />
                 <Setter Property="HamburgerForeground" Value="White" />
                 <Setter Property="NavAreaBackground" Value="{StaticResource DarkColorBrush}" />
@@ -66,10 +61,9 @@
                 <Setter Property="NavButtonCheckedForeground" Value="White" />
                 <Setter Property="NavButtonCheckedBackground" Value="{StaticResource DarkThemeColorBrush}" />
                 <Setter Property="NavButtonCheckedIndicatorBrush" Value="White" />
-
-                
-
-                <!--<Setter Property="AccentColor" Value="{StaticResource CustomColor}" />-->
+                <Setter Property="PaneBorderThickness" Value="0"/>
+                <Setter Property="PaneBorderBrush" Value="Transparent"/>
+                <Setter Property="SecondarySeparator" Value="DarkGray"/>
                 <Setter Property="VisualStateNarrowMinWidth" Value="{StaticResource NarrowMinWidth}" />
                 <Setter Property="VisualStateNormalMinWidth" Value="{StaticResource NormalMinWidth}" />
                 <Setter Property="VisualStateWideMinWidth" Value="{StaticResource WideMinWidth}" />
