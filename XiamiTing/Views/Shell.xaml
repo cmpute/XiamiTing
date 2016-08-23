@@ -24,16 +24,13 @@
                 <Controls:HamburgerButtonInfo ClearHistory="True" PageType="views:DiscoveryPage">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Width="48" Height="48" Glyph="&#xE704;"/>
-                        <TextBlock Margin="12,0,0,0" VerticalAlignment="Center"
-                                   Text="Discovery" />
+                        <TextBlock x:Uid="DiscoveryNavText" Margin="12,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Controls:HamburgerButtonInfo>
                 <Controls:HamburgerButtonInfo PageType="views:PlaylistPage">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Width="48" Height="48"
-                                    Symbol="MusicInfo" />
-                        <TextBlock Margin="12,0,0,0" VerticalAlignment="Center"
-                                   Text="Playlist" />
+                        <SymbolIcon Width="48" Height="48" Symbol="MusicInfo" />
+                        <TextBlock x:Uid="PlaylistNavText" Margin="12,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Controls:HamburgerButtonInfo>
             </Controls:HamburgerMenu.PrimaryButtons>
@@ -46,10 +43,8 @@
                         <SuppressNavigationTransitionInfo />
                     </Controls:HamburgerButtonInfo.NavigationTransitionInfo>
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Width="48" Height="48"
-                                    Symbol="Setting" />
-                        <TextBlock Margin="12,0,0,0" VerticalAlignment="Center"
-                                   Text="Settings" />
+                        <SymbolIcon Width="48" Height="48" Symbol="Setting" />
+                        <TextBlock x:Uid="SettingsNavText" Margin="12,0,0,0" VerticalAlignment="Center" Text="Settings" />
                     </StackPanel>
                 </Controls:HamburgerButtonInfo>
             </Controls:HamburgerMenu.SecondaryButtons>
