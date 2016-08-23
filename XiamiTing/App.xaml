@@ -4,8 +4,8 @@
                      xmlns:local="using:JacobC.Xiami"
                      xmlns:common="using:Template10.Common"
                      RequestedTheme="Light">
-
-    <Application.Resources>
+    
+    <common:BootStrapper.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/Colors.xaml"/>
@@ -22,6 +22,6 @@
                 </Setter>
             </Style>
         </ResourceDictionary>
-    </Application.Resources>
+    </common:BootStrapper.Resources>
 
 </common:BootStrapper>

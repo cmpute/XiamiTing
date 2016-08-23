@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Newtonsoft.Json;
 
 namespace JacobC.Xiami.Views
 {
@@ -16,7 +17,7 @@ namespace JacobC.Xiami.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var index = int.Parse(_SerializationService.Deserialize(e.Parameter?.ToString()).ToString());
+            var index = e.GetParameter<int>();//JsonConvert.DeserializeObject<int>(e.Parameter?.ToString());
             MyPivot.SelectedIndex = index;
         }
     }

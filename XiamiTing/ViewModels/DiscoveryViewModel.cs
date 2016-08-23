@@ -15,9 +15,9 @@ using JacobC.Xiami.Models;
 
 namespace JacobC.Xiami.ViewModels
 {
-    public class MainPageViewModel : ViewModelBase
+    public class DiscoveryViewModel : ViewModelBase
     {
-        public MainPageViewModel()
+        public DiscoveryViewModel()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
             {

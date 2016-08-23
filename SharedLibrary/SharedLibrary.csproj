@@ -126,15 +126,19 @@
       <DependentUpon>SongItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="IncrementalLoadingBase.cs" />
-    <Compile Include="Models\AlbumModel.cs" />
-    <Compile Include="Models\ArtistModel.cs" />
-    <Compile Include="Models\CollectionModel.cs" />
-    <Compile Include="Models\CommentModel.cs" />
-    <Compile Include="Models\GenreModel.cs" />
-    <Compile Include="Models\LovableModelBase.cs" />
-    <Compile Include="Models\MVModel.cs" />
-    <Compile Include="Models\SongModel.cs" />
-    <Compile Include="Models\UserModel.cs" />
+    <Compile Include="Models\BaseModels\AlbumModel.cs" />
+    <Compile Include="Models\BaseModels\ArtistModel.cs" />
+    <Compile Include="Models\BaseModels\CollectionModel.cs" />
+    <Compile Include="Models\BaseModels\CommentModel.cs" />
+    <Compile Include="Models\BaseModels\GenreModel.cs" />
+    <Compile Include="Models\BaseModels\LovableModelBase.cs" />
+    <Compile Include="Models\BaseModels\MVModel.cs" />
+    <Compile Include="Models\BaseModels\ZoneModel.cs" />
+    <Compile Include="Models\CollectionRecommendationModel.cs" />
+    <Compile Include="Models\PresetRadios.cs" />
+    <Compile Include="Models\RecommendationModel.cs" />
+    <Compile Include="Models\BaseModels\SongModel.cs" />
+    <Compile Include="Models\BaseModels\UserModel.cs" />
     <Compile Include="Net\Api\CombinedApi.cs" />
     <Compile Include="Net\Api\DataApi.cs" />
     <Compile Include="Net\Api\IXiamiApi.cs" />
@@ -177,6 +181,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

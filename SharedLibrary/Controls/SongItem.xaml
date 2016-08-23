@@ -19,6 +19,15 @@
             <Setter Property="HorizontalAlignment" Value="Left"/>
         </Style>
         <t10c:ChangeTypeConverter x:Key="ToNullableConverter"/>
+        <Style TargetType="Button" x:Key="EmptyButtonForIconLocal">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     
     <Grid x:Name="RootGrid">
@@ -66,7 +75,7 @@
                        VerticalAlignment="Center"
                        Foreground="{x:Bind NormalIconForeground}"
                        Text="{x:Bind ListIndex, Mode=OneWay}" HorizontalAlignment="Center"/>
-            <Button x:Name="PlayButton"  Style="{StaticResource EmptyButtonForIcon}" HorizontalAlignment="Left" Visibility="Collapsed" Margin="-4,0,0,-4" Click="PlayButton_Click">
+            <Button x:Name="PlayButton"  Style="{StaticResource EmptyButtonForIconLocal}" HorizontalAlignment="Left" Visibility="Collapsed" Margin="-4,0,0,-4" Click="PlayButton_Click">
                 <FontIcon Glyph="&#xE7F6;" FontSize="24"/>
             </Button>
         </Grid>
@@ -131,7 +140,7 @@
             </Control.Template>
         </CheckBox>
         <Button x:Name="FlyoutButton" Margin="28,0,0,0" 
-                Style="{StaticResource EmptyButtonForIcon}"
+                Style="{StaticResource EmptyButtonForIconLocal}"
                 Visibility="Collapsed"
                 Grid.Column="4" >
             <Button.Flyout>
@@ -141,7 +150,7 @@
             </Button.Flyout>
             <FontIcon Style="{StaticResource sFontIcon}" Foreground="{x:Bind NormalIconForeground}" Glyph="&#xE169;" />
         </Button>
-        <Button x:Name="DeleteButton" Grid.Column="4" Margin="52,0,0,0" Tapped="DeleteButton_Tapped" Style="{StaticResource EmptyButtonForIcon}" Visibility="Collapsed">
+        <Button x:Name="DeleteButton" Grid.Column="4" Margin="52,0,0,0" Tapped="DeleteButton_Tapped" Style="{StaticResource EmptyButtonForIconLocal}" Visibility="Collapsed">
             <FontIcon Style="{StaticResource sFontIcon}" Foreground="{x:Bind NormalIconForeground}" Glyph="&#xE711;"/>
         </Button>
     </Grid>

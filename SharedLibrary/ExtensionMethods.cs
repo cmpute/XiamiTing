@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Template10.Common;
 using Template10.Services.SettingsService;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Navigation;
 using Windows.Foundation;
 
 namespace JacobC.Xiami
@@ -65,5 +66,13 @@ namespace JacobC.Xiami
         /// </summary>
         /// <param name="asyncMethod">要同步运行的方法</param>
         public static T InvokeAndWait<T>(Func<IAsyncOperation<T>> asyncMethod) => InvokeAndWait(async () => await asyncMethod());
+        /// <summary>
+        /// 获取指定类型的参数
+        /// </summary>
+        /// <typeparam name="T">需要获取的参数类型</typeparam>
+        public static T GetParameter<T>(this NavigationEventArgs e)
+        {
+            return Template10.Services.SerializationService.SerializationService.Json.Deserialize<T>(e.Parameter?.ToString());
+        }
     }
 }

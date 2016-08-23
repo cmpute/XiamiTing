@@ -89,6 +89,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock x:Name="CurrentPosition"/>
+                        <!-- 加入Progress的表示， 可以通过获取后台BufferingProgress获得 -->
                         <Slider x:Name="ProgressBar"
                                 IsEnabled="{x:Bind IsDownloadBarDisabled, Mode=OneWay}"
                                 Grid.Column="1"

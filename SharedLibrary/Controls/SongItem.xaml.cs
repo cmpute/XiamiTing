@@ -62,7 +62,7 @@ namespace JacobC.Xiami.Controls
                     _LinkedList = ItemsControl.ItemsControlFromItemContainer(item) as ListView;
                     var index = _LinkedList.IndexFromContainer(item);
                     ListIndex = index + 1;
-                    if (PlaylistService.Instance.CurrentIndex == index)//正在播放则更新状态
+                    if (PlaylistService.Instance.CurrentIndex == index && index != -1)//正在播放则更新状态
                         VisualStateManager.GoToState(this, "Playing", true);
                     if (_LinkedList.ItemsSource is INotifyCollectionChanged)
                     {
