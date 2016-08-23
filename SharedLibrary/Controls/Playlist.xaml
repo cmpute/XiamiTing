@@ -26,6 +26,7 @@
         <Grid x:Name="Header" Margin="16,4">
             <!--TODO: 增加是否显示多选框按钮-->
             <!--TODO: 响应按下标题进行排序-->
+            <!--TODO: 表头也要和SongItem一样响应大小变化-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="48"/>
                 <ColumnDefinition/>
@@ -38,8 +39,7 @@
             <TextBlock Grid.Column="3" Text="Album" Style="{StaticResource TitleText}"/>
         </Grid>
         <ListView x:Name="Songlist"
-                  x:FieldModifier="Public"
-                  SelectionMode="{x:Bind SelectionMode, Mode=TwoWay}"
+                  SelectionMode="{x:Bind SelectionMode, Mode=OneWay}"
                   CanReorderItems="True" AllowDrop="True"
                   HorizontalContentAlignment="Stretch"
                   ItemsSource="{x:Bind SongSource, Mode=OneWay}"
@@ -313,6 +313,7 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="m:SongModel">
+                    <!--TODO: 把这个列表放到一个控件里面，其中列表项末尾是+还是x可以设置一个属性-->
                     <local:SongItem x:Name="SongPresenter" ItemSource="{x:Bind}" VerticalAlignment="Stretch"/>
                 </DataTemplate>
             </ListView.ItemTemplate>

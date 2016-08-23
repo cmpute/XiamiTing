@@ -94,7 +94,7 @@ namespace JacobC.Xiami.Controls
         /// </summary>
         public static readonly DependencyProperty SelectionModeProperty =
               DependencyProperty.Register(nameof(SelectionMode), typeof(SelectionMode),
-                  typeof(Playlist), new PropertyMetadata(ListViewSelectionMode.Multiple, (d, e) =>
+                  typeof(Playlist), new PropertyMetadata(ListViewSelectionMode.Extended, (d, e) =>
                   {
                       //(d as Playlist).SelectionModeChanged?.Invoke(d, e.ToChangedEventArgs<SelectionMode>());
                       (d as Playlist).InternalSelectionModeChanged(e);
@@ -105,7 +105,7 @@ namespace JacobC.Xiami.Controls
         //public event EventHandler<ChangedEventArgs<ListViewSelectionMode>> SelectionModeChanged;
         private void InternalSelectionModeChanged(DependencyPropertyChangedEventArgs e)
         {
-            
+            //TODO: 改变标题栏的结构
         }
 
         /// <summary>

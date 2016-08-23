@@ -127,18 +127,23 @@ namespace JacobC.Xiami.Services
             for (int i = 0; i < 6; i++)
             {
                 SongModel sm = SongModel.GetNew(1775616994);
-                sm.Name = $"Foundations (Original Mix)";
-                sm.Album = AlbumModel.GetNew(2100274906);
-                //sm.MediaUri = new Uri(@"ms-appx:///Assets/Ring01.wma");
-                ExtensionMethods.InvokeAndWait(async()=>await Net.DataApi.GetDownloadLink(sm, false));
-                sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/21002749061455506376_2.jpg");
+                if (i == 0)
+                {
+                    sm.Name = $"Foundations (Original Mix)";
+                    sm.Album = AlbumModel.GetNew(2100274906);
+                    //sm.MediaUri = new Uri(@"ms-appx:///Assets/Ring01.wma");
+                    ExtensionMethods.InvokeAndWait(async () => sm.MediaUri = new Uri(await Net.DataApi.GetDownloadLink(sm, false)));
+                    sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/21002749061455506376_2.jpg");
+                }
                 yield return sm;
-                sm = SongModel.GetNew(1771503325);
-                sm.Name = $"Give My Regards";
-                sm.Album = AlbumModel.GetNew(504506);
-                //sm.MediaUri = new Uri(@"ms-appx:///Assets/Ring02.wma");
-                ExtensionMethods.InvokeAndWait(async () => await Net.DataApi.GetDownloadLink(sm, false));
-                sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/5045061333262175_2.jpg");
+                sm = SongModel.GetNew(1771503325); if (i == 0)
+                {
+                    sm.Name = $"Give My Regards";
+                    sm.Album = AlbumModel.GetNew(504506);
+                    //sm.MediaUri = new Uri(@"ms-appx:///Assets/Ring02.wma");
+                    ExtensionMethods.InvokeAndWait(async () => sm.MediaUri = new Uri(await Net.DataApi.GetDownloadLink(sm, false)));
+                    sm.Album.AlbumArtUri = new Uri("http://img.xiami.net/images/album/img35/105735/5045061333262175_2.jpg");
+                }
                 yield return sm;
             }
         }

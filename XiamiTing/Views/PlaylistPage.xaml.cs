@@ -40,6 +40,29 @@ namespace JacobC.Xiami.Views
             Songlist.OperateSelectedItems(SelectionOperation.Delete);
         }, (model) => { return Songlist.CanOperateItem(SelectionOperation.Delete); }));
 
+        private DelegateCommand<object> _MultipleSelect;
+        public DelegateCommand<object> MultipleSelect => _MultipleSelect ?? (_MultipleSelect = new DelegateCommand<object>((model) =>
+        {
+            if (Songlist.SelectionMode == ListViewSelectionMode.Extended)
+            {
+                Songlist.SelectionMode = ListViewSelectionMode.Multiple;
+                MultiSelect.Label = "SingleSelect";
+                SelectAll.Visibility = Visibility.Visible;
+            }
+            else if(Songlist.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                Songlist.SelectionMode = ListViewSelectionMode.Extended;
+                MultiSelect.Label = "MultiSelect";
+                SelectAll.Visibility = Visibility.Collapsed;
+            }
+        }));
+
+        private DelegateCommand<object> _SelectAll;
+        public DelegateCommand<object> SelectAllCommand => _SelectAll ?? (_SelectAll = new DelegateCommand<object>((model) =>
+        {
+            Songlist.OperateSelectedItems(SelectionOperation.SelectAll);
+        }));
+
 
         private void listView_SelectionChanged(object sender, RoutedEventArgs e)
         {

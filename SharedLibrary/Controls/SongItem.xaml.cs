@@ -60,8 +60,11 @@ namespace JacobC.Xiami.Controls
                     _LinkedItem = item;
                     (item as ListViewItem).Tag = this;//用Tag传递对SongItem的引用
                     _LinkedList = ItemsControl.ItemsControlFromItemContainer(item) as ListView;
-                    ListIndex = _LinkedList.IndexFromContainer(item) + 1;
-                    if(_LinkedList.ItemsSource is INotifyCollectionChanged)
+                    var index = _LinkedList.IndexFromContainer(item);
+                    ListIndex = index + 1;
+                    if (PlaylistService.Instance.CurrentIndex == index)//正在播放则更新状态
+                        VisualStateManager.GoToState(this, "Playing", true);
+                    if (_LinkedList.ItemsSource is INotifyCollectionChanged)
                     {
                         _LinkedCollection = _LinkedList.ItemsSource as INotifyCollectionChanged;
                         _LinkedCollection.CollectionChanged += _Linkedlist_CollectionChanged;
@@ -152,7 +155,8 @@ namespace JacobC.Xiami.Controls
                   }));
         private void InternalItemSourceChanged(DependencyPropertyChangedEventArgs e)
         {
-
+            if (PlaylistService.Instance.CurrentIndex == ListIndex - 1)
+                VisualStateManager.GoToState(this, "Playing", true);
         }
 
         /// <summary>

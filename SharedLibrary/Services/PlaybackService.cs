@@ -247,6 +247,9 @@ namespace JacobC.Xiami.Services
             }
             else
             {
+                //TODO: 增加如果播放不成功则刷新地址
+                if (song.MediaUri == null)
+                    ExtensionMethods.InvokeAndWait(async () => song.MediaUri = new Uri(await Net.DataApi.GetDownloadLink(song, false)));
                 MessageService.SendMediaMessageToBackground(MediaMessageTypes.SetSong, song);
                 MessageService.SendMediaMessageToBackground(MediaMessageTypes.StartPlayback);
                 return true;

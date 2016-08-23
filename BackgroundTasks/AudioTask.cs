@@ -305,7 +305,7 @@ namespace JacobC.Xiami.Services
                     //if (current.CurrentState != MediaPlayerState.Playing && current.CurrentState != MediaPlayerState.Closed)
                     //    StartPlayback();
                     UpdateUVCOnNewTrack(song);
-                    DebugWrite($"PlaySong {song.XiamiID}", "BackgroundPlayer");
+                    DebugWrite($"PlaySong {song.XiamiID} Address:{song.MediaUri}", "BackgroundPlayer");
                     return;
             }
 

@@ -15,7 +15,7 @@ namespace JacobC.Xiami.Models
 
         //TODO: 在Artist,Album,Song之间使用弱引用WeakReference
         static Dictionary<uint, SongModel> _dict = new Dictionary<uint, SongModel>();
-        public static readonly SongModel Null = new SongModel() { Name = "虾", TrackArtist = "听", Album = AlbumModel.Null };
+        public static readonly SongModel Null = new SongModel() { Name = "虾米音乐", TrackArtist = "随心而动", Album = AlbumModel.Null };
         /// <summary>
         /// 获取一个新的<see cref="SongModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>

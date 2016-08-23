@@ -41,10 +41,11 @@
         <controls:PageHeader x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
                              Grid.Row="0" Text="Playlist">
             <controls:PageHeader.PrimaryCommands>
-                <AppBarButton Command="{x:Bind DeleteCommand, Mode=OneWay}" Icon="Delete" Label="Delete Selection"/>
+                <AppBarButton x:Name="Delete" Command="{x:Bind DeleteCommand}" Icon="Delete" Label="Delete Selection"/>
+                <AppBarButton x:Name="SelectAll" Command="{x:Bind SelectAllCommand}" Icon="SelectAll" Label="SelectAll" Visibility="Collapsed"/>
+                <AppBarButton x:Name="MultiSelect" Command="{x:Bind MultipleSelect}" Icon="ViewAll" Label="MultiSelect"/>
             </controls:PageHeader.PrimaryCommands>
         </controls:PageHeader>
-        <!--TODO: 把这个列表放到一个控件里面，其中列表项末尾是+还是x可以设置一个属性，首行是否显示CheckBox也可以添加一个属性-->
         <c:Playlist Grid.Row="1" x:Name="Songlist"/>
     </Grid>
 </Page>
