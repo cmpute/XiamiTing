@@ -1,18 +1,12 @@
 ﻿using JacobC.Xiami.Models;
 using JacobC.Xiami.Services;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Template10.Mvvm;
 using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace JacobC.Xiami.Controls
 {
@@ -22,7 +16,6 @@ namespace JacobC.Xiami.Controls
     public sealed partial class MusicController : UserControl
     {
         DispatcherTimer songtimer = new DispatcherTimer();
-        bool timerblocked = false;
 
         private void AddListeners()
         {
@@ -33,6 +26,9 @@ namespace JacobC.Xiami.Controls
             songtimer.Interval = TimeSpan.FromMilliseconds(300);
             songtimer.Tick += Songtimer_Tick;
             this.Unloaded += (sender, e) => songtimer.Stop();
+            ProgressBar.Loaded += (sender, e) =>
+                (Windows.UI.Xaml.Media.VisualTreeHelper.GetChild(sender as DependencyObject, 0) as FrameworkElement).RegisterPropertyChangedCallback(TagProperty, (obj, dp) =>
+                    IsDraggingSlider = (bool)((obj as FrameworkElement).Tag));
         }
 
         private async void MediaPlayer_StateChanged(object sender, Template10.Common.ChangedEventArgs<MediaPlayerState> e)
@@ -53,62 +49,49 @@ namespace JacobC.Xiami.Controls
             });
         }
 
-        DelegateCommand _PlayCommand;
-        public DelegateCommand PlayCommand => _PlayCommand ?? (_PlayCommand = new DelegateCommand(() =>
+        bool _isDragging = false;
+        private bool IsDraggingSlider
         {
-            var pservice = PlaybackService.Instance;
-            var CurrentPlayer = pservice.CurrentPlayer;
-            if (MediaPlayerState.Playing == CurrentPlayer.CurrentState)
+            get { return _isDragging; }
+            set
             {
-                CurrentPlayer.Pause();
+                if (_isDragging != value)
+                {
+                    _isDragging = value;
+                    if (!value)
+                        OnDraggingEnd();
+                }
             }
-            else if (MediaPlayerState.Paused == CurrentPlayer.CurrentState)
-            {
-                pservice.StartPlayback();
-            }
-            else
-            {
-                pservice.PlayTrack();
-                //else if (MediaPlayerState.Closed == CurrentPlayer.CurrentState)
-                //{
-                //    pservice.StartBackgroundAudioTask();
-                //    pservice.StartPlayback();
-                //}
-            }
-        }));
-
-        private DelegateCommand<object> _PreviousCommand;
-        public DelegateCommand<object> PreviousCommand => _PreviousCommand ?? (_PreviousCommand = new DelegateCommand<object>((model) =>
-        {
-            PlaybackService.Instance.SkipPrevious();
-            //TODO: 判断是否循环/随机，并且设置Next的可用性
-
-            // Prevent the user from repeatedly pressing the button and causing 
-            // a backlong of button presses to be handled. This button is re-eneabled 
-            // in the TrackReady Playstate handler.
-            //previous.IsEnabled = false;
-        }));
-
-        private DelegateCommand<object> _NextCommand;
-        public DelegateCommand<object> NextCommand => _NextCommand ?? (_NextCommand = new DelegateCommand<object>((model) =>
-        {
-            PlaybackService.Instance.SkipNext();
-            //TODO: 判断是否循环/随机，并且设置Next的可用性
-
-            // Prevent the user from repeatedly pressing the button and causing 
-            // a backlong of button presses to be handled. This button is re-eneabled 
-            // in the TrackReady Playstate handler.
-            //nextButton.IsEnabled = false;
-        }));
+        }
 
         private void Songtimer_Tick(object sender, object e)
         {
-            timerblocked = true;
+            if (_isDragging)
+                return;//拖拽时不改变数值
             var player = PlaybackService.Instance.CurrentPlayer;
             ProgressBar.Maximum = player.NaturalDuration.TotalSeconds;
             ProgressBar.Value = player.Position.TotalSeconds;
-            //Debug.WriteLine(player.Position.TotalSeconds);
-            timerblocked = false;
+            //TODO: Tick更改时间指示文字
+        }
+
+        private double _lastSeekPosition = -1;
+        private void ProgressBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (_isDragging)
+            {
+                //TODO: 拖拽时更改时间指示文字
+                _lastSeekPosition = e.NewValue;
+            }
+        }
+
+        //拖拽结束时发生 TODO: 验证是否生效
+        private void OnDraggingEnd()
+        {
+            if (_lastSeekPosition != -1)
+            {
+                PlaybackService.Instance.CurrentPlayer.Position = TimeSpan.FromSeconds(_lastSeekPosition);
+                _lastSeekPosition = -1;
+            }
         }
 
     }

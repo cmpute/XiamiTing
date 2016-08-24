@@ -95,12 +95,13 @@
                                 Foreground="White"
                                 ValueChanged="ProgressBar_ValueChanged"
                                 >
-                            <Slider.Tag>
-                                <x:Boolean>False</x:Boolean>
-                            </Slider.Tag>
                             <Slider.Template>
                                 <ControlTemplate TargetType="Slider">
-                                    <Grid Margin="{TemplateBinding Padding}">
+                                    <Grid x:Name="Root" Margin="{TemplateBinding Padding}">
+                                        <Grid.Tag>
+                                            <!--存储拖拽信息-->
+                                            <x:Boolean>False</x:Boolean>
+                                        </Grid.Tag>
                                         <Grid.Resources>
                                             <SolidColorBrush Color="DimGray" x:Key="HoverColor"/>
                                             <Style TargetType="Thumb" x:Key="SliderThumbStyle">
@@ -130,6 +131,11 @@
                                                         <Setter Target="HorizontalThumb.Background" Value="{StaticResource ThemeColorBrush}"/>
                                                         <Setter Target="HorizontalThumb.Opacity" Value="1"/>
                                                         <Setter Target="HorizontalTrackRect.Fill" Value="{StaticResource HoverColor}"/>
+                                                        <Setter Target="Root.Tag">
+                                                            <Setter.Value>
+                                                                <x:Boolean>True</x:Boolean>
+                                                            </Setter.Value>
+                                                        </Setter>
                                                     </VisualState.Setters>
                                                 </VisualState>
                                                 <VisualState x:Name="Disabled">

@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using JacobC.Xiami.Services;
+using Template10.Mvvm;
+using Windows.Media.Playback;
 
 namespace JacobC.Xiami.Controls
 {
@@ -31,13 +33,53 @@ namespace JacobC.Xiami.Controls
             this.AddListeners();
         }
 
-        //TODO: 区分是Timer改变的ProgressBar还是进度条自行变化，自行变化时需要改变时间显示。可以考虑用VisualTree获取子控件然后用Tag属性作为是否按下的传递
-        private void ProgressBar_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        DelegateCommand _PlayCommand;
+        public DelegateCommand PlayCommand => _PlayCommand ?? (_PlayCommand = new DelegateCommand(() =>
         {
-            //Debug.WriteLine(e.NewValue - e.OldValue);
-            if (timerblocked)
-                return;
-            PlaybackService.Instance.CurrentPlayer.Position = TimeSpan.FromSeconds(e.NewValue);
-        }
-    }   
+            var pservice = PlaybackService.Instance;
+            var CurrentPlayer = pservice.CurrentPlayer;
+            if (MediaPlayerState.Playing == CurrentPlayer.CurrentState)
+            {
+                CurrentPlayer.Pause();
+            }
+            else if (MediaPlayerState.Paused == CurrentPlayer.CurrentState)
+            {
+                pservice.StartPlayback();
+            }
+            else
+            {
+                pservice.PlayTrack();
+                //else if (MediaPlayerState.Closed == CurrentPlayer.CurrentState)
+                //{
+                //    pservice.StartBackgroundAudioTask();
+                //    pservice.StartPlayback();
+                //}
+            }
+        }));
+
+        private DelegateCommand<object> _PreviousCommand;
+        public DelegateCommand<object> PreviousCommand => _PreviousCommand ?? (_PreviousCommand = new DelegateCommand<object>((model) =>
+        {
+            PlaybackService.Instance.SkipPrevious();
+            //TODO: 判断是否循环/随机，并且设置Next的可用性
+
+            // Prevent the user from repeatedly pressing the button and causing 
+            // a backlong of button presses to be handled. This button is re-eneabled 
+            // in the TrackReady Playstate handler.
+            //previous.IsEnabled = false;
+        }));
+
+        private DelegateCommand<object> _NextCommand;
+        public DelegateCommand<object> NextCommand => _NextCommand ?? (_NextCommand = new DelegateCommand<object>((model) =>
+        {
+            PlaybackService.Instance.SkipNext();
+            //TODO: 判断是否循环/随机，并且设置Next的可用性
+
+            // Prevent the user from repeatedly pressing the button and causing 
+            // a backlong of button presses to be handled. This button is re-eneabled 
+            // in the TrackReady Playstate handler.
+            //nextButton.IsEnabled = false;
+        }));
+
+    }
 }
