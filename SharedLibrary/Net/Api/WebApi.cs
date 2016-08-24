@@ -86,11 +86,11 @@ namespace JacobC.Xiami.Net
                                 {
                                     var album = song.Album ?? AlbumModel.GetNew(id);
                                     album.Name = linknode.InnerText;
-                                    if (album.AlbumArtUri.Host == "")
+                                    if (album.Art.Host == "")
                                     {
                                         var art = detail.ParentNode.SelectSingleNode(".//img").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
-                                        album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
-                                        album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
+                                        album.Art = new Uri(art.Replace("_2", "_1"));
+                                        album.ArtFull = new Uri(art.Replace("_2", ""));
                                     }
                                     song.Album = album;
                                 }
@@ -131,12 +131,12 @@ namespace JacobC.Xiami.Net
                 var imga = item.SelectSingleNode("./a");
                 var id = uint.Parse(imga.GetAttributeValue("name_card", "0"));
                 UserModel user = UserModel.GetNew(id);
-                if (user.AvatarUri.Host == "")
+                if (user.Art.Host == "")
                 {
                     var avatar = imga.FirstChild.GetAttributeValue("src", @"ms-appx:///Assets/Pictures/usr50.gif");
                     if (avatar == @"http://img.xiami.net/res/img/default/usr50.gif") avatar = @"ms-appx:///Assets/Pictures/usr50.gif";
-                    user.AvatarUri = new Uri(avatar);
-                    user.AvatarFullUri = new Uri(avatar.Replace("_1", ""));
+                    user.Art = new Uri(avatar);
+                    user.ArtFull = new Uri(avatar.Replace("_1", ""));
                 }
                 user.Name = item.SelectSingleNode("./p/a").InnerText;
                 yield return user;
@@ -233,11 +233,11 @@ namespace JacobC.Xiami.Net
                                 break;
                         }
                     }
-                    if (album.AlbumArtUri.Host == "")
+                    if (album.Art.Host == "")
                     {
                         var art = body.SelectSingleNode(".//img");
-                        album.AlbumArtUri = new Uri(art.GetAttributeValue("src", AlbumModel.SmallDefaultUri));
-                        album.AlbumArtFullUri = new Uri(art.ParentNode.GetAttributeValue("href", AlbumModel.LargeDefaultUri));
+                        album.Art = new Uri(art.GetAttributeValue("src", AlbumModel.SmallDefaultUri));
+                        album.ArtFull = new Uri(art.ParentNode.GetAttributeValue("href", AlbumModel.LargeDefaultUri));
                     }
                     if (album.Introduction == null || cover)
                         album.Introduction = body.SelectSingleNode(".//span[@property='v:summary']").InnerText.Replace("<br />", "");
@@ -366,11 +366,11 @@ namespace JacobC.Xiami.Net
                 var imagenode = nodes[0];
                 var alink = imagenode.SelectSingleNode("./a").GetAttributeValue("href", "/0");
                 AlbumModel album = AlbumModel.GetNew(uint.Parse(alink.Substring(alink.LastIndexOf('/') + 1)));
-                if (album.AlbumArtUri.Host == "")
+                if (album.Art.Host == "")
                 {
                     var art = imagenode.SelectSingleNode("./img").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
-                    album.AlbumArtUri = new Uri(art.Replace("_5", "_1"));
-                    album.AlbumArtFullUri = new Uri(art.Replace("_5", ""));
+                    album.Art = new Uri(art.Replace("_5", "_1"));
+                    album.ArtFull = new Uri(art.Replace("_5", ""));
                 }
                 var infonodes = nodes[1].SelectNodes(".//a");
                 if (album.Name == null)

@@ -142,7 +142,7 @@ namespace JacobC.Xiami.Services
             smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
             smtc.DisplayUpdater.Type = MediaPlaybackType.Music;
             smtc.DisplayUpdater.MusicProperties.Title = item.Name;
-            smtc.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(item.Album.AlbumArtUri);
+            smtc.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(item.Album.Art);
             smtc.DisplayUpdater.Update();
         }
 

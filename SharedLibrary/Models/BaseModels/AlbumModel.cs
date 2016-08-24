@@ -12,7 +12,7 @@ using Template10.Mvvm;
 namespace JacobC.Xiami.Models
 {
     [DataContract]
-    public class AlbumModel : LovableModelBase<uint>
+    public class AlbumModel : LovableModelBase<uint>, ICovered
     {
         static Dictionary<uint, AlbumModel> _dict = new Dictionary<uint, AlbumModel>();
         public static readonly AlbumModel Null = new AlbumModel() { };
@@ -36,20 +36,12 @@ namespace JacobC.Xiami.Models
         public const string SmallDefaultUri = @"ms-appx:///Assets/Pictures/cd100.gif";
         public const string LargeDefaultUri = @"ms-appx:///Assets/Pictures/cd500.gif";
 
-        /* 专辑封面后缀说明
-         * ..:原图
-         * .._1:100x100
-         * .._2:185x184
-         * .._3:55x55
-         * .._4:原图
-         * .._5:185x185
-         */
         [JsonProperty]
         Uri _AlbumArtUri = new Uri(SmallDefaultUri);
         /// <summary>
         /// 获取或设置专辑封面的链接
         /// </summary>
-        public Uri AlbumArtUri
+        public Uri Art
         {
             get { return _AlbumArtUri; }
             set
@@ -63,7 +55,7 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取或设置专辑大图的链接
         /// </summary>
-        public Uri AlbumArtFullUri
+        public Uri ArtFull
         {
             get { return _AlbumArtFullUri; }
             set
@@ -167,6 +159,17 @@ namespace JacobC.Xiami.Models
         {
             return $@"名称：{Name}  ID:{XiamiID}
 评分：{Rating}  发售日期：{ReleaseDate}";
+        }
+
+        /// <summary>
+        /// 获取指定大小的封面地址
+        /// </summary>
+        /// <param name="size">封面大小对应的数字
+        /// 专辑：0:原图 1:100x100 2:185x184 3:55x55 4:原图 5:185x185
+        /// </param>
+        public Uri GetArtWithSize(int sizecode)
+        {
+            return new Uri(ArtFull.ToString() + (sizecode == 0 ? "" : sizecode.ToString()));
         }
     }
 }

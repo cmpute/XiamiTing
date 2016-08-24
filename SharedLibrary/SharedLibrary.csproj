@@ -110,8 +110,8 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\AlbumPresenter.xaml.cs">
-      <DependentUpon>AlbumPresenter.xaml</DependentUpon>
+    <Compile Include="Controls\CoveredItem.xaml.cs">
+      <DependentUpon>CoveredItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ImageEx.cs" />
     <Compile Include="Controls\MusicController.declaration.cs">
@@ -135,6 +135,7 @@
     <Compile Include="Models\BaseModels\CollectionModel.cs" />
     <Compile Include="Models\BaseModels\CommentModel.cs" />
     <Compile Include="Models\BaseModels\GenreModel.cs" />
+    <Compile Include="Models\BaseModels\ICovered.cs" />
     <Compile Include="Models\BaseModels\LovableModelBase.cs" />
     <Compile Include="Models\BaseModels\MVModel.cs" />
     <Compile Include="Models\BaseModels\ZoneModel.cs" />
@@ -169,7 +170,7 @@
     <EmbeddedResource Include="Properties\SharedLibrary.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\AlbumPresenter.xaml">
+    <Page Include="Controls\CoveredItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

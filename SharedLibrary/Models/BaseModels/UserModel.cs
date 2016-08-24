@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace JacobC.Xiami.Models
 {
-    public class UserModel : XiamiModelBase<uint>
+    public class UserModel : XiamiModelBase<uint>, ICovered
     {
-        
         static Dictionary<uint, UserModel> _dict = new Dictionary<uint, UserModel>();
 
         /// <summary>
@@ -27,33 +26,45 @@ namespace JacobC.Xiami.Models
             }
             return song;
         }
+        
+        /// <summary>
+        /// 获取指定大小的封面地址
+        /// </summary>
+        /// <param name="size">封面大小对应的数字
+        /// 0:原图 1:55x55 2:100x100 3:200x240(按比例)
+        /// </param>
+        public Uri GetArtWithSize(int sizecode)
+        {
+            return new Uri(ArtFull.ToString() + (sizecode == 0 ? "" : sizecode.ToString()));
+        }
+
         private UserModel() { }
 
-        Uri _AvatarUri = new Uri(@"ms-appx:///Assets/Pictures/usr50.gif");
+        Uri _AvatarArtUri = new Uri(@"ms-appx:///Assets/Pictures/usr50.gif");
         /// <summary>
         /// 获取或设置用户头像的链接
         /// </summary>
-        public Uri AvatarUri
+        public Uri Art
         {
-            get { return _AvatarUri; }
+            get { return _AvatarArtUri; }
             set
             {
-                if (_AvatarUri?.ToString() != value?.ToString())
-                    Set(ref _AvatarUri, value);
+                if (_AvatarArtUri?.ToString() != value?.ToString())
+                    Set(ref _AvatarArtUri, value);
             }
         }
 
-        Uri _AvatarFullUri = new Uri(@"ms-appx:///Assets/Pictures/usr200.gif");
+        Uri _AvatarArtFullUri = new Uri(@"ms-appx:///Assets/Pictures/usr200.gif");
         /// <summary>
         /// 获取或设置用户高清头像的链接
         /// </summary>
-        public Uri AvatarFullUri
+        public Uri ArtFull
         {
-            get { return _AvatarFullUri; }
+            get { return _AvatarArtFullUri; }
             set
             {
-                if (_AvatarFullUri?.ToString() != value?.ToString())
-                    Set(ref _AvatarFullUri, value);
+                if (_AvatarArtFullUri?.ToString() != value?.ToString())
+                    Set(ref _AvatarArtFullUri, value);
             }
         }
 

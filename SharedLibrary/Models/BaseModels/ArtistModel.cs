@@ -14,7 +14,7 @@ namespace JacobC.Xiami.Models
     /// 艺术家（歌手、编曲家等）的MVVM模型
     /// </summary>
     [DataContract]
-    public class ArtistModel : LovableModelBase<uint>
+    public class ArtistModel : LovableModelBase<uint>, ICovered
     {
         public const string SmallDefaultUri = @"ms-appx:///Assets/Pictures/usr100.gif";
         public const string LargeDefaultUri = @"ms-appx:///Assets/Pictures/usr100.gif";
@@ -53,7 +53,7 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取或设置艺人头像的链接
         /// </summary>
-        public Uri ArtistAvatarUri
+        public Uri Art
         {
             get { return _ArtistAvatarUri; }
             set
@@ -67,7 +67,7 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取或设置艺人高清头像的链接
         /// </summary>
-        public Uri ArtistAvatarFullUri
+        public Uri ArtFull
         {
             get { return _ArtistAvatarFullUri; }
             set
@@ -95,5 +95,14 @@ namespace JacobC.Xiami.Models
 地区：{Area} 别称：{AliasName}";
         }
 
+        /// <summary>
+        /// 获取指定大小的封面地址
+        /// </summary>
+        /// <param name="size">封面大小对应的数字
+        /// </param>
+        public Uri GetArtWithSize(int sizecode)
+        {
+            return new Uri(ArtFull.ToString() + (sizecode == 0 ? "" : sizecode.ToString()));
+        }
     }
 }

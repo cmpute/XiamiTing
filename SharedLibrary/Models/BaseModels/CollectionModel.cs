@@ -10,7 +10,7 @@ namespace JacobC.Xiami.Models
     /// <summary>
     /// 虾米精选集的Model
     /// </summary>
-    public class CollectionModel : LovableModelBase<uint>
+    public class CollectionModel : LovableModelBase<uint>, ICovered
     {
 
         static Dictionary<uint, CollectionModel> _dict = new Dictionary<uint, CollectionModel>();
@@ -29,6 +29,18 @@ namespace JacobC.Xiami.Models
             }
             return collect;
         }
+
+        /// <summary>
+        /// 获取指定大小的封面地址
+        /// </summary>
+        /// <param name="size">封面大小对应的数字
+        /// 0:原图 1:100x100 2:55x55
+        /// </param>
+        public Uri GetArtWithSize(int sizecode)
+        {
+            return new Uri(ArtFull.ToString() + (sizecode == 0 ? "" : sizecode.ToString()));
+        }
+
         private CollectionModel() { }
 
         IEnumerable<SongModel> _SongList = default(IEnumerable<SongModel>);
@@ -37,5 +49,34 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public IEnumerable<SongModel> SongList { get { return _SongList; } set { Set(ref _SongList, value); } }
 
+
+
+        Uri _CoverArtUri = new Uri(AlbumModel.SmallDefaultUri);
+        /// <summary>
+        /// 获取或设置精选集封面的链接
+        /// </summary>
+        public Uri Art
+        {
+            get { return _CoverArtUri; }
+            set
+            {
+                if (_CoverArtUri?.ToString() != value?.ToString())
+                    Set(ref _CoverArtUri, value);
+            }
+        }
+
+        Uri _CoverArtFullUri = new Uri(AlbumModel.LargeDefaultUri);
+        /// <summary>
+        /// 获取或设置精选集大图的链接
+        /// </summary>
+        public Uri ArtFull
+        {
+            get { return _CoverArtFullUri; }
+            set
+            {
+                if (_CoverArtFullUri?.ToString() != value?.ToString())
+                    Set(ref _CoverArtFullUri, value);
+            }
+        }
     }
 }

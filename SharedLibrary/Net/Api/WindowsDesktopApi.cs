@@ -90,11 +90,11 @@ namespace JacobC.Xiami.Net
                         var addrlength = "/app/xiating/album?id=".Length;
                         uint albumID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
                         AlbumModel album = song.Album ?? AlbumModel.GetNew(albumID);
-                        if (album.AlbumArtUri.Host == "")
+                        if (album.Art.Host == "")
                         {
                             var art = logo.GetAttributeValue("src", AlbumModel.SmallDefaultUri);
-                            album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
-                            album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
+                            album.Art = new Uri(art.Replace("_2", "_1"));
+                            album.ArtFull = new Uri(art.Replace("_2", ""));
                         }
                         album.Name = albumtag.InnerText;
                         song.Album = album;

@@ -105,11 +105,11 @@ namespace JacobC.Xiami.Net
                         var addrlength = "/app/xiating/album?id=".Length;
                         uint albumID = uint.Parse(idtext.Substring(addrlength, idtext.IndexOf("&", addrlength) - addrlength));
                         AlbumModel album = song.Album ?? AlbumModel.GetNew(albumID);
-                        if (album.AlbumArtUri.Host == "")
+                        if (album.Art.Host == "")
                         {
                             var art = logo.GetAttributeValue("src", AlbumModel.SmallDefaultUri);
-                            album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
-                            album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
+                            album.Art = new Uri(art.Replace("_2", "_1"));
+                            album.ArtFull = new Uri(art.Replace("_2", ""));
                         }
                         album.Name = albumtag.InnerText;
                         song.Album = album;
@@ -160,11 +160,11 @@ namespace JacobC.Xiami.Net
                     process.Add(Task.Run(() => { if (album.RelateHotAlbums == null || cover) album.RelateHotAlbums = ParseRelateAlbums(doc.DocumentNode.SelectSingleNode("//h3").NextSibling.NextSibling).ToList(); }));
 
                     var infonode = doc.DocumentNode.SelectSingleNode("//section[1]/div[1]/div[2]/div[1]");
-                    if (album.AlbumArtUri.Host == "")
+                    if (album.Art.Host == "")
                     {
                         var art = infonode.SelectSingleNode(".//img").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
-                        album.AlbumArtUri = new Uri(art);
-                        album.AlbumArtFullUri = new Uri(art.Replace("_1", ""));
+                        album.Art = new Uri(art);
+                        album.ArtFull = new Uri(art.Replace("_1", ""));
                     }
                     album.Name = infonode.SelectSingleNode(".//h2").InnerText;
                     album.Rating = infonode.SelectSingleNode(".//p").InnerText.Remove(0, 4).Trim();
@@ -217,11 +217,11 @@ namespace JacobC.Xiami.Net
                 AlbumModel album = AlbumModel.GetNew(uint.Parse(node.GetAttributeValue("rel", "0")));
                 album.Name = node.SelectSingleNode("./div/a").InnerText;
                 album.Rating = node.SelectSingleNode(".//em").InnerText;
-                if (album.AlbumArtUri.Host == "")
+                if (album.Art.Host == "")
                 {
                     var art = node.SelectSingleNode(".//img").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
-                    album.AlbumArtUri = new Uri(art);
-                    album.AlbumArtFullUri = new Uri(art.Replace("_1", ""));
+                    album.Art = new Uri(art);
+                    album.ArtFull = new Uri(art.Replace("_1", ""));
                 }
                 yield return album;
             }
@@ -251,11 +251,11 @@ namespace JacobC.Xiami.Net
                     var area = body.SelectSingleNode(".//p[2]");
                     if (area != null) artist.Name = area.InnerText.Remove(0, 3);
 
-                    if (artist.ArtistAvatarUri.Host == "")
+                    if (artist.Art.Host == "")
                     {
                         var art = body.SelectSingleNode(".//img").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
-                        artist.ArtistAvatarUri = new Uri(art);
-                        artist.ArtistAvatarFullUri = new Uri(art.Replace("_1", ""));
+                        artist.Art = new Uri(art);
+                        artist.ArtFull = new Uri(art.Replace("_1", ""));
                     }
                     
                     var songlist = ParseArtistSongs(body.SelectSingleNode(".//ul[@class='playlist']")).ToArray();//只计算一次count
@@ -338,11 +338,11 @@ namespace JacobC.Xiami.Net
                 AlbumModel album = AlbumModel.GetNew(id);
                 var imagenode = item.SelectSingleNode(".//img");
                 album.Name = imagenode.GetAttributeValue("alt", null);
-                if(album.AlbumArtUri.Host == "")
+                if(album.Art.Host == "")
                 {
                     var art = imagenode.GetAttributeValue("src", AlbumModel.SmallDefaultUri);
-                    album.AlbumArtUri = new Uri(art);
-                    album.AlbumArtFullUri = new Uri(art.Replace("_1", ""));
+                    album.Art = new Uri(art);
+                    album.ArtFull = new Uri(art.Replace("_1", ""));
                 }
                 album.Rating = item.SelectSingleNode(".//em").InnerText;
                 yield return album;

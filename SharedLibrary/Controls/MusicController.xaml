@@ -40,7 +40,7 @@
                 </Grid.ColumnDefinitions>
                 <!--插入一个控制栏背景层-->
                 <!--设置Placeholder图片-->
-                <local:ImageEx Height="60" Width="60" Stretch="UniformToFill" Source="{x:Bind CurrentSong.Album.AlbumArtUri, Mode=OneWay}"/>
+                <local:ImageEx Height="60" Width="60" Stretch="UniformToFill" Source="{x:Bind CurrentSong.Album.Art, Mode=OneWay}"/>
                 <StackPanel x:Name="controlButtons" Grid.Column="1" Orientation="Horizontal">
                     <Button x:Name="previous" Style="{StaticResource EmptyButtonForIcon}"
                             Background="Transparent"
