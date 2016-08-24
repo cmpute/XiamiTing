@@ -110,6 +110,10 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\AlbumPresenter.xaml.cs">
+      <DependentUpon>AlbumPresenter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ImageEx.cs" />
     <Compile Include="Controls\MusicController.declaration.cs">
       <DependentUpon>MusicController.xaml</DependentUpon>
     </Compile>
@@ -152,6 +156,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="SafeBindableBase.cs" />
+    <Compile Include="ImageCache.cs" />
     <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\MediaMessageTypes.cs" />
@@ -164,6 +169,15 @@
     <EmbeddedResource Include="Properties\SharedLibrary.rd.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\AlbumPresenter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ImageEx.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
     <Page Include="Controls\MusicController.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -4,6 +4,7 @@
     xmlns:local="using:JacobC.Xiami.Controls">
 
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ms-appx:///SharedLibrary/Controls/ImageEx.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
  

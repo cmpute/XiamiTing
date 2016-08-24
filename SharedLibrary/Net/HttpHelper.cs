@@ -8,6 +8,9 @@ using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
 using Windows.Foundation;
 using System.Net.Http;
 using JacobC.Xiami.Services;
+using Windows.ApplicationModel;
+using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace JacobC.Xiami.Net
 {
@@ -139,5 +142,23 @@ namespace JacobC.Xiami.Net
             });
         }
         //TODO: HTML解析的时候使用Stream进行解析
+
+        /// <summary>
+        /// 获得一个HTTP的GET请求的响应流并且写入到本地文件中
+        /// </summary>
+        /// <param name="uri">需要请求的Uri</param>
+        /// <param name="targetFile">需要储存到的文件对象</param>
+        public static async Task GetHttpStreamToStorageFileAsync(this Uri uri, StorageFile targetFile)
+        {
+            using (var content = await Client.GetAsync(uri))
+            {
+                content.EnsureSuccessStatusCode();
+                using (var fileStream = await targetFile.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    using (var stream = fileStream.AsStreamForWrite())
+                        await content.Content.CopyToAsync(stream);
+                }
+            }
+        }
     }
 }
