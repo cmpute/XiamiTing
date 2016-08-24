@@ -92,7 +92,7 @@ namespace JacobC.Xiami.Net
                         AlbumModel album = song.Album ?? AlbumModel.GetNew(albumID);
                         if (album.AlbumArtUri.Host == "")
                         {
-                            var art = logo.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                            var art = logo.GetAttributeValue("src", AlbumModel.SmallDefaultUri);
                             album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
                             album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
                         }

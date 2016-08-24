@@ -16,6 +16,9 @@ namespace JacobC.Xiami.Models
     [DataContract]
     public class ArtistModel : LovableModelBase<uint>
     {
+        public const string SmallDefaultUri = @"ms-appx:///Assets/Pictures/usr100.gif";
+        public const string LargeDefaultUri = @"ms-appx:///Assets/Pictures/usr100.gif";
+
         static Dictionary<uint, ArtistModel> _dict = new Dictionary<uint, ArtistModel>();
         /// <summary>
         /// 获取一个新的<see cref="ArtistModel"/>实例，如果已经创建过则返回这个实例
@@ -46,7 +49,7 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Area { get { return _Area; } set { Set(ref _Area, value); } }
 
-        Uri _ArtistAvatarUri = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");
+        Uri _ArtistAvatarUri = new Uri(SmallDefaultUri);
         /// <summary>
         /// 获取或设置艺人头像的链接
         /// </summary>
@@ -60,7 +63,7 @@ namespace JacobC.Xiami.Models
             }
         }
 
-        Uri _ArtistAvatarFullUri = new Uri(@"ms-appx:///Assets/Pictures/cd500.gif");
+        Uri _ArtistAvatarFullUri = new Uri(LargeDefaultUri);
         /// <summary>
         /// 获取或设置艺人高清头像的链接
         /// </summary>

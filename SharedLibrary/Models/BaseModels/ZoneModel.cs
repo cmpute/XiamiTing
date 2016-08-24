@@ -14,6 +14,6 @@ namespace JacobC.Xiami.Models
     /// </remarks>
     public class ZoneModel
     {
-        IList<CollectionModel> Collections;
+        //IList<CollectionModel> Collections;
     }
 }

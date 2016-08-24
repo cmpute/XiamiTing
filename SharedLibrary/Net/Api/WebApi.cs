@@ -31,6 +31,9 @@ namespace JacobC.Xiami.Net
             }
         }
 
+        #region 获取歌曲信息
+
+
         public IAsyncAction GetSongInfo(SongModel song, bool cover = false)
         {
             if (song.XiamiID == 0)
@@ -85,7 +88,7 @@ namespace JacobC.Xiami.Net
                                     album.Name = linknode.InnerText;
                                     if (album.AlbumArtUri.Host == "")
                                     {
-                                        var art = detail.ParentNode.SelectSingleNode(".//img").GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                                        var art = detail.ParentNode.SelectSingleNode(".//img").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
                                         album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
                                         album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
                                     }
@@ -109,7 +112,7 @@ namespace JacobC.Xiami.Net
 
 
                     await Task.WhenAll(process);
-                    LogService.DebugWrite($"Finishi Getting info of Song {song.XiamiID}", nameof(WebApi));
+                    LogService.DebugWrite($"Finish Getting info of Song {song.XiamiID}", nameof(WebApi));
                 }
                 catch (Exception e)
                 {
@@ -161,6 +164,8 @@ namespace JacobC.Xiami.Net
                     yield return item.InnerText;
         }
 
+        #endregion
+        #region 获取专辑信息
         public IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = false)
         {
             if (album.XiamiID == 0)
@@ -178,7 +183,7 @@ namespace JacobC.Xiami.Net
                     doc.LoadHtml(content);
                     var body = doc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
                     List<Task> process = new List<Task>();
-                    process.Add(Task.Run(() => 
+                    process.Add(Task.Run(() =>
                     {
                         var listnode = body.SelectSingleNode(".//div[@class='chapter mgt10']");
                         if (album.SongList == null || cover)
@@ -231,11 +236,11 @@ namespace JacobC.Xiami.Net
                     if (album.AlbumArtUri.Host == "")
                     {
                         var art = body.SelectSingleNode(".//img");
-                        album.AlbumArtUri = new Uri(art.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif"));
-                        album.AlbumArtFullUri = new Uri(art.ParentNode.GetAttributeValue("href", "ms-appx:///Assets/Pictures/cd500.gif"));
+                        album.AlbumArtUri = new Uri(art.GetAttributeValue("src", AlbumModel.SmallDefaultUri));
+                        album.AlbumArtFullUri = new Uri(art.ParentNode.GetAttributeValue("href", AlbumModel.LargeDefaultUri));
                     }
                     if (album.Introduction == null || cover)
-                        album.Introduction = body.SelectSingleNode(".//span[@property='v:summary']").InnerText.Replace("<br />","");
+                        album.Introduction = body.SelectSingleNode(".//span[@property='v:summary']").InnerText.Replace("<br />", "");
 
                     await Task.WhenAll(process);
                     LogService.DebugWrite($"Finishi Getting info of Album {album.XiamiID}", nameof(WebApi));
@@ -307,9 +312,77 @@ namespace JacobC.Xiami.Net
             }
         }
 
+        #endregion
+        #region 获取艺术家信息
+
         public IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = false)
         {
             throw new NotImplementedException();
+        }
+
+        #endregion
+
+        public IAsyncOperation<RecommendationModel> GetMainRecommendations()
+        {
+            return Run(async token =>
+            {
+                try
+                {
+                    LogService.DebugWrite($"Get info of MainPage", nameof(WebApi));
+
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(content);
+                    var body = doc.DocumentNode.SelectSingleNode(".//body");
+                    RecommendationModel res = new RecommendationModel();
+                    List<Task> process = new List<Task>();
+                    //System.Diagnostics.Debugger.Break();
+                    process.Add(Task.Run(() =>
+                    {
+                        res.NewInAll = ParseNewInAllAlbums(body.SelectSingleNode("..//div[@data-content='1_0']")).ToList();
+                    }));
+
+                    await Task.WhenAll(process);
+                    LogService.DebugWrite("Finish Getting Mainpage", nameof(WebApi));
+                    return res;
+                }
+                catch (Exception e) {
+                    LogService.ErrorWrite(e, nameof(WebApi));
+                    throw e;
+                }
+            });
+        } 
+
+        //获取新碟首发
+        internal IEnumerable<AlbumModel> ParseNewInAllAlbums(HtmlNode listnode)
+        {
+            foreach(var albumnode in listnode.ChildNodes)
+            {
+                if (albumnode.NodeType != HtmlNodeType.Element)
+                    continue;
+                var nodes = albumnode.SelectNodes("./div");
+                var imagenode = nodes[0];
+                var alink = imagenode.SelectSingleNode("./a").GetAttributeValue("href", "/0");
+                AlbumModel album = AlbumModel.GetNew(uint.Parse(alink.Substring(alink.LastIndexOf('/') + 1)));
+                if (album.AlbumArtUri.Host == "")
+                {
+                    var art = imagenode.SelectSingleNode("./img").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
+                    album.AlbumArtUri = new Uri(art.Replace("_5", "_1"));
+                    album.AlbumArtFullUri = new Uri(art.Replace("_5", ""));
+                }
+                var infonodes = nodes[1].SelectNodes(".//a");
+                if (album.Name == null)
+                    album.Name = infonodes[0].InnerText;
+                if (album.Artist == null)
+                {
+                    var arlink = infonodes[1].GetAttributeValue("href", "/0");
+                    album.Artist = ArtistModel.GetNew(uint.Parse(arlink.Substring(arlink.LastIndexOf('/') + 1)));
+                    album.Artist.Name = infonodes[1].InnerText;
+                }
+                yield return album;
+            }
         }
     }
 }

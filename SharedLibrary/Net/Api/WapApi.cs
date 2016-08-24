@@ -107,7 +107,7 @@ namespace JacobC.Xiami.Net
                         AlbumModel album = song.Album ?? AlbumModel.GetNew(albumID);
                         if (album.AlbumArtUri.Host == "")
                         {
-                            var art = logo.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                            var art = logo.GetAttributeValue("src", AlbumModel.SmallDefaultUri);
                             album.AlbumArtUri = new Uri(art.Replace("_2", "_1"));
                             album.AlbumArtFullUri = new Uri(art.Replace("_2", ""));
                         }
@@ -162,7 +162,7 @@ namespace JacobC.Xiami.Net
                     var infonode = doc.DocumentNode.SelectSingleNode("//section[1]/div[1]/div[2]/div[1]");
                     if (album.AlbumArtUri.Host == "")
                     {
-                        var art = infonode.SelectSingleNode(".//img").GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                        var art = infonode.SelectSingleNode(".//img").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
                         album.AlbumArtUri = new Uri(art);
                         album.AlbumArtFullUri = new Uri(art.Replace("_1", ""));
                     }
@@ -219,7 +219,7 @@ namespace JacobC.Xiami.Net
                 album.Rating = node.SelectSingleNode(".//em").InnerText;
                 if (album.AlbumArtUri.Host == "")
                 {
-                    var art = node.SelectSingleNode(".//img").GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                    var art = node.SelectSingleNode(".//img").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
                     album.AlbumArtUri = new Uri(art);
                     album.AlbumArtFullUri = new Uri(art.Replace("_1", ""));
                 }
@@ -253,7 +253,7 @@ namespace JacobC.Xiami.Net
 
                     if (artist.ArtistAvatarUri.Host == "")
                     {
-                        var art = body.SelectSingleNode(".//img").GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                        var art = body.SelectSingleNode(".//img").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
                         artist.ArtistAvatarUri = new Uri(art);
                         artist.ArtistAvatarFullUri = new Uri(art.Replace("_1", ""));
                     }
@@ -340,7 +340,7 @@ namespace JacobC.Xiami.Net
                 album.Name = imagenode.GetAttributeValue("alt", null);
                 if(album.AlbumArtUri.Host == "")
                 {
-                    var art = imagenode.GetAttributeValue("src", "ms-appx:///Assets/Pictures/cd100.gif");
+                    var art = imagenode.GetAttributeValue("src", AlbumModel.SmallDefaultUri);
                     album.AlbumArtUri = new Uri(art);
                     album.AlbumArtFullUri = new Uri(art.Replace("_1", ""));
                 }

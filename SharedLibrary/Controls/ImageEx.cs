@@ -164,10 +164,9 @@ namespace JacobC.Xiami.Controls
 
                 VisualStateManager.GoToState(this, "Loading", true);
 
-                var sourceString = source as string;
-                if (sourceString != null)
+                if (source is string)
                 {
-                    string url = sourceString;
+                    string url = source as string;
                     if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out _uri))
                     {
                         _isHttpSource = IsHttpUri(_uri);
@@ -179,9 +178,17 @@ namespace JacobC.Xiami.Controls
                         await LoadImageAsync();
                     }
                 }
+                else if (source is Uri)
+                {
+                    _uri = source as Uri;
+                    await LoadImageAsync();
+                }
                 else
                 {
-                    _image.Source = source as ImageSource;
+                    var sourcelink = source as Uri;
+                    if (sourcelink != null)
+
+                        _image.Source = source as ImageSource;
                 }
 
                 VisualStateManager.GoToState(this, "Loaded", true);

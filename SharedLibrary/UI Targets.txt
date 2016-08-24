@@ -3,3 +3,5 @@ Player¿Ø¼þÔö¼ÓÊ±¼äÏÔÊ¾£¬²¢ÇÒÍÏ¶¯ÌõÍÏ¶¯µÄÊ±ºò²»seekµ«Ê±¼äÏÔÊ¾»á±ä»¯£¬tooltipÏÔÊ¾³
 ¹ö¶¯Lrc¸è´Ê°å£¬ÓÐKTVÐ§¹û
 ¶àÑ¡×´Ì¬ÏÂÒ³Ãæµ×²¿µ¯³ö¶àÑ¡²Ù×÷À¸
 Player¿Ø¼þ¿ÉÒÔ×î´ó»¯³É¸èÇú²¥·Å½çÃæ
+
+GridViewÔö¼ÓÏñXAML UI ControlsÀïÃæÒ»ÑùµÄ¶¯»­

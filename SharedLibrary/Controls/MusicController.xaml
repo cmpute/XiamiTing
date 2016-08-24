@@ -39,11 +39,8 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <!--插入一个控制栏背景层-->
-                <Image Height="60" Width="60" Stretch="UniformToFill">
-                    <Image.Source>
-                        <BitmapImage UriSource="{x:Bind CurrentSong.Album.AlbumArtUri, Mode=OneWay}" />
-                    </Image.Source>
-                </Image>
+                <!--设置Placeholder图片-->
+                <local:ImageEx Height="60" Width="60" Stretch="UniformToFill" Source="{x:Bind CurrentSong.Album.AlbumArtUri, Mode=OneWay}"/>
                 <StackPanel x:Name="controlButtons" Grid.Column="1" Orientation="Horizontal">
                     <Button x:Name="previous" Style="{StaticResource EmptyButtonForIcon}"
                             Background="Transparent"

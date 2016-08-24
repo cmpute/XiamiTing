@@ -33,6 +33,9 @@ namespace JacobC.Xiami.Models
         }
         private AlbumModel() { }
 
+        public const string SmallDefaultUri = @"ms-appx:///Assets/Pictures/cd100.gif";
+        public const string LargeDefaultUri = @"ms-appx:///Assets/Pictures/cd500.gif";
+
         /* 专辑封面后缀说明
          * ..:原图
          * .._1:100x100
@@ -42,7 +45,7 @@ namespace JacobC.Xiami.Models
          * .._5:185x185
          */
         [JsonProperty]
-        Uri _AlbumArtUri = new Uri(@"ms-appx:///Assets/Pictures/cd100.gif");
+        Uri _AlbumArtUri = new Uri(SmallDefaultUri);
         /// <summary>
         /// 获取或设置专辑封面的链接
         /// </summary>
@@ -56,7 +59,7 @@ namespace JacobC.Xiami.Models
             }
         }
 
-        Uri _AlbumArtFullUri = new Uri(@"ms-appx:///Assets/Pictures/cd500.gif");
+        Uri _AlbumArtFullUri = new Uri(LargeDefaultUri);
         /// <summary>
         /// 获取或设置专辑大图的链接
         /// </summary>
