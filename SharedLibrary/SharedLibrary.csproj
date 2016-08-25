@@ -110,9 +110,11 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ClipExtended.cs" />
     <Compile Include="Controls\CoveredItem.xaml.cs">
       <DependentUpon>CoveredItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DependencyExtended.cs" />
     <Compile Include="Controls\TimeSpanConverter.cs" />
     <Compile Include="Controls\ImageEx.cs" />
     <Compile Include="Controls\MusicController.declaration.cs">
@@ -148,6 +150,7 @@
     <Compile Include="Net\Api\CombinedApi.cs" />
     <Compile Include="Net\Api\DataApi.cs" />
     <Compile Include="Net\Api\IXiamiApi.cs" />
+    <Compile Include="Net\Api\ParamHelper.cs" />
     <Compile Include="Net\Api\WapApi.cs" />
     <Compile Include="Net\Api\WebApi.cs" />
     <Compile Include="Net\Api\WindowsDesktopApi.cs" />

@@ -70,13 +70,13 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取专辑的大图链接
         /// </summary>
-        public Uri ArtLarge => GetArtWithSize(2);
+        public Uri ArtLarge => GetArtWithSize(5);
 
         /// <summary>
         /// 获取指定大小的封面地址
         /// </summary>
         /// <param name="size">封面大小对应的数字
-        /// 专辑：0:原图 1:100x100 2:185x184 3:55x55 4:原图 5:185x185
+        /// 专辑：0:原图 1:100x100 2:185x184(按比例) 3:55x55 4:原图 5:185x185
         /// </param>
         public Uri GetArtWithSize(int sizecode)
         {
