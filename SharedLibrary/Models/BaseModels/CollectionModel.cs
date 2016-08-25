@@ -30,27 +30,7 @@ namespace JacobC.Xiami.Models
             return collect;
         }
 
-        /// <summary>
-        /// 获取指定大小的封面地址
-        /// </summary>
-        /// <param name="size">封面大小对应的数字
-        /// 0:原图 1:100x100 2:55x55
-        /// </param>
-        public Uri GetArtWithSize(int sizecode)
-        {
-            return new Uri(ArtFull.ToString() + (sizecode == 0 ? "" : sizecode.ToString()));
-        }
-
-        private CollectionModel() { }
-
-        IEnumerable<SongModel> _SongList = default(IEnumerable<SongModel>);
-        /// <summary>
-        /// 获取或设置精选集的歌曲列表
-        /// </summary>
-        public IEnumerable<SongModel> SongList { get { return _SongList; } set { Set(ref _SongList, value); } }
-
-
-
+        #region ICovered Members
         Uri _CoverArtUri = new Uri(AlbumModel.SmallDefaultUri);
         /// <summary>
         /// 获取或设置精选集封面的链接
@@ -67,7 +47,7 @@ namespace JacobC.Xiami.Models
 
         Uri _CoverArtFullUri = new Uri(AlbumModel.LargeDefaultUri);
         /// <summary>
-        /// 获取或设置精选集大图的链接
+        /// 获取或设置精选集原图的链接
         /// </summary>
         public Uri ArtFull
         {
@@ -78,5 +58,29 @@ namespace JacobC.Xiami.Models
                     Set(ref _CoverArtFullUri, value);
             }
         }
+
+        /// <summary>
+        /// 获取指定大小的封面地址
+        /// </summary>
+        /// <param name="size">封面大小对应的数字
+        /// 0:原图 1:100x100 2:55x55
+        /// </param>
+        public Uri GetArtWithSize(int sizecode)
+        {
+
+            var origin = ArtFull.ToString();
+            return new Uri(origin.Insert(origin.LastIndexOf('.'), "_" + (sizecode == 0 ? "" : sizecode.ToString())));
+        }
+        #endregion
+
+        private CollectionModel() { }
+
+        IEnumerable<SongModel> _SongList = default(IEnumerable<SongModel>);
+        /// <summary>
+        /// 获取或设置精选集的歌曲列表
+        /// </summary>
+        public IEnumerable<SongModel> SongList { get { return _SongList; } set { Set(ref _SongList, value); } }
+
+
     }
 }

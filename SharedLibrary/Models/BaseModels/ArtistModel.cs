@@ -49,6 +49,7 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Area { get { return _Area; } set { Set(ref _Area, value); } }
 
+        #region ICovered Members
         Uri _ArtistAvatarUri = new Uri(SmallDefaultUri);
         /// <summary>
         /// 获取或设置艺人头像的链接
@@ -77,6 +78,18 @@ namespace JacobC.Xiami.Models
             }
         }
 
+        /// <summary>
+        /// 获取指定大小的封面地址
+        /// </summary>
+        /// <param name="size">封面大小对应的数字
+        /// </param>
+        public Uri GetArtWithSize(int sizecode)
+        {
+            var origin = ArtFull.ToString();
+            return new Uri(origin.Insert(origin.LastIndexOf('.'), "_" + (sizecode == 0 ? "" : sizecode.ToString())));
+        }
+        #endregion
+
         PageItemsCollection<SongModel> _HotSongs = null;
         /// <summary>
         /// 获取或设置艺人热门歌曲属性
@@ -95,14 +108,5 @@ namespace JacobC.Xiami.Models
 地区：{Area} 别称：{AliasName}";
         }
 
-        /// <summary>
-        /// 获取指定大小的封面地址
-        /// </summary>
-        /// <param name="size">封面大小对应的数字
-        /// </param>
-        public Uri GetArtWithSize(int sizecode)
-        {
-            return new Uri(ArtFull.ToString() + (sizecode == 0 ? "" : sizecode.ToString()));
-        }
     }
 }

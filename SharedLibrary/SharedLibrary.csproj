@@ -113,6 +113,7 @@
     <Compile Include="Controls\CoveredItem.xaml.cs">
       <DependentUpon>CoveredItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TimeSpanConverter.cs" />
     <Compile Include="Controls\ImageEx.cs" />
     <Compile Include="Controls\MusicController.declaration.cs">
       <DependentUpon>MusicController.xaml</DependentUpon>

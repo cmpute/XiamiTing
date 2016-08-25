@@ -134,6 +134,7 @@ namespace JacobC.Xiami.Services
                     //sm.MediaUri = new Uri(@"ms-appx:///Assets/Ring01.wma");
                     ExtensionMethods.InvokeAndWait(async () => sm.MediaUri = new Uri(await Net.DataApi.GetDownloadLink(sm, false)));
                     sm.Album.Art = new Uri("http://img.xiami.net/images/album/img35/105735/21002749061455506376_2.jpg");
+                    sm.Album.ArtFull = new Uri("http://img.xiami.net/images/album/img35/105735/21002749061455506376.jpg");
                 }
                 yield return sm;
                 sm = SongModel.GetNew(1771503325); if (i == 0)
@@ -143,6 +144,7 @@ namespace JacobC.Xiami.Services
                     //sm.MediaUri = new Uri(@"ms-appx:///Assets/Ring02.wma");
                     ExtensionMethods.InvokeAndWait(async () => sm.MediaUri = new Uri(await Net.DataApi.GetDownloadLink(sm, false)));
                     sm.Album.Art = new Uri("http://img.xiami.net/images/album/img35/105735/5045061333262175_2.jpg");
+                    sm.Album.ArtFull = new Uri("http://img.xiami.net/images/album/img35/105735/5045061333262175.jpg");
                 }
                 yield return sm;
             }

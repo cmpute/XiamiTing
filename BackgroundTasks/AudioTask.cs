@@ -142,7 +142,8 @@ namespace JacobC.Xiami.Services
             smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
             smtc.DisplayUpdater.Type = MediaPlaybackType.Music;
             smtc.DisplayUpdater.MusicProperties.Title = item.Name;
-            smtc.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(item.Album.Art);
+            smtc.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(item.Album.ArtLarge);
+            DebugWrite(item.Album.ArtLarge.ToString());
             smtc.DisplayUpdater.Update();
         }
 
@@ -260,13 +261,16 @@ namespace JacobC.Xiami.Services
         void Current_CurrentStateChanged(MediaPlayer sender, object args)
         {
             DebugWrite($"PlayerStateChanged to {sender.CurrentState.ToString()}", "BackgroundPlayer");
-            switch(sender.CurrentState)
+            switch (sender.CurrentState)
             {
                 case MediaPlayerState.Playing:
                     smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
                     break;
                 case MediaPlayerState.Paused://中途的暂停或播放完毕的暂停
                     smtc.PlaybackStatus = MediaPlaybackStatus.Paused;
+                    var player = BackgroundMediaPlayer.Current;
+                    if (player.NaturalDuration.TotalSeconds - player.Position.TotalSeconds < 0.1)//播放下一曲，有0.1s的容错率
+                        MessageService.SendMediaMessageToForeground(MediaMessageTypes.SkipNext);
                     break;
                 case MediaPlayerState.Closed:
                     smtc.PlaybackStatus = MediaPlaybackStatus.Closed;

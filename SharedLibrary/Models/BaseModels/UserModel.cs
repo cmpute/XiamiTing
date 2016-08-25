@@ -10,7 +10,6 @@ namespace JacobC.Xiami.Models
     public class UserModel : XiamiModelBase<uint>, ICovered
     {
         static Dictionary<uint, UserModel> _dict = new Dictionary<uint, UserModel>();
-
         /// <summary>
         /// 获取一个新的<see cref="UserModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>
@@ -26,20 +25,9 @@ namespace JacobC.Xiami.Models
             }
             return song;
         }
-        
-        /// <summary>
-        /// 获取指定大小的封面地址
-        /// </summary>
-        /// <param name="size">封面大小对应的数字
-        /// 0:原图 1:55x55 2:100x100 3:200x240(按比例)
-        /// </param>
-        public Uri GetArtWithSize(int sizecode)
-        {
-            return new Uri(ArtFull.ToString() + (sizecode == 0 ? "" : sizecode.ToString()));
-        }
-
         private UserModel() { }
 
+        #region ICovered Members
         Uri _AvatarArtUri = new Uri(@"ms-appx:///Assets/Pictures/usr50.gif");
         /// <summary>
         /// 获取或设置用户头像的链接
@@ -67,6 +55,18 @@ namespace JacobC.Xiami.Models
                     Set(ref _AvatarArtFullUri, value);
             }
         }
+
+        /// <summary>
+        /// 获取指定大小的封面地址
+        /// </summary>
+        /// <param name="size">封面大小对应的数字
+        /// 0:原图 1:55x55 2:100x100 3:200x240(按比例)
+        /// </param>
+        public Uri GetArtWithSize(int sizecode)
+        {
+            return new Uri(ArtFull.ToString() + (sizecode == 0 ? "" : sizecode.ToString()));
+        }
+        #endregion
 
         bool _IsVIP = default(bool);
         /// <summary>

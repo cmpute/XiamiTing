@@ -36,6 +36,7 @@ namespace JacobC.Xiami.Models
         public const string SmallDefaultUri = @"ms-appx:///Assets/Pictures/cd100.gif";
         public const string LargeDefaultUri = @"ms-appx:///Assets/Pictures/cd500.gif";
 
+        #region ICovered Members
         [JsonProperty]
         Uri _AlbumArtUri = new Uri(SmallDefaultUri);
         /// <summary>
@@ -51,9 +52,10 @@ namespace JacobC.Xiami.Models
             }
         }
 
+        [JsonProperty]
         Uri _AlbumArtFullUri = new Uri(LargeDefaultUri);
         /// <summary>
-        /// 获取或设置专辑大图的链接
+        /// 获取或设置专辑原图的链接
         /// </summary>
         public Uri ArtFull
         {
@@ -64,6 +66,25 @@ namespace JacobC.Xiami.Models
                     Set(ref _AlbumArtFullUri, value);
             }
         }
+
+        /// <summary>
+        /// 获取专辑的大图链接
+        /// </summary>
+        public Uri ArtLarge => GetArtWithSize(2);
+
+        /// <summary>
+        /// 获取指定大小的封面地址
+        /// </summary>
+        /// <param name="size">封面大小对应的数字
+        /// 专辑：0:原图 1:100x100 2:185x184 3:55x55 4:原图 5:185x185
+        /// </param>
+        public Uri GetArtWithSize(int sizecode)
+        {
+            var origin = ArtFull.ToString();
+            return new Uri(origin.Insert(origin.LastIndexOf('.'), "_" + (sizecode == 0 ? "" : sizecode.ToString())));
+        }
+        #endregion
+
 
         ArtistModel _Artist = null;
         /// <summary>
@@ -161,15 +182,5 @@ namespace JacobC.Xiami.Models
 评分：{Rating}  发售日期：{ReleaseDate}";
         }
 
-        /// <summary>
-        /// 获取指定大小的封面地址
-        /// </summary>
-        /// <param name="size">封面大小对应的数字
-        /// 专辑：0:原图 1:100x100 2:185x184 3:55x55 4:原图 5:185x185
-        /// </param>
-        public Uri GetArtWithSize(int sizecode)
-        {
-            return new Uri(ArtFull.ToString() + (sizecode == 0 ? "" : sizecode.ToString()));
-        }
     }
 }

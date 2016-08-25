@@ -58,7 +58,9 @@ namespace JacobC.Xiami.Controls
                 if (_isDragging != value)
                 {
                     _isDragging = value;
-                    if (!value)
+                    if (value)
+                        _lastSeekPosition = ProgressBar.Value;//使不滑动的时候也能seek
+                    else
                         OnDraggingEnd();
                 }
             }
@@ -69,9 +71,15 @@ namespace JacobC.Xiami.Controls
             if (_isDragging)
                 return;//拖拽时不改变数值
             var player = PlaybackService.Instance.CurrentPlayer;
-            ProgressBar.Maximum = player.NaturalDuration.TotalSeconds;
-            ProgressBar.Value = player.Position.TotalSeconds;
-            //TODO: Tick更改时间指示文字
+            var total = player.NaturalDuration.TotalSeconds;
+            if(ProgressBar.Maximum!=total)
+            {
+                ProgressBar.Maximum = total;
+                NaturalDuration.Text = TimeSpanConverter.Covert(total);
+            }
+            var cur = player.Position.TotalSeconds;
+            ProgressBar.Value = cur;
+            CurrentPosition.Text = TimeSpanConverter.Covert(cur);
         }
 
         private double _lastSeekPosition = -1;
@@ -79,14 +87,18 @@ namespace JacobC.Xiami.Controls
         {
             if (_isDragging)
             {
-                //TODO: 拖拽时更改时间指示文字
-                _lastSeekPosition = e.NewValue;
+                CurrentPosition.Text = TimeSpanConverter.Covert(e.NewValue);
+                if (IsSeekingInstant)
+                    PlaybackService.Instance.CurrentPlayer.Position = TimeSpan.FromSeconds(e.NewValue);
+                else
+                    _lastSeekPosition = e.NewValue;
             }
         }
 
-        //拖拽结束时发生 TODO: 验证是否生效
+        //拖拽结束时发生
         private void OnDraggingEnd()
         {
+            LogService.DebugWrite($"Dragging Seeker Ended at {_lastSeekPosition}", nameof(MusicController));
             if (_lastSeekPosition != -1)
             {
                 PlaybackService.Instance.CurrentPlayer.Position = TimeSpan.FromSeconds(_lastSeekPosition);

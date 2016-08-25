@@ -9,7 +9,17 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
-
-    </Grid>
+    <Border BorderBrush="{x:Bind BorderBrush}" BorderThickness="{x:Bind BorderThickness}">
+        <Grid Background="{x:Bind BorderBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="24"/>
+            </Grid.RowDefinitions>
+            <local:ImageEx 
+                Width="{x:Bind ImageSize, Mode=OneWay}" 
+                Height="{x:Bind ImageSize, Mode=OneWay}" 
+                Source="{x:Bind ItemSource.ArtFull,Mode=OneWay}"/>
+            <TextBlock Text="PlaceHolder" Foreground="{x:Bind Foreground}" Width="{x:Bind ImageSize, Mode=OneWay}" Grid.Row="1"/>
+        </Grid>
+    </Border>
 </UserControl>

@@ -12,6 +12,7 @@
     d:DesignWidth="600">
 
     <Control.Resources>
+        <local:TimeSpanConverter x:Key="TimeConverter"/>
     </Control.Resources>
     <Grid x:Name="root">
         <VisualStateManager.VisualStateGroups>
@@ -71,7 +72,7 @@
                         <RowDefinition/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <RelativePanel Margin="8,8,8,0">
+                    <RelativePanel Margin="8,4,8,0">
                         <TextBlock x:Name="trackTitle" Text="{x:Bind CurrentSong.Name, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}"/>
                         <TextBlock x:Name="split" Margin="8,0" Text="/" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="trackTitle" />
                         <TextBlock x:Name="artistName" Text="{x:Bind CurrentSong.TrackArtist, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="split"/>
@@ -85,15 +86,15 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="CurrentPosition"/>
-                        <!-- 加入Progress的表示， 可以通过获取后台BufferingProgress获得 -->
+                        <TextBlock x:Name="CurrentPosition" FontSize="12" Foreground="#AAFFFFFF" Margin="4,0"/>
                         <Slider x:Name="ProgressBar"
                                 IsEnabled="{x:Bind IsDownloadBarDisabled, Mode=OneWay}"
                                 Grid.Column="1"
-                                Margin="0,-4,0,0"
-                                Value="0" IsThumbToolTipEnabled="False"
+                                Margin="0,-4,0,0" Value="0"
                                 Foreground="White"
                                 ValueChanged="ProgressBar_ValueChanged"
+                                IsThumbToolTipEnabled="{x:Bind IsThumbToolTipEnabled}"
+                                ThumbToolTipValueConverter="{StaticResource TimeConverter}"
                                 >
                             <Slider.Template>
                                 <ControlTemplate TargetType="Slider">
@@ -181,7 +182,7 @@
                                 </ControlTemplate>
                             </Slider.Template>
                         </Slider>
-                        <TextBlock Grid.Column="2" x:Name="Duration"/>
+                        <TextBlock x:Name="NaturalDuration" FontSize="12" Foreground="#AAFFFFFF" Grid.Column="2" Margin="4,0"/>
                     </Grid>
                 </Grid>
             </Grid>
