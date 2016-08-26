@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Web.Http;
 using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
+using System.Text.RegularExpressions;
 
 namespace JacobC.Xiami.Net
 {
@@ -16,7 +17,12 @@ namespace JacobC.Xiami.Net
     /// </summary>
     public class WebApi : IXiamiApi
     {
-
+        /*
+         * http://www.xiami.com/index/home?_={timestamp} : 用户基本信息
+         * http://www.xiami.com/index/recommend?_=1472214951932  : 每日个人推荐
+         * http://www.xiami.com/index/collect?_=1472214951933 
+         * http://www.xiami.com/index/unlikerecommend/ajax/1?album_id=2100218152&_=1472214951940 ： 不喜欢某专辑的推荐
+         */
         private WebApi() { }
         static WebApi _instance;
         /// <summary>
@@ -322,7 +328,7 @@ namespace JacobC.Xiami.Net
 
         #endregion
 
-        public IAsyncOperation<RecommendationModel> GetMainRecommendations()
+        public IAsyncOperation<RecommendationBatchModel> GetMainRecs()
         {
             return Run(async token =>
             {
@@ -336,7 +342,7 @@ namespace JacobC.Xiami.Net
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
                     var body = doc.DocumentNode.SelectSingleNode(".//body");
-                    RecommendationModel res = new RecommendationModel();
+                    RecommendationBatchModel res = new RecommendationBatchModel();
                     List<Task> process = new List<Task>();
                     //System.Diagnostics.Debugger.Break();
                     process.Add(Task.Run(() =>
@@ -384,5 +390,60 @@ namespace JacobC.Xiami.Net
                 yield return album;
             }
         }
+
+        public IAsyncOperation<DailyRecBatch> GetDailyRecs()
+        {
+            return Run(async token =>
+            {
+                try
+                {
+                    LogService.DebugWrite($"Get Daily Recommendation", nameof(WebApi));
+
+                    var gettask = HttpHelper.GetAsync(new Uri("http://www.xiami.com/index/recommend?_" + ParamHelper.GetTimestamp()));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    var i1 = content.IndexOf("\"data\"") + 7;
+                    var i2 = content.LastIndexOf("\"jumpurl\"") - 3;
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(Regex.Unescape(content.Substring(i1,i2-i1)));
+                    DailyRecBatch res = new DailyRecBatch();
+                    res.RecCollectionCovers = doc.DocumentNode.SelectSingleNode(".//div[@class='image']").SelectNodes("./img")
+                        .Select((node) => new Uri(node.GetAttributeValue("src", AlbumModel.SmallDefaultUri))).ToList();//图片质量为_1
+                    res.RecAlbums = doc.DocumentNode.SelectSingleNode(".//div[@class='main']").SelectNodes("./div")
+                        .Select((node) => {
+                            var arec = new RecommendationModel<AlbumModel>();
+                            var items = node.SelectNodes("./div");
+
+                            var idt = items[0].SelectSingleNode(".//a").GetAttributeValue("href", "/0");
+                            AlbumModel album = AlbumModel.GetNew(uint.Parse(idt.Substring(idt.LastIndexOf('/') + 1)));
+                            arec.Target = album;
+                            var image = items[0].SelectSingleNode("./a").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
+                            album.Art = new Uri(image);
+                            album.ArtFull = new Uri(image.Replace("_5", ""));
+
+                            var texts = items[1].SelectNodes("./p");
+                            var ar = texts[2].SelectSingleNode("./a");
+                            var art = ar.GetAttributeValue("href", "/0");
+                            ArtistModel artist = ArtistModel.GetNew(uint.Parse(art.Substring(art.LastIndexOf('/')+1)));
+                            artist.Name = ar.InnerText;
+                            album.Artist = artist;
+                            album.Name = texts[1].InnerText;
+                            arec.ReasonRaw = texts[0].InnerText;
+
+                            return arec;
+                        }).ToList();
+
+                    System.Diagnostics.Debugger.Break();
+                    LogService.DebugWrite("Finish Getting Daily Recommendation", nameof(WebApi));
+                    return res;
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e, nameof(WebApi));
+                    throw e;
+                }
+            });
+        }
+
     }
 }

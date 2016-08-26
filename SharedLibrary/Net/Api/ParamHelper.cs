@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JacobC.Xiami.Net.Api
+namespace JacobC.Xiami.Net
 {
     /// <summary>
     /// 提供一些参数的转化
@@ -12,7 +12,7 @@ namespace JacobC.Xiami.Net.Api
     public static class ParamHelper
     {
         public static double GetTimestamp(DateTime now) => (now - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
-        public static double GetTimestamp() => GetTimestamp(DateTime.Now);
+        public static string GetTimestamp() => ((int)GetTimestamp(DateTime.Now)).ToString();
         //为WindowsApi提供，似乎失效了
         public static string GetApiSignature(Dictionary<string, string> dic, string secret)
         {

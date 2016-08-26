@@ -7,48 +7,29 @@ using System.Threading.Tasks;
 namespace JacobC.Xiami.Models
 {
     /// <summary>
-    /// 用于获取推荐内容的模型
+    /// 推荐的基本模型
     /// </summary>
-    public class RecommendationModel
+    /// <typeparam name="T"></typeparam>
+    public class RecommendationModel<T> where T : XiamiModelBase
     {
         /// <summary>
-        /// 每日推荐/猜你喜欢
+        /// 推荐的内容
         /// </summary>
-        public IList<AlbumModel> Daily { get; set; }
-        public IList<AlbumModel> NewInAll { get; set; }
-        public IList<AlbumModel> NewInChinese { get; set; }
-        public IList<AlbumModel> NewInEnglish { get; set; }
-        public IList<AlbumModel> NewInJapanese { get; set; }
-        public IList<AlbumModel> NewInKorean { get; set; }
-        public IList<Services.RadioService> GenreMusic { get; set; }
+        public T Target { get; set; }
+
         /// <summary>
-        /// 大虾推荐
+        /// 推荐的原因（为未转义的html）
         /// </summary>
-        public IList<UserRecommendationModel> UserRecommendations { get; set; }
-        /// <summary>
-        /// 今日音乐人
-        /// </summary>
-        public IList<UserRecommendationModel> MusicianRecommendations { get; set; }
+        public string ReasonRaw { get; set; }
     }
     /// <summary>
     /// 用户推荐的模型
     /// </summary>
-    public class UserRecommendationModel
+    public class UserRecommendationModel : RecommendationModel<SongModel>
     {
         /// <summary>
         /// 推荐者
         /// </summary>
         public UserModel Nominator { get; set; }
-
-        //下面两个可以考虑改成CommentModel？
-
-        /// <summary>
-        /// 推荐内容
-        /// </summary>
-        public SongModel Recommendation { get; set; }
-        /// <summary>
-        /// 推荐原因
-        /// </summary>
-        public string Reason { get; set; }
     }
 }

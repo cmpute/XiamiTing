@@ -133,6 +133,9 @@
     <Compile Include="Controls\Playlist.xaml.cs">
       <DependentUpon>Playlist.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\BaseModels\XiamiModelBase.cs" />
+    <Compile Include="Models\RecommendationModel.cs" />
+    <Compile Include="RichText.cs" />
     <Compile Include="Controls\SongItem.xaml.cs">
       <DependentUpon>SongItem.xaml</DependentUpon>
     </Compile>
@@ -148,7 +151,7 @@
     <Compile Include="Models\BaseModels\ZoneModel.cs" />
     <Compile Include="Models\CollectionRecommendationModel.cs" />
     <Compile Include="Models\PresetRadios.cs" />
-    <Compile Include="Models\RecommendationModel.cs" />
+    <Compile Include="Models\RecommendationBatchModel.cs" />
     <Compile Include="Models\BaseModels\SongModel.cs" />
     <Compile Include="Models\BaseModels\UserModel.cs" />
     <Compile Include="Net\Api\CombinedApi.cs" />

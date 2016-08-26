@@ -71,10 +71,11 @@
             <RowDefinition Height="{x:Bind ImageSize, Converter={StaticResource GridWidthConverter}, Mode=OneWay}"/>
             <RowDefinition Height="{x:Bind InfoPanelHeight, Converter={StaticResource GridWidthConverter}, Mode=OneWay}"/>
         </Grid.RowDefinitions>
+        <!-- 改成ItemSource.ArtLarge -->
         <local:ImageEx
                 Width="{x:Bind ImageSize, Mode=OneWay}" 
                 Height="{x:Bind ImageSize, Mode=OneWay}"
-                Source="{x:Bind ItemSource.Art,Mode=OneWay}"/>
+                Source="{x:Bind ItemSource.ArtFull,Mode=OneWay}"/>
         <Button x:Name="CommandGrid"
               Width="{x:Bind ImageSize, Mode=OneWay}" Height="{x:Bind ImageSize, Mode=OneWay}"
               Opacity="0"
