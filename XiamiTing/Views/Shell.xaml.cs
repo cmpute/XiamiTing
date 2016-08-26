@@ -12,7 +12,7 @@ namespace JacobC.Xiami.Views
     public sealed partial class Shell : Page
     {
         public static Shell Instance { get; set; }
-        public static HamburgerMenu HamburgerMenu => Instance.MyHamburgerMenu;
+        public static HamburgerMenu HamburgerMenu => Instance.RootFrame;
 
         public Shell()
         {
@@ -30,7 +30,7 @@ namespace JacobC.Xiami.Views
 
         public void SetNavigationService(INavigationService navigationService)
         {
-            MyHamburgerMenu.NavigationService = navigationService;
+            RootFrame.NavigationService = navigationService;
         }
     }
 }

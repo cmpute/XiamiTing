@@ -111,11 +111,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\ClipExtended.cs" />
+    <Compile Include="Controls\CoveredItem.declaration.cs">
+      <DependentUpon>CoveredItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CoveredItem.xaml.cs">
       <DependentUpon>CoveredItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DependencyExtended.cs" />
-    <Compile Include="Controls\TimeSpanConverter.cs" />
+    <Compile Include="Controls\IconButton.cs" />
+    <Compile Include="Controls\LocalConverters.cs" />
     <Compile Include="Controls\ImageEx.cs" />
     <Compile Include="Controls\MusicController.declaration.cs">
       <DependentUpon>MusicController.xaml</DependentUpon>
@@ -177,6 +181,11 @@
     <Page Include="Controls\CoveredItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\IconButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Controls\ImageEx.xaml">
       <SubType>Designer</SubType>

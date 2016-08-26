@@ -17,13 +17,13 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <Controls:HamburgerMenu x:Name="MyHamburgerMenu" PaneWidth="216">
+        <Controls:HamburgerMenu x:Name="RootFrame" PaneWidth="216">
 
             <Controls:HamburgerMenu.PrimaryButtons>
                 <!--  mainpage button  -->
                 <Controls:HamburgerButtonInfo ClearHistory="True" PageType="views:DiscoveryPage">
                     <StackPanel Orientation="Horizontal">
-                        <FontIcon Width="48" Height="48" Glyph="&#xE704;"/>
+                        <FontIcon Width="48" Height="48" Glyph="&#xE8D6;"/>
                         <TextBlock x:Uid="DiscoveryNavText" Margin="12,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Controls:HamburgerButtonInfo>

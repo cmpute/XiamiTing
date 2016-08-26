@@ -20,35 +20,38 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="UpPart">
                 <VisualState x:Name="NormalUp">
-                    <!--<Storyboard>
-                        <DoubleAnimation Storyboard.TargetName="UpperBoardTranslate" Storyboard.TargetProperty="Y"
-                                         To="{x:Bind ImageSize, Converter={StaticResource OffsetConverter}, Mode=OneWay}" Duration="0:0:0.2"/>
-                    </Storyboard>-->
+                    <Storyboard>
+                        <!--<DoubleAnimation Storyboard.TargetName="UpperBoardTranslate" Storyboard.TargetProperty="Y"
+                                         To="{x:Bind ImageSize, Converter={StaticResource OffsetConverter}, Mode=OneWay}" Duration="0:0:0.2"/>-->
+                        <DoubleAnimation Storyboard.TargetName="CommandGrid" Storyboard.TargetProperty="Opacity"
+                                         To="0" Duration="0:0:0.2"/>
+                    </Storyboard>
                 </VisualState>
                 <VisualState x:Name="PointerOverUp">
-                    <VisualState.Setters>
-                        <Setter Target="CommandGrid.Visibility" Value="Visible"/>
-                    </VisualState.Setters>
-                    <!--<Storyboard>
-                        <DoubleAnimation Storyboard.TargetName="UpperBoardTranslate" Storyboard.TargetProperty="Y"
+                    <Storyboard>
+                        <!--<DoubleAnimation Storyboard.TargetName="UpperBoardTranslate" Storyboard.TargetProperty="Y"
                                          To="0" Duration="0:0:0.2">
                             <DoubleAnimation.EasingFunction>
                                 <ExponentialEase Exponent="-6" EasingMode="EaseIn"/>
                             </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                    </Storyboard>-->
+                        </DoubleAnimation>-->
+                        <DoubleAnimation Storyboard.TargetName="CommandGrid" Storyboard.TargetProperty="Opacity"
+                                         To="1" Duration="0:0:0.2"/>
+                    </Storyboard>
                 </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="DownPart">
                 <VisualState x:Name="NormalDown">
                     <Storyboard>
                         <DoubleAnimation Storyboard.TargetName="TextGrid" Storyboard.TargetProperty="Height"
+                                         EnableDependentAnimation="True"
                                          To="{x:Bind InfoPanelHeight, Converter={StaticResource TypeConverter}, Mode=OneWay}" Duration="0:0:0.2"/>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="PointerOverDown">
                     <Storyboard>
                         <DoubleAnimation Storyboard.TargetName="TextGrid" Storyboard.TargetProperty="Height"
+                                         EnableDependentAnimation="True"
                                          To="{x:Bind TotalHeight, Converter={StaticResource TypeConverter}, Mode=OneWay}" Duration="0:0:0.2">
                             <DoubleAnimation.EasingFunction>
                                 <ExponentialEase Exponent="-6" EasingMode="EaseIn"/>
@@ -74,29 +77,40 @@
                 Source="{x:Bind ItemSource.Art,Mode=OneWay}"/>
         <Grid x:Name="CommandGrid"
               Width="{x:Bind ImageSize, Mode=OneWay}" Height="{x:Bind ImageSize, Mode=OneWay}"
-              Background="#66000000"
-              Visibility="Collapsed">
+              Background="#88000000"
+              Opacity="0">
             <!--<Grid.RenderTransform>
                 <TranslateTransform x:Name="UpperBoardTranslate" Y="{x:Bind ImageSize, Converter={StaticResource OffsetConverter}, Mode=OneWay}"/>
             </Grid.RenderTransform>-->
-            <Button Content="Text"
-                    Width="28" Height="28"
-                    VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                    Foreground="White"/>
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                <local:IconButton>
+                    <ToolTipService.ToolTip>
+                        <ToolTip Content="立即播放"/>
+                    </ToolTipService.ToolTip>
+                    <FontIcon Glyph="&#xE102;" FontSize="28"/>
+                </local:IconButton>
+                <local:IconButton>
+                    <ToolTipService.ToolTip>
+                        <ToolTip Content="添加到播放列表"/>
+                    </ToolTipService.ToolTip>
+                    <FontIcon Glyph="&#xE142;" FontSize="28"/>
+                </local:IconButton>
+            </StackPanel>
         </Grid>
         <Grid x:Name="TextGrid" Grid.RowSpan="1" Grid.Row="1"
-              Width="{x:Bind ImageSize, Mode=OneWay}"
+              Width="{x:Bind ImageSize, Mode=OneWay}" Height="{x:Bind InfoPanelHeight, Converter={StaticResource TypeConverter}, Mode=OneWay}"
               Background="{x:Bind BorderBrush}"
+              PointerEntered="Rectangle_PointerEntered" PointerExited="Rectangle_PointerExited"
               VerticalAlignment="Bottom">
-            <Rectangle x:Name="SizeHolder" Height="{x:Bind InfoPanelHeight, Converter={StaticResource TypeConverter}, Mode=OneWay}"/>
             <TextBlock x:Name="InfoText"
-                       Text="PlaceHolder"
-                       PointerEntered="Rectangle_PointerEntered" PointerExited="Rectangle_PointerExited"
                        TextWrapping="Wrap"
                        TextTrimming="CharacterEllipsis"
                        Foreground="{x:Bind Foreground}"
                        VerticalAlignment="Top"
-                       Grid.Row="1"/>
+                       Grid.Row="1">
+                <TextBlock.Inlines></TextBlock.Inlines>
+            </TextBlock>
         </Grid>
     </Grid>
 </UserControl>

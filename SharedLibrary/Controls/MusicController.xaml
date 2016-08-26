@@ -43,29 +43,28 @@
                 <!--设置Placeholder图片-->
                 <local:ImageEx Height="60" Width="60" Stretch="UniformToFill" Source="{x:Bind CurrentSong.Album.Art, Mode=OneWay}"/>
                 <StackPanel x:Name="controlButtons" Grid.Column="1" Orientation="Horizontal">
-                    <Button x:Name="previous" Style="{StaticResource EmptyButtonForIcon}"
-                            Background="Transparent"
+                    <local:IconButton x:Name="previous"
                             VerticalAlignment="Center"
                             Command="{x:Bind PreviousCommand}"
-                            Margin="4,0">
-                        <FontIcon FontSize="28" Glyph="&#xE100;" Foreground="{StaticResource BackColorBrush}" />
-                    </Button>
-                    <Button x:Name="play" Style="{StaticResource EmptyButtonForIcon}"
-                            Background="Transparent"
+                            Margin="4,0"
+                            Foreground="{StaticResource BackColorBrush}">
+                        <FontIcon FontSize="28" Glyph="&#xE100;"/>
+                    </local:IconButton>
+                    <local:IconButton x:Name="play"
                             VerticalAlignment="Center"
+                            Foreground="{StaticResource BackColorBrush}"
                             Margin="4,0"
                             Command="{x:Bind PlayCommand}">
-                        <FontIcon x:Name="PlayIcon" FontSize="40"
-                                  Glyph="&#xE102;"
-                                  Foreground="{StaticResource BackColorBrush}"/>
-                    </Button>
-                    <Button x:Name="next" Style="{StaticResource EmptyButtonForIcon}"
+                        <FontIcon x:Name="PlayIcon" FontSize="40" FontWeight="Bold" Glyph="&#xE102;"/>
+                    </local:IconButton>
+                    <local:IconButton x:Name="next"
                             Background="Transparent"
                             VerticalAlignment="Center"
-                            Command="{x:Bind NextCommand}"
+                            Command="{x:Bind NextCommand}" 
+                            Foreground="{StaticResource BackColorBrush}"
                             Margin="4,0">
-                        <FontIcon FontSize="28" Glyph="&#xE101;" Foreground="{StaticResource BackColorBrush}"/>
-                    </Button>
+                        <FontIcon FontSize="28" Glyph="&#xE101;"/>
+                    </local:IconButton>
                 </StackPanel>
                 <Grid Grid.Column="2" Padding="4,4">
                     <Grid.RowDefinitions>
@@ -76,9 +75,9 @@
                         <TextBlock x:Name="trackTitle" Text="{x:Bind CurrentSong.Name, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}"/>
                         <TextBlock x:Name="split" Margin="8,0" Text="/" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="trackTitle" />
                         <TextBlock x:Name="artistName" Text="{x:Bind CurrentSong.TrackArtist, Mode=OneWay}" Foreground="{StaticResource BackColorBrush}" RelativePanel.RightOf="split"/>
-                        <Button x:Name="list" Style="{StaticResource EmptyButtonForIcon}" Foreground="{StaticResource BackColorBrush}" Background="Transparent" VerticalAlignment="Center" RelativePanel.AlignRightWithPanel="True">
+                        <local:IconButton x:Name="list" Foreground="{StaticResource BackColorBrush}" VerticalAlignment="Center" RelativePanel.AlignRightWithPanel="True">
                             <FontIcon FontSize="20" Glyph="&#xE142;" />
-                        </Button>
+                        </local:IconButton>
                     </RelativePanel>
                     <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>

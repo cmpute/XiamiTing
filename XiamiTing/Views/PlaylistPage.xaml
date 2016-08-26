@@ -43,7 +43,7 @@
             <controls:PageHeader.PrimaryCommands>
                 <AppBarButton x:Name="Delete" Command="{x:Bind DeleteCommand}" Icon="Delete" Label="Delete Selection"/>
                 <AppBarButton x:Name="SelectAll" Command="{x:Bind SelectAllCommand}" Icon="SelectAll" Label="SelectAll" Visibility="Collapsed"/>
-                <AppBarButton x:Name="MultiSelect" Command="{x:Bind MultipleSelect}" Icon="ViewAll" Label="MultiSelect"/>
+                <AppBarButton x:Name="MultiSelect" Command="{x:Bind MultipleSelect}" Icon="Bullets" Label="MultiSelect"/>
             </controls:PageHeader.PrimaryCommands>
         </controls:PageHeader>
         <c:Playlist Grid.Row="1" x:Name="Songlist"/>
