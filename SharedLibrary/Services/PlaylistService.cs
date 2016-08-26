@@ -40,6 +40,14 @@ namespace JacobC.Xiami.Services
         }
         #endregion
 
+        public void AddRange(IEnumerable<SongModel> target)
+        {
+            if (target == null)
+                return;
+            foreach (var item in target)
+                Add(item);
+        }
+
         /// <summary>
         /// 获取当前选中或播放的音轨
         /// </summary>
@@ -205,6 +213,15 @@ namespace JacobC.Xiami.Services
             get; set;
         }
 
+        #endregion
+
+        #region Model Adding Methods
+        public void AddModel(object model)
+        {
+            if (model is AlbumModel)
+                AddAlbum(model as AlbumModel);
+        }
+        public void AddAlbum(AlbumModel model) => this.AddRange(model?.SongList);//TODO 如果Songlist为空则获取SongList
         #endregion
 
     }

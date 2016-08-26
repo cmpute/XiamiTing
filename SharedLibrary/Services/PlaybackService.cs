@@ -285,6 +285,33 @@ namespace JacobC.Xiami.Services
 
         #endregion
 
+        #region Model Playing Methods
+        /// <summary>
+        /// 播放虾米内容，自动判断对象类型
+        /// </summary>
+        /// <param name="model"></param>
+        public void PlayModel(object model)
+        {
+            if (model == null)
+                return;
+            if (model is AlbumModel)
+                PlayAlbum(model as AlbumModel);
+        }
+        /// <summary>
+        /// 播放专辑
+        /// </summary>
+        public void PlayAlbum(AlbumModel album)
+        {
+            if (album == null)
+                return;
+            if (album.SongList == null)
+                return;
+            PlaylistService.Instance.Clear();
+            PlaylistService.Instance.AddAlbum(album);
+            PlayTrack();
+        }
+        #endregion
+
         /// <summary>
         /// 设置播放内容为播放列表或电台
         /// </summary>

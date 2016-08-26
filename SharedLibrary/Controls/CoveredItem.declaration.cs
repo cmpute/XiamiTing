@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Navigation;
 using JacobC.Xiami.Services;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Documents;
+using System.Collections.ObjectModel;
 
 namespace JacobC.Xiami.Controls
 {
@@ -106,9 +107,34 @@ namespace JacobC.Xiami.Controls
             DependencyProperty.Register("InfoPanelContent", typeof(InlineCollection), typeof(CoveredItem), new PropertyMetadata(null));
 
         /// <summary>
-        /// 设置展示对象的类型，用于播放按操作
+        /// 按下专辑显示部分时发生, sender为ItemSource
         /// </summary>
-        public Type ItemSourceType { get; set; } = typeof(AlbumModel);
+        public event EventHandler<RoutedEventArgs> MainPanelClick;
+
+
+        public object InfoContent
+        {
+            get { return (object)GetValue(InfoContentProperty); }
+            set { SetValue(InfoContentProperty, value); }
+        }
+        public static readonly DependencyProperty InfoContentProperty =
+            DependencyProperty.Register("InfoContent", typeof(object), typeof(CoveredItem), new PropertyMetadata(null));
+
+        public DataTemplate InfoContentTemplate
+        {
+            get { return (DataTemplate)GetValue(InfoContentTemplateProperty); }
+            set { SetValue(InfoContentTemplateProperty, value); }
+        }
+        public static readonly DependencyProperty InfoContentTemplateProperty =
+            DependencyProperty.Register("InfoContentTemplate", typeof(DataTemplate), typeof(CoveredItem), new PropertyMetadata(null));
+
+        public DataTemplateSelector InfoContentTemplateSelector
+        {
+            get { return (DataTemplateSelector)GetValue(InfoContentTemplateSelectorProperty); }
+            set { SetValue(InfoContentTemplateSelectorProperty, value); }
+        }
+        public static readonly DependencyProperty InfoContentTemplateSelectorProperty =
+            DependencyProperty.Register("InfoContentTemplateSelector", typeof(DataTemplateSelector), typeof(CoveredItem), new PropertyMetadata(null));
 
         #endregion
     }

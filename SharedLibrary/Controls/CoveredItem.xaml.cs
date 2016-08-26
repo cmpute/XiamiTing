@@ -18,6 +18,7 @@ using JacobC.Xiami.Services;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Markup;
+using System.Windows.Input;
 
 namespace JacobC.Xiami.Controls
 {
@@ -27,7 +28,6 @@ namespace JacobC.Xiami.Controls
     /// <remarks>
     /// TODO: 增加属性决定上半部分内容的出现方式？
     /// TODO: 增加按键事件，和按键可见性
-    /// TODO: 增加内容属性表示信息栏的内容
     /// </remarks>
     public sealed partial class CoveredItem : UserControl
     {
@@ -39,7 +39,7 @@ namespace JacobC.Xiami.Controls
         private double TotalHeight
         {
             get { return (double)GetValue(TotalHeightProperty); }
-            set { SetValue(TotalHeightProperty, value); }
+            set { SetValue(TotalHeightProperty, value);}
         }
         public static readonly DependencyProperty TotalHeightProperty =
             DependencyProperty.Register("TotalHeight", typeof(double), typeof(CoveredItem), new PropertyMetadata(124d));
@@ -51,7 +51,7 @@ namespace JacobC.Xiami.Controls
             if (_hoverdown)
                 return;
             _hoverup = true;
-            LogService.DebugWrite("PinterEnteredUp");
+            LogService.DebugWrite("PointerEnteredUp", nameof(CoveredItem));
             VisualStateManager.GoToState(this, "PointerOverUp", true);
         }
         protected override void OnPointerExited(PointerRoutedEventArgs e)
@@ -62,7 +62,7 @@ namespace JacobC.Xiami.Controls
 
         private void Rectangle_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            LogService.DebugWrite("PinterEnteredDown");
+            LogService.DebugWrite("PointerEnteredDown", nameof(CoveredItem));
             _hoverdown = true;
             VisualStateManager.GoToState(this, "PointerOverDown", true);
             if (_hoverup)
@@ -72,6 +72,20 @@ namespace JacobC.Xiami.Controls
         {
             _hoverdown = false;
             VisualStateManager.GoToState(this, "NormalDown", true);
+        }
+
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            PlaybackService.Instance.PlayModel(this.ItemSource);
+        }
+        private void CommandGrid_Click(object sender, RoutedEventArgs e)
+        {
+            LogService.DebugWrite("Clicked", nameof(CoveredItem));
+            MainPanelClick?.Invoke(ItemSource, e);
+        }
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            PlaylistService.Instance.AddModel(this.ItemSource);
         }
     }
 

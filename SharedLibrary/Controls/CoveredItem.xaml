@@ -75,42 +75,44 @@
                 Width="{x:Bind ImageSize, Mode=OneWay}" 
                 Height="{x:Bind ImageSize, Mode=OneWay}"
                 Source="{x:Bind ItemSource.Art,Mode=OneWay}"/>
-        <Grid x:Name="CommandGrid"
+        <Button x:Name="CommandGrid"
               Width="{x:Bind ImageSize, Mode=OneWay}" Height="{x:Bind ImageSize, Mode=OneWay}"
-              Background="#88000000"
-              Opacity="0">
+              Opacity="0"
+              Click="CommandGrid_Click">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter/>
+                </ControlTemplate>
+            </Button.Template>
             <!--<Grid.RenderTransform>
                 <TranslateTransform x:Name="UpperBoardTranslate" Y="{x:Bind ImageSize, Converter={StaticResource OffsetConverter}, Mode=OneWay}"/>
             </Grid.RenderTransform>-->
-            <StackPanel Orientation="Horizontal"
-                        VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                <local:IconButton>
+            <RelativePanel Background="#88000000">
+                <local:IconButton x:Name="PlayButton" Click="PlayButton_Click" Margin="4,2"
+                                  RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">
                     <ToolTipService.ToolTip>
                         <ToolTip Content="立即播放"/>
                     </ToolTipService.ToolTip>
                     <FontIcon Glyph="&#xE102;" FontSize="28"/>
                 </local:IconButton>
-                <local:IconButton>
+                <local:IconButton Click="AddButton_Click" Margin="0,4"
+                                  RelativePanel.LeftOf="PlayButton" RelativePanel.AlignBottomWithPanel="True">
                     <ToolTipService.ToolTip>
                         <ToolTip Content="添加到播放列表"/>
                     </ToolTipService.ToolTip>
-                    <FontIcon Glyph="&#xE142;" FontSize="28"/>
+                    <FontIcon Glyph="&#xE109;" FontSize="24"/>
                 </local:IconButton>
-            </StackPanel>
-        </Grid>
+            </RelativePanel>
+        </Button>
         <Grid x:Name="TextGrid" Grid.RowSpan="1" Grid.Row="1"
               Width="{x:Bind ImageSize, Mode=OneWay}" Height="{x:Bind InfoPanelHeight, Converter={StaticResource TypeConverter}, Mode=OneWay}"
               Background="{x:Bind BorderBrush}"
               PointerEntered="Rectangle_PointerEntered" PointerExited="Rectangle_PointerExited"
               VerticalAlignment="Bottom">
-            <TextBlock x:Name="InfoText"
-                       TextWrapping="Wrap"
-                       TextTrimming="CharacterEllipsis"
-                       Foreground="{x:Bind Foreground}"
-                       VerticalAlignment="Top"
-                       Grid.Row="1">
-                <TextBlock.Inlines></TextBlock.Inlines>
-            </TextBlock>
+            <ContentPresenter VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                              Content="{x:Bind InfoContent, Mode=OneWay}"
+                              ContentTemplate="{x:Bind InfoContentTemplate, Mode=OneWay}"
+                              ContentTemplateSelector="{x:Bind InfoContentTemplateSelector, Mode=OneWay}"/>
         </Grid>
     </Grid>
 </UserControl>
