@@ -411,13 +411,13 @@ namespace JacobC.Xiami.Net
                         .Select((node) => new Uri(node.GetAttributeValue("src", AlbumModel.SmallDefaultUri))).ToList();//图片质量为_1
                     res.RecAlbums = doc.DocumentNode.SelectSingleNode(".//div[@class='main']").SelectNodes("./div")
                         .Select((node) => {
-                            var arec = new RecommendationModel<AlbumModel>();
+                            var arec = new AlbumRecModel();
                             var items = node.SelectNodes("./div");
 
                             var idt = items[0].SelectSingleNode(".//a").GetAttributeValue("href", "/0");
                             AlbumModel album = AlbumModel.GetNew(uint.Parse(idt.Substring(idt.LastIndexOf('/') + 1)));
                             arec.Target = album;
-                            var image = items[0].SelectSingleNode("./a").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
+                            var image = items[0].SelectSingleNode("./img").GetAttributeValue("src", AlbumModel.SmallDefaultUri);
                             album.Art = new Uri(image);
                             album.ArtFull = new Uri(image.Replace("_5", ""));
 
@@ -428,12 +428,11 @@ namespace JacobC.Xiami.Net
                             artist.Name = ar.InnerText;
                             album.Artist = artist;
                             album.Name = texts[1].InnerText;
-                            arec.ReasonRaw = texts[0].InnerText;
+                            arec.ReasonRaw = texts[0].InnerHtml;
 
                             return arec;
                         }).ToList();
 
-                    System.Diagnostics.Debugger.Break();
                     LogService.DebugWrite("Finish Getting Daily Recommendation", nameof(WebApi));
                     return res;
                 }

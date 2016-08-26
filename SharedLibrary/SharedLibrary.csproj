@@ -135,7 +135,7 @@
     </Compile>
     <Compile Include="Models\BaseModels\XiamiModelBase.cs" />
     <Compile Include="Models\RecommendationModel.cs" />
-    <Compile Include="RichText.cs" />
+    <Compile Include="Controls\RichTextExtended.cs" />
     <Compile Include="Controls\SongItem.xaml.cs">
       <DependentUpon>SongItem.xaml</DependentUpon>
     </Compile>

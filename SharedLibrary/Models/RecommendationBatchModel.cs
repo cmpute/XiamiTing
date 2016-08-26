@@ -35,7 +35,9 @@ namespace JacobC.Xiami.Models
     /// </summary>
     public class DailyRecBatch
     {
-        public IList<RecommendationModel<AlbumModel>> RecAlbums;
+        public IList<AlbumRecModel> RecAlbums;
         public IList<Uri> RecCollectionCovers;
     }
+    //便于绑定用
+    public class AlbumRecModel : RecommendationModel<AlbumModel> { }
 }

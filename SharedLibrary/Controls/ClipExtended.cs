@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Media;
 namespace JacobC.Xiami.Controls
 {
     //From https://social.msdn.microsoft.com/Forums/en-US/0e80a0ed-bf4d-479f-bbf1-9fefc1db0857/how-to-clip-content-of-a-panel-at-its-bounds-cliptobounds-in-metro?forum=winappswithcsharp
-    public class ClipExtended
+    public static class ClipExtended
     {
         public static bool GetToBounds(DependencyObject depObj)
         {
