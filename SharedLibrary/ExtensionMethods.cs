@@ -69,7 +69,7 @@ namespace JacobC.Xiami
         /// <summary>
         /// 获取指定类型的参数
         /// </summary>
-        /// <typeparam name="T">需要获取的参数类型</typeparam>
+        /// <typeparam name="T">需要获取的参数类型(int不能用！)</typeparam>
         public static T GetParameter<T>(this NavigationEventArgs e)
         {
             return Template10.Services.SerializationService.SerializationService.Json.Deserialize<T>(e.Parameter?.ToString());

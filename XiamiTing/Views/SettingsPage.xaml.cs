@@ -17,7 +17,7 @@ namespace JacobC.Xiami.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var index = e.GetParameter<int>();//JsonConvert.DeserializeObject<int>(e.Parameter?.ToString());
+            var index = int.Parse(_SerializationService.Deserialize(e.Parameter?.ToString()).ToString());//TODO: 把参数的获取封装起来
             MyPivot.SelectedIndex = index;
         }
     }

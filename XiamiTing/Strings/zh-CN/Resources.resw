@@ -125,18 +125,26 @@
   </data>
   <data name="DiscoveryHeader.Text" xml:space="preserve">
     <value>发现，倾听</value>
-    <comment>DiscoveryView的标题栏文字</comment>
+    <comment>DiscoveryPage的标题栏文字</comment>
   </data>
   <data name="DiscoveryNavText.Text" xml:space="preserve">
     <value>发现</value>
-    <comment>DiscoveryView导航按钮文字</comment>
+    <comment>DiscoveryPage导航按钮文字</comment>
+  </data>
+  <data name="FeedbackNavText.Text" xml:space="preserve">
+    <value>反馈</value>
+    <comment>反馈导航按钮文字</comment>
+  </data>
+  <data name="LibraryNavText.Text" xml:space="preserve">
+    <value>乐库</value>
+    <comment>LibraryPage导航栏按钮文字</comment>
   </data>
   <data name="PlaylistNavText.Text" xml:space="preserve">
     <value>播放列表</value>
-    <comment>PlaylistView导航按钮文字</comment>
+    <comment>PlaylistPage导航按钮文字</comment>
   </data>
   <data name="SettingsNavText.Text" xml:space="preserve">
     <value>设置</value>
-    <comment>SettingsView导航栏按钮文字</comment>
+    <comment>SettingsPage导航栏按钮文字</comment>
   </data>
 </root>

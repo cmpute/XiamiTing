@@ -38,7 +38,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <!--添加全选，反选按钮-->
-        <controls:PageHeader x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
+        <controls:PageHeader x:Name="pageHeader"
                              Grid.Row="0" Text="Playlist">
             <controls:PageHeader.PrimaryCommands>
                 <AppBarButton x:Name="Delete" Command="{x:Bind DeleteCommand}" Icon="Delete" Label="Delete Selection"/>

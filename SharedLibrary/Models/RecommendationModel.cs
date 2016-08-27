@@ -32,4 +32,17 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public UserModel Nominator { get; set; }
     }
+    /// <summary>
+    /// 滑动封面的推荐
+    /// </summary>
+    public class MainCoverModel
+    {
+        public Uri SliderCoverSource { get; set; }
+        public string Title { get; set; }
+        public Uri RedirectUri { get; set; }
+        public override string ToString()
+        {
+            return Title;
+        }
+    }
 }

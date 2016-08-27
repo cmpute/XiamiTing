@@ -12,6 +12,8 @@ using Windows.UI.Xaml.Media.Imaging;
 using System.Threading;
 using Windows.Foundation;
 using JacobC.Xiami.Models;
+using JacobC.Xiami.Net;
+using Windows.UI.Xaml;
 
 namespace JacobC.Xiami.ViewModels
 {
@@ -34,8 +36,24 @@ namespace JacobC.Xiami.ViewModels
             {
                 Value = suspensionState[nameof(Value)]?.ToString();
             }
-            await Task.CompletedTask;
+            DailyRecs = await WebApi.Instance.GetDailyRecs();
+            var mainbatch = await WebApi.Instance.GetMainRecs();
+            NewInAllRecs = mainbatch.NewInAll;
         }
+
+
+        DailyRecBatch _DailyRecs = default(DailyRecBatch);
+        /// <summary>
+        /// 获取或设置猜你喜欢属性
+        /// </summary>
+        public DailyRecBatch DailyRecs { get { return _DailyRecs; } set { Set(ref _DailyRecs, value); } }
+
+        IList<AlbumModel> _NewInAllRecs = default(IList<AlbumModel>);
+        /// <summary>
+        /// 获取或设置新碟首发属性
+        /// </summary>
+        public IList<AlbumModel> NewInAllRecs { get { return _NewInAllRecs; } set { Set(ref _NewInAllRecs, value); } }
+
 
         public override async Task OnNavigatedFromAsync(IDictionary<string, object> suspensionState, bool suspending)
         {

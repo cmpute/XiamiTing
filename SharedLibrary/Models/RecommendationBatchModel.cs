@@ -7,27 +7,22 @@ using System.Threading.Tasks;
 namespace JacobC.Xiami.Models
 {
     /// <summary>
-    /// 用于获取推荐内容的模型
+    /// 用于获取主页推荐内容的模型
     /// </summary>
-    public class RecommendationBatchModel
+    public class MainRecBatchModel
     {
         /// <summary>
-        /// 每日推荐/猜你喜欢
+        /// 新碟首发
         /// </summary>
         public IList<AlbumModel> NewInAll { get; set; }
-        public IList<AlbumModel> NewInChinese { get; set; }
-        public IList<AlbumModel> NewInEnglish { get; set; }
-        public IList<AlbumModel> NewInJapanese { get; set; }
-        public IList<AlbumModel> NewInKorean { get; set; }
+        /// <summary>
+        /// 时间定制电台
+        /// </summary>
         public IList<Services.RadioService> GenreMusic { get; set; }
         /// <summary>
-        /// 大虾推荐
+        /// 滑动封面
         /// </summary>
-        public IList<UserRecommendationModel> UserRecommendations { get; set; }
-        /// <summary>
-        /// 今日音乐人
-        /// </summary>
-        public IList<UserRecommendationModel> MusicianRecommendations { get; set; }
+        public IList<MainCoverModel> PromoteCovers { get; set; }
     }
 
     /// <summary>

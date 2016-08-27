@@ -6,8 +6,7 @@
         IconColor : App图标配色
         ContrastColor : 辅助配色
     -->
-    <Color x:Key="ThemeColor">#F60</Color>
-    <!-- 等价于FF6600 -->
+    <Color x:Key="ThemeColor">#FF6600</Color>
     <Color x:Key="IconColor">#FF5E00</Color>
     <Color x:Key="InactiveThemeColor">#FFB380</Color>
     <Color x:Key="HighlightThemeColor">#FFA200</Color>
@@ -15,9 +14,9 @@
     <Color x:Key="DarkThemeColor">#DB5900</Color>
     <Color x:Key="LightDarkColor">#7B7A74</Color>
     <Color x:Key="DarkColor">#3A3935</Color>
-    <Color x:Key="ForeColor">#333</Color>
+    <Color x:Key="ForeColor">#333333</Color>
     <Color x:Key="BackColor">#F5F5F5</Color>
-    <Color x:Key="DisableColor">#999</Color>
+    <Color x:Key="DisableColor">#999999</Color>
     <Color x:Key="ContrastColor">#1ABC9C</Color>
 
 

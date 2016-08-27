@@ -17,12 +17,7 @@ namespace JacobC.Xiami.Net
     /// </summary>
     public class WebApi : IXiamiApi
     {
-        /*
-         * http://www.xiami.com/index/home?_={timestamp} : 用户基本信息
-         * http://www.xiami.com/index/recommend?_=1472214951932  : 每日个人推荐
-         * http://www.xiami.com/index/collect?_=1472214951933 
-         * http://www.xiami.com/index/unlikerecommend/ajax/1?album_id=2100218152&_=1472214951940 ： 不喜欢某专辑的推荐
-         */
+
         private WebApi() { }
         static WebApi _instance;
         /// <summary>
@@ -328,7 +323,7 @@ namespace JacobC.Xiami.Net
 
         #endregion
 
-        public IAsyncOperation<RecommendationBatchModel> GetMainRecs()
+        public IAsyncOperation<MainRecBatchModel> GetMainRecs()
         {
             return Run(async token =>
             {
@@ -336,19 +331,28 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get info of MainPage", nameof(WebApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/"));
+                    var gettask = HttpHelper.GetAsync(new Uri("http://www.xiami.com/"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
                     var body = doc.DocumentNode.SelectSingleNode(".//body");
-                    RecommendationBatchModel res = new RecommendationBatchModel();
+                    MainRecBatchModel res = new MainRecBatchModel();
                     List<Task> process = new List<Task>();
-                    //System.Diagnostics.Debugger.Break();
                     process.Add(Task.Run(() =>
                     {
-                        res.NewInAll = ParseNewInAllAlbums(body.SelectSingleNode("..//div[@data-content='1_0']")).ToList();
+                        res.NewInAll = ParseNewInAllAlbums(body.SelectSingleNode(".//div[@data-content='1_0']")).ToList();
                     }));
+                    process.Add(Task.Run(() => {
+                        res.PromoteCovers = (from item in body.SelectSingleNode(".//div[@id='slider']").SelectNodes(".//a[@title]")
+                                            select new MainCoverModel() {
+                                                SliderCoverSource = new Uri(item.SelectSingleNode("./img").GetAttributeValue("src", "")),
+                                                RedirectUri = new Uri(item.GetAttributeValue("href", "")),
+                                                Title = item.GetAttributeValue("title","")
+                                            }).ToList();
+                    }));
+                    process.Add(Task.Run(() => { //TODO:获取时间定制精选集
+                        }));
 
                     await Task.WhenAll(process);
                     LogService.DebugWrite("Finish Getting Mainpage", nameof(WebApi));
@@ -360,7 +364,6 @@ namespace JacobC.Xiami.Net
                 }
             });
         } 
-
         //获取新碟首发
         internal IEnumerable<AlbumModel> ParseNewInAllAlbums(HtmlNode listnode)
         {
