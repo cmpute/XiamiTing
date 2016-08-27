@@ -30,6 +30,7 @@ namespace JacobC.Xiami.Views
         public PlaylistPage()
         {
             this.InitializeComponent();
+            //TODO: 移到ViewModel里面
             Songlist.SongSource = PlaylistService.Instance;
             Songlist.SelectionUpdated += listView_SelectionChanged;
         }
@@ -62,7 +63,6 @@ namespace JacobC.Xiami.Views
         {
             Songlist.OperateSelectedItems(SelectionOperation.SelectAll);
         }));
-
 
         private void listView_SelectionChanged(object sender, RoutedEventArgs e)
         {

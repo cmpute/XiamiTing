@@ -14,6 +14,7 @@ using Windows.Foundation;
 using JacobC.Xiami.Models;
 using JacobC.Xiami.Net;
 using Windows.UI.Xaml;
+using JacobC.Xiami.Views;
 
 namespace JacobC.Xiami.ViewModels
 {
@@ -23,19 +24,21 @@ namespace JacobC.Xiami.ViewModels
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
             {
-                Value = "Designtime value";
+                //Value = "Designtime value";
             }
         }
 
-        string _Value = "Gas";
-        public string Value { get { return _Value; } set { Set(ref _Value, value); } }
+        //string _Value = "Gas";
+        //public string Value { get { return _Value; } set { Set(ref _Value, value); } }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {
-            if (suspensionState.Any())
-            {
-                Value = suspensionState[nameof(Value)]?.ToString();
-            }
+            //if (suspensionState.Any())
+            //{
+            //    Value = suspensionState[nameof(Value)]?.ToString();
+            //}
+            if (mode == NavigationMode.Back)
+                return;
             DailyRecs = await WebApi.Instance.GetDailyRecs();
             var mainbatch = await WebApi.Instance.GetMainRecs();
             NewInAllRecs = mainbatch.NewInAll;
@@ -57,10 +60,10 @@ namespace JacobC.Xiami.ViewModels
 
         public override async Task OnNavigatedFromAsync(IDictionary<string, object> suspensionState, bool suspending)
         {
-            if (suspending)
-            {
-                suspensionState[nameof(Value)] = Value;
-            }
+            //if (suspending)
+            //{
+            //    suspensionState[nameof(Value)] = Value;
+            //}
             await Task.CompletedTask;
         }
 
@@ -71,13 +74,17 @@ namespace JacobC.Xiami.ViewModels
         }
 
         public void GotoSettings() =>
-            NavigationService.Navigate(typeof(Views.SettingsPage), 0);
+            NavigationService.Navigate(typeof(SettingsPage), 0);
 
         public void GotoPrivacy() =>
-            NavigationService.Navigate(typeof(Views.SettingsPage), 1);
+            NavigationService.Navigate(typeof(SettingsPage), 1);
 
         public void GotoAbout() =>
-            NavigationService.Navigate(typeof(Views.SettingsPage), 2);
+            NavigationService.Navigate(typeof(SettingsPage), 2);
+
+        public void NavigateAlbum(AlbumModel album)=>
+             NavigationService.Navigate(typeof(AlbumPage), album?.XiamiID);
+
 
     }
 }
