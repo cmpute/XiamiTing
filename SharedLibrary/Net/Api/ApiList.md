@@ -1,7 +1,81 @@
-﻿- http://www.xiami.com/index/home?_={timestamp} : 用户基本信息
-- http://www.xiami.com/index/recommend?_={timestamp} : 每日个人推荐
-- http://www.xiami.com/index/collect?_={timestamp} : 大虾推荐
-- http://www.xiami.com/index/unlikerecommend/ajax/1?album_id=2100218152&_={timestamp} ： 不喜欢某专辑的推荐
-- http://www.xiami.com/index/indexright?_={timestamp} : 小组更新+？
-- http://www.xiami.com/index/subscribe?_={timestamp} : 底部订阅
-- http://www.xiami.com/relation/card?user_id={userid}&_xiamitoken={xiamitoken} : 获取用户基本信息（显示在名片上的）
+﻿#说明
+-返回j代表json，h代表html，x代表xml，jh代表返回json但是主体内容是html，u表示API用于上传信息（这种一般返回都是json）
+-虾米页面/param/value/param2/value和?param=value&param2=value2访问的结果是一样的
+-划掉的部分是没有什么卵用或者统计不准确的Api
+--------
+#桌面端
+|Api地址|Api说明|返回|
+|:--|:--|:--:|
+|http://www.xiami.com/index/home?_={timestamp}|该用户基本信息|j|
+|http://www.xiami.com/index/recommend?_={timestamp}|每日个人推荐|jh|
+|http://www.xiami.com/index/collect?_={timestamp}|大虾推荐|jh|
+|http://www.xiami.com/index/feed?_={timestamp}|该用户动态|jh|
+|http://www.xiami.com/fresh/minifeed?id={data-id}&uid={userid}&artist=0|该用户动态详情,data-id由feed获得|h|
+|http://www.xiami.com/index/unlikerecommend/ajax/1?album_id={albumid}&_={timestamp}|不喜欢某专辑的推荐|u|
+|http://www.xiami.com/index/indexright?_={timestamp}|小组更新+？|
+|http://www.xiami.com/index/subscribe?_={timestamp}|底部订阅|
+|http://www.xiami.com/index/hotthread|热门话题|j|
+|http://www.xiami.com/index/mygroup|用户的小组|j|
+|http://www.xiami.com/musician/get-musician-daily-song?callback=jQuery&_={timestamp}|获取每日音乐人|j|
+|http://www.xiami.com/relation/card?user_id={userid}&_xiamitoken={xiamitoken}|获取某用户基本信息（显示在名片上的）|h|
+|http://www.xiami.com/listen/recent?_={timestamp}|获取最近播放列表
+||||
+|http://www.xiami.com/song/{songid}|歌曲页面|h|
+|http://www.xiami.com/song/fav?ids={songid}&trace_fm=47.078186793084285&_xiamitoken={xiamitoken}|收藏某歌曲|u|
+|http://www.xiami.com/song/playlist/id/{id}/type/{playlisttype}|获取歌曲信息(playlisttype=0歌曲1专辑3精选集)|x|
+|http://www.xiami.com/song/playlist/id/1/type/{playlisttype}|获取播放列表(playlisttype=9每日歌单15未登录每日歌单)
+||||
+|http://www.xiami.com/album/{albumid}|专辑界面|h|
+|http://www.xiami.com/album/list/year/{year}/month/{month}/p/{pub/unpub}|获取制定日期的专辑|
+||||
+|http://www.xiami.com/collect/{collectid}|精选集界面|h|
+||||
+|http://www.xiami.com/artist/{artistid}|艺人界面|h|
+|http://www.xiami.com/artist/profile/id/23258|艺人简介|h|
+|http://www.xiami.com/artist/album/id/{albumid}/page/{page}/c/{category}|艺人专辑|h|
+||||
+|http://www.xiami.com/radio/play/id/{radioid}|电台页面，radioid=2为虾米猜|h|
+|http://www.xiami.com/radio/play/type/{radiotype}/oid/{id}|电台页面，radiotype=1星座，2年代，6新歌，4为用户个人电台，5为艺人电台，8为虾米猜，9为每日推荐歌单，12为大类风格电台，13为风格电台，16为心情电台（id填对应对象的id，虾米猜填userid()可以通过html获得radioid)|h|
+|http://www.xiami.com/radio/xml/type/{radiotype}/id/{id}|同上，获取电台歌曲列表|x|
+|http://www.xiami.com/radio/recent|最近播放的电台|j|
+|http://www.xiami.com/radio/newfav|最新被收藏的电台(所有用户)|h|
+|http://www.xiami.com/radio/fav?rid={radioid}&_xiamitoken={xiamitoken}|收藏某电台|u|
+|http://www.xiami.com/radio/hot/type/{hotradiotype}|热门电台hotradiotype=[空]全部,[profile]个人[official]官方[artist]艺人[style]风格|h|
+||||
+|http://www.xiami.com/genre/detail/sid/{genreid}|音乐风格界面|h|
+|http://www.xiami.com/genre/album/sid/{genreid}|某风格代表专辑界面|h|
+|http://www.xiami.com/genre/artist/sid/{genreid}|某风格代表艺人界面|h|
+|http://www.xiami.com/genre/song/sid/{genreid}|某风格代表歌曲界面|h|
+|http://www.xiami.com/genre/detail/gid/{genreid}|音乐大类风格界面|h|
+|http://www.xiami.com/genre/album/gid/{genreid}|某大类风格代表专辑界面|h|
+|http://www.xiami.com/genre/artist/gid/{genreid}|某大类风格代表艺人界面|h|
+|http://www.xiami.com/genre/song/gid/{genreid}|某大类风格代表歌曲界面|h|
+||||
+|http://www.xiami.com/chart/index/c/{chartid}/type/{charttype}|排行榜页面(对于虾米榜，type为 1华语 2欧美 3日本 4韩国)
+|http://www.xiami.com/chart/real-time|实时榜界面|j|
+|http://www.xiami.com/chart/data-real-time?page={page}&size={pagesize}|实时榜数据|j|
+|http://www.xiami.com/chart/week|周榜界面|j|
+|http://www.xiami.com/chart/data-week?page={page}&size={pagesize}|周榜数据|j|
+|http://www.xiami.com/chart/year|年度榜界面|j|
+|http://www.xiami.com/chart/data-year?page={page}&size={pagesize}|年度榜数据|j|
+||||
+|http://www.xiami.com/u/{userid}|用户主页|h|
+|http://www.xiami.com/fresh/feedlist?page={page}&uid=0&type={feedtype}&mode={feedmode}|用户音乐动态 feedtype=0全部1单曲2专辑3精选集 feedmode=0全部1用户2艺人|h|
+|http://www.xiami.com/space/charts-recent/u/{userid}/page/{page}|用户最近播放|h|
+|http://www.xiami.com/space/feed/u/{userid}|用户动态|h|
+|http://www.xiami.com/space/lib-song/u/{userid}|用户收藏的歌曲|h|
+|http://www.xiami.com/space/lib-album/u/{userid}|用户收藏的专辑|h|
+|http://www.xiami.com/space/lib-artist/u/{userid}|用户收藏的艺人|h|
+|http://www.xiami.com/space/lib-mv/u/{userid}|用户收藏的MV|h|
+|http://www.xiami.com/space/unlib-song/u/{userid}|用户不喜欢的歌曲|h|
+|http://www.xiami.com/space/unlib-artist/u/{userid}|用户不喜欢的艺人|h|
+|http://www.xiami.com/space/charts/u/{userid}|~~试听排行~~|h|
+||||
+|http://www.xiami.com/ajax/similar-artists?id={artistid}&c={count}|获取某艺人指定数目的相似艺人|j|
+||||
+|http://www.xiami.com/count/playrecord?sid={songid}&type=10&ishq={isHQ}|记录播放了歌曲(2min为界)
+|http://www.xiami.com/count/playstat?song_id={songid}&type={scrobbletype}&vip_role={vip}|scrobble播放状态(scrobbletype 1:30s 2:2min 3:结束, vip? 0普通用户 2vip)|u|
+||||
+|http://www.xiami.com/commentlist/turnpage/id/{radioid}/page/{page}/ajax/1|获取电台评论|h|
+||||
+|http://www.xiami.com/music/category|~~音乐类别~~|h|

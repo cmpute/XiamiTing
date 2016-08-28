@@ -21,8 +21,12 @@ namespace JacobC.Xiami.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            Album = AlbumModel.GetNew(uint.Parse(parameter.ToString()));
-            await Task.CompletedTask;
+            uint id;
+            if (!uint.TryParse(parameter.ToString(), out id))
+                NavigationService.Navigate(typeof(Views.LibraryPage));
+            Album = AlbumModel.GetNew(id);
+            if (Album.Description == null)
+                await Net.WebApi.Instance.GetAlbumInfo(Album);
         }
 
         AlbumModel _Album = default(AlbumModel);
@@ -30,7 +34,5 @@ namespace JacobC.Xiami.ViewModels
         /// 获取或设置内容专辑属性
         /// </summary>
         public AlbumModel Album { get { return _Album; } set { Set(ref _Album, value); } }
-
-
     }
 }

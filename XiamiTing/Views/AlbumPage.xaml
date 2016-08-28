@@ -20,15 +20,28 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <controls:PageHeader x:Name="pageHeader" Grid.Row="0" Text="专辑"/>
-        <StackPanel Grid.Row="1" MaxWidth="{StaticResource ContentMaxWidth}" BorderThickness="4" BorderBrush="Black">
-            <TextBlock FontSize="28" FontWeight="Bold" Text="{x:Bind ViewModel.Album.Name}"/>
-            <TextBlock FontSize="20" Text="{x:Bind ViewModel.Album.Description}"/>
-            <Grid>
+        <StackPanel Grid.Row="1" MaxWidth="{StaticResource ContentMaxWidth}" Margin="8,8">
+            <TextBlock FontSize="28" FontWeight="Bold" Text="{x:Bind ViewModel.Album.Name}" TextWrapping="WrapWholeWords"/>
+            <TextBlock FontSize="20" Text="{x:Bind ViewModel.Album.Description}" TextWrapping="WrapWholeWords"/>
+            <Grid Margin="0,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <c:ImageEx Width="200" Height="200" Source="{x:Bind ViewModel.Album.ArtFull}"/>
+                <StackPanel Grid.Column="1" Margin="24,0,0,0">
+                    <TextBlock FontSize="20">
+                        <Run x:Uid="AlbumArtist" Text="Artist"/><Run Text="{x:Bind ViewModel.Album.Artist.Name}"/>
+                        <LineBreak/>
+                        <Run x:Uid="AlbumLanguage" Text="Language"/><Run Text="{x:Bind ViewModel.Album.Language}"/>
+                        <LineBreak/>
+                        <Run x:Uid="AlbumType" Text="Type"/><Run Text="{x:Bind ViewModel.Album.Type}"/>
+                        <LineBreak/>
+                        <Run x:Uid="AlbumReleaseDate" Text="ReleaseDate"/><Run Text="{x:Bind ViewModel.Album.ReleaseDate}"/>
+                        <LineBreak/>
+                        <Run x:Uid="AlbumPublisher" Text="Publisher"/><Run Text="{x:Bind ViewModel.Album.Publisher}"/>
+                    </TextBlock>
+                </StackPanel>
             </Grid>
         </StackPanel>
     </Grid>

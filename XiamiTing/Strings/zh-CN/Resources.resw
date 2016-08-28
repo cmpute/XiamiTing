@@ -117,6 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlbumArtist.Text" xml:space="preserve">
+    <value>艺人：&#9;&#9;</value>
+    <comment>AlbumPage艺人标签</comment>
+  </data>
+  <data name="AlbumLanguage.Text" xml:space="preserve">
+    <value>语种：&#9;&#9;</value>
+    <comment>AlbumPage语种标签</comment>
+  </data>
+  <data name="AlbumPublisher.Text" xml:space="preserve">
+    <value>唱片公司：&#9;</value>
+    <comment>AlbumPage唱片公司标签</comment>
+  </data>
+  <data name="AlbumReleaseDate.Text" xml:space="preserve">
+    <value>发售日期：&#9;</value>
+    <comment>AlbumPage发售日期标签</comment>
+  </data>
+  <data name="AlbumType.Text" xml:space="preserve">
+    <value>专辑类型：&#9;</value>
+    <comment>AlbumPage专辑类型标签</comment>
+  </data>
   <data name="CollectionRecommend.Header" xml:space="preserve">
     <value>精选集</value>
   </data>
