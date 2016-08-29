@@ -17,6 +17,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <controls:PageHeader x:Name="pageHeader" Grid.Row="0" Text="专辑"/>
@@ -44,5 +45,10 @@
                 </StackPanel>
             </Grid>
         </StackPanel>
+        <c:Playlist Grid.Row="2"
+                    MaxWidth="{StaticResource ContentMaxWidth}"
+                    x:Name="Songlist"
+                    SongSource="{x:Bind ViewModel.Album.SongList}"
+                    ListType="AlbumPlaylist"/>
     </Grid>
 </Page>

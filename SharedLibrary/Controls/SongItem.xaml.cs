@@ -26,8 +26,12 @@ namespace JacobC.Xiami.Controls
     {
         public SongItem()
         {
-            this.InitializeComponent();  
+            this.InitializeComponent();
+            this.DoubleTapped += (sender, e) => PlayButton_Click(sender, e); 
         }
+
+
+        PlaylistType _listtype = PlaylistType.LocalPlaylist;
 
         #region Link to Parent
 
@@ -60,10 +64,20 @@ namespace JacobC.Xiami.Controls
                     _LinkedItem = item;
                     (item as ListViewItem).Tag = this;//用Tag传递对SongItem的引用
                     _LinkedList = ItemsControl.ItemsControlFromItemContainer(item) as ListView;
+                    var listcontainer = VisualTreeHelper.GetParent(VisualTreeHelper.GetParent(_LinkedList));
+                    if (listcontainer is Playlist)
+                    {//获取播放列表类型
+                        var list = listcontainer as Playlist;
+                        list.ListTypeChanged += SongItem_ListTypeChanged;
+                        _listtype = list.ListType;
+                        VisualStateManager.GoToState(this, list.ListType.ToString(), true);
+                    }
                     var index = _LinkedList.IndexFromContainer(item);
                     ListIndex = index + 1;
                     if (PlaylistService.Instance.CurrentIndex == index && index != -1)//正在播放则更新状态
                         VisualStateManager.GoToState(this, "Playing", true);
+                    else
+                        VisualStateManager.GoToState(this, "NotPlaying", true);
                     if (_LinkedList.ItemsSource is INotifyCollectionChanged)
                     {
                         _LinkedCollection = _LinkedList.ItemsSource as INotifyCollectionChanged;
@@ -82,6 +96,11 @@ namespace JacobC.Xiami.Controls
                 }
             }
         }
+        private void SongItem_ListTypeChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            _listtype = (PlaylistType)(e.NewValue);
+            VisualStateManager.GoToState(this, e.NewValue.ToString(), true);
+        }
         private void SongItem_Unloaded(object sender, RoutedEventArgs e)
         {
             //卸载事件，删除引用
@@ -95,7 +114,13 @@ namespace JacobC.Xiami.Controls
                 _LinkedCollection.CollectionChanged -= _Linkedlist_CollectionChanged;
                 _LinkedCollection = null;
             }
-            _LinkedList = null;
+            if(_LinkedList != null)
+            {
+                var listcontainer = VisualTreeHelper.GetParent(_LinkedList);
+                if (listcontainer is Playlist)
+                    (listcontainer as Playlist).ListTypeChanged -= SongItem_ListTypeChanged;
+                _LinkedList = null;
+            }
             _LinkedItem = null;
         }
         private async void _Linkedlist_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -134,6 +159,8 @@ namespace JacobC.Xiami.Controls
         }
 
         #endregion
+
+        #region Public Properties
 
         /// <summary>
         /// 获取或设置歌曲信息来源
@@ -174,6 +201,9 @@ namespace JacobC.Xiami.Controls
               DependencyProperty.Register(nameof(ListIndex), typeof(int),
                   typeof(SongItem), new PropertyMetadata(0));
 
+        /// <summary>
+        /// 图标默认的前景色
+        /// </summary>
         public Brush NormalIconForeground
         {
             get { return (Brush)GetValue(NormalIconForegroundProperty); }
@@ -181,6 +211,8 @@ namespace JacobC.Xiami.Controls
         }
         public static readonly DependencyProperty NormalIconForegroundProperty =
             DependencyProperty.Register("NormalIconForeground", typeof(Brush), typeof(SongItem), new PropertyMetadata(new SolidColorBrush(Colors.Gray)));
+
+        #endregion
 
         private void DeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
@@ -192,8 +224,13 @@ namespace JacobC.Xiami.Controls
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ListIndex == 0) return;
-            PlaybackService.Instance.PlayTrack(ListIndex - 1);
+            if (_listtype == PlaylistType.LocalPlaylist)
+            {
+                if (ListIndex == 0) return;
+                PlaybackService.Instance.PlayTrack(ListIndex - 1);
+            }
+            else
+                PlaybackService.Instance.PlayTrack(ItemSource);
         }
     }
 }

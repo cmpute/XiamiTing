@@ -179,7 +179,7 @@ namespace JacobC.Xiami.Services
         private void Current_CurrentStateChanged(MediaPlayer sender, object args)
         {
             var e = new ChangedEventArgs<MediaPlayerState>(CurrentState, sender.CurrentState);
-            StateChanged.Invoke(null, e);
+            StateChanged?.Invoke(null, e);
             CurrentState = sender.CurrentState;
         }
 

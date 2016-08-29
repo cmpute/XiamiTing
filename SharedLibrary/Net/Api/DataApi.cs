@@ -70,7 +70,12 @@ namespace JacobC.Xiami.Net
                     var content = await gettask;
                     var match = Regex.Match(content, isHQ? "(?<=location\":\").+?(?=\")" : "(?<=location>).+?(?=</location)");
                     if (!match.Success)
+                    {
+#if DEBUG
+                        System.Diagnostics.Debugger.Break();
+#endif
                         throw new Exception("获取下载地址出错");
+                    }
                     var decry = ParseDownloadLink(int.Parse(match.Value[0].ToString()), match.Value.Substring(1));
                     return System.Net.WebUtility.UrlDecode(decry).Replace('^','0');
                 }

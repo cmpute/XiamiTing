@@ -23,25 +23,33 @@ namespace JacobC.Xiami.Controls
         {
             this.InitializeComponent();
             PlaylistService.Instance.CurrentIndexChanged += Instance_CurrentIndexChanged;
-            Songlist.SelectionChanged += (sender, e) => SelectionUpdated.Invoke(sender, e);
+            Songlist.SelectionChanged += (sender, e) => SelectionUpdated?.Invoke(sender, e);
         }
 
         private void Instance_CurrentIndexChanged(object sender, Template10.Common.ChangedEventArgs<int> e)
         {
             //TODO: 针对播放中的打乱顺序进行处理
             ListViewItem t;
-            if (e.OldValue >= 0)
+            if (ListType == PlaylistType.LocalPlaylist)
             {
-                t = Songlist.ContainerFromIndex(e.OldValue) as ListViewItem;
-                VisualStateManager.GoToState((t.Tag as SongItem), "NotPlaying", true);
+                if (e.OldValue >= 0)
+                {
+                    t = Songlist.ContainerFromIndex(e.OldValue) as ListViewItem;
+                    VisualStateManager.GoToState((t.Tag as SongItem), "NotPlaying", true);
+                }
+                if (e.NewValue >= 0)
+                {
+                    t = Songlist.ContainerFromIndex(e.NewValue) as ListViewItem;
+                    VisualStateManager.GoToState((t.Tag as SongItem), "Playing", true);
+                }
             }
-            if (e.NewValue >= 0)
+            else
             {
-                t = Songlist.ContainerFromIndex(e.NewValue) as ListViewItem;
-                VisualStateManager.GoToState((t.Tag as SongItem), "Playing", true);
+                //TODO: 刷新所有歌曲的播放状态？
             }
         }
 
+        #region Public Properties
         /// <summary>
         /// 获取或设置播放列表的类型
         /// </summary>
@@ -58,17 +66,31 @@ namespace JacobC.Xiami.Controls
                   typeof(Playlist), new PropertyMetadata(PlaylistType.LocalPlaylist, (d, e) =>
                   {
                       (d as Playlist).InternalListTypeChanged(e);
+                      (d as Playlist).ListTypeChanged?.Invoke(d,e);
                   }));
+        /// <summary>
+        /// 当<see cref="ListType"/>发生改变时发生
+        /// </summary>
+        public event EventHandler<DependencyPropertyChangedEventArgs> ListTypeChanged;
         private void InternalListTypeChanged(DependencyPropertyChangedEventArgs e)
         {
             //TODO:完成模式更改的更新
+            Songlist.Tag = e.NewValue;
             switch((PlaylistType)(e.NewValue))
             {
                 case PlaylistType.LocalPlaylist:
-                    SelectionMode = ListViewSelectionMode.Multiple;
+                    //SelectionMode = ListViewSelectionMode.Extended;
+                    break;
+                case PlaylistType.AlbumPlaylist:
+                    //SelectionMode = ListViewSelectionMode.Extended;
+                    Songlist.CanReorderItems = false;
+                    break;
+                case PlaylistType.CollectionPlaylist:
+                    Songlist.CanReorderItems = false;
                     break;
             }
         }
+
 
         /// <summary>
         /// 获取或设置列表的歌曲来源
@@ -107,7 +129,9 @@ namespace JacobC.Xiami.Controls
         {
             //TODO: 改变标题栏的结构
         }
+        #endregion
 
+        #region Operations
         /// <summary>
         /// 对选中歌曲项进行操作
         /// </summary>
@@ -175,28 +199,11 @@ namespace JacobC.Xiami.Controls
                 action.Invoke(item);
             }
         }
+        #endregion
 
         public event RoutedEventHandler SelectionUpdated;
     }
 
-    /// <summary>
-    /// 标识播放列表的类别
-    /// </summary>
-    public enum PlaylistType
-    {
-        /// <summary>
-        /// 专辑的曲目列表
-        /// </summary>
-        AlbumPlaylist,
-        /// <summary>
-        /// 精选集歌曲列表
-        /// </summary>
-        CollectionPlaylist,
-        /// <summary>
-        /// 本地播放列表
-        /// </summary>
-        LocalPlaylist
-    }
 
     /// <summary>
     /// 标识对选中播放列表项的操作类型
@@ -238,4 +245,23 @@ namespace JacobC.Xiami.Controls
         /// </summary>
         Download
     }
+}
+
+/// <summary>
+/// 标识播放列表的类别
+/// </summary>
+public enum PlaylistType
+{
+    /// <summary>
+    /// 专辑的曲目列表
+    /// </summary>
+    AlbumPlaylist,
+    /// <summary>
+    /// 精选集歌曲列表
+    /// </summary>
+    CollectionPlaylist,
+    /// <summary>
+    /// 本地播放列表
+    /// </summary>
+    LocalPlaylist
 }

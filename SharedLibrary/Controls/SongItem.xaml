@@ -7,8 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:t10c="using:Template10.Converters"
     mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400"
+    d:DesignHeight="60"
+    d:DesignWidth="800"
     Loaded="SongItem_Loaded"
     Unloaded="SongItem_Unloaded">
 
@@ -19,7 +19,7 @@
             <Setter Property="HorizontalAlignment" Value="Left"/>
         </Style>
         <t10c:ChangeTypeConverter x:Key="ToNullableConverter"/>
-        <Style TargetType="Button" x:Key="EmptyButtonForIconLocal">
+        <Style TargetType= "Button" x:Key="EmptyButtonForIconLocal">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -58,6 +58,14 @@
                 <VisualState x:Name="Playing">
                     <VisualState.Setters>
                         <Setter Target="IndexNumber.FontWeight" Value="Bold"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="PlaylistTypes">
+                <VisualState x:Name="LocalPlaylist"/>
+                <VisualState x:Name="AlbumPlaylist">
+                    <VisualState.Setters>
+                        <Setter Target="DeleteIcon.Glyph" Value="&#xE948;"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -150,9 +158,9 @@
             </Button.Flyout>
             <FontIcon Style="{StaticResource sFontIcon}" Foreground="{x:Bind NormalIconForeground}" Glyph="&#xE169;" />
         </Button>
-        <Button x:Name="DeleteButton" Grid.Column="4" Margin="52,0,0,0" Tapped="DeleteButton_Tapped" Style="{StaticResource EmptyButtonForIconLocal}" Visibility="Collapsed">
-            <FontIcon Style="{StaticResource sFontIcon}" Foreground="{x:Bind NormalIconForeground}" Glyph="&#xE711;"/>
-        </Button>
+        <local:IconButton x:Name="DeleteButton" Grid.Column="4" Margin="52,0,0,0" Tapped="DeleteButton_Tapped" Visibility="Collapsed">
+            <FontIcon x:Name="DeleteIcon" Style="{StaticResource sFontIcon}" Foreground="{x:Bind NormalIconForeground}" Glyph="&#xE711;"/>
+        </local:IconButton>
     </Grid>
     
 </UserControl>
