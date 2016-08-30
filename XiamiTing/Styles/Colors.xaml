@@ -7,6 +7,7 @@
         ContrastColor : 辅助配色
     -->
     <Color x:Key="ThemeColor">#FF6600</Color>
+    <Color x:Key="ThemeBackgroundColor">#FFF9CD</Color>
     <Color x:Key="IconColor">#FF5E00</Color>
     <Color x:Key="InactiveThemeColor">#FFB380</Color>
     <Color x:Key="HighlightThemeColor">#FFA200</Color>
@@ -25,6 +26,7 @@
         <GradientStop Color="#F57614" Offset="1"/>
     </LinearGradientBrush>
     <SolidColorBrush x:Key="ThemeColorBrush" Color="{StaticResource ThemeColor}" />
+    <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{StaticResource ThemeBackgroundColor}" />
     <!--<SolidColorBrush x:Key="LightDarkThemeColorBrush" Color="{StaticResource LightDarkThemeColor}" />-->
     <SolidColorBrush x:Key="DarkThemeColorBrush" Color="{StaticResource DarkThemeColor}" />
     <SolidColorBrush x:Key="LightDarkColorBrush" Color="{StaticResource LightDarkColor}" />

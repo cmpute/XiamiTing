@@ -1,0 +1,7 @@
+MainPackage=D:\编程\GitHub\XiamiTing\XiamiTing\bin\ARM\Release\Upload\XiamiTing_0.1.2.0_ARM.appx
+SymbolPackage=D:\编程\GitHub\XiamiTing\XiamiTing\AppPackages\XiamiTing_0.1.2.0\XiamiTing_0.1.2.0_ARM.appxsym
+ResourcePack=D:\编程\GitHub\XiamiTing\XiamiTing\_language-zh-hans.appx
+ResourcePack=D:\编程\GitHub\XiamiTing\XiamiTing\_scale-100.appx
+ResourcePack=D:\编程\GitHub\XiamiTing\XiamiTing\_scale-125.appx
+ResourcePack=D:\编程\GitHub\XiamiTing\XiamiTing\_scale-150.appx
+ResourcePack=D:\编程\GitHub\XiamiTing\XiamiTing\_scale-400.appx

@@ -19,7 +19,7 @@ namespace JacobC.Xiami
         public App()
         {
             InitializeComponent();
-            //SplashFactory = (e) => new Views.Splash(e);
+            SplashFactory = (e) => new Views.Splash(e);
 
             #region App settings
 
@@ -33,9 +33,6 @@ namespace JacobC.Xiami
 
         public override async Task OnInitializeAsync(IActivatedEventArgs args)
         {
-            //自定义代码段
-            SetTitleColor();
-            PlaybackService.Instance.StartBackgroundAudioTask();
 
             if (Window.Current.Content as ModalDialog == null)
             {
@@ -57,6 +54,10 @@ namespace JacobC.Xiami
         {
             // long-running startup tasks go here
             //await Task.Delay(5000);
+
+            //自定义代码段
+            SetTitleColor();
+            PlaybackService.Instance.StartBackgroundAudioTask();
 
             NavigationService.Navigate(typeof(Views.DiscoveryPage));
             await Task.CompletedTask;

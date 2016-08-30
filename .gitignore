@@ -5,6 +5,11 @@ NetTest/
 XiamiTing/Assets/TestMedia
 #Analysis
 *.py
+#Appboundle
+XiamiTing/AppPackages
+*.appx
+XiamiTing_StoreKey.pfx
+_pkginfo.txt
 
 # Windows image file caches
 Thumbs.db

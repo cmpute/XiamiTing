@@ -6,7 +6,7 @@
     <x:Double x:Key="NormalMinWidth">521</x:Double>
     <x:Double x:Key="WideMinWidth">1200</x:Double>
     <x:Double x:Key="ContentMaxWidth">1000</x:Double>
-
+    <!--<Color x:Key="CustomColor">Green</Color>-->
     <Color x:Key="SystemAccentColor">SteelBlue</Color>
 
     <ResourceDictionary.ThemeDictionaries>
@@ -42,7 +42,7 @@
         <ResourceDictionary x:Key="Default">
 
             <SolidColorBrush x:Key="ContrastColorBrush" Color="{StaticResource ContrastColor}" />
-            <SolidColorBrush x:Key="ExtendedSplashBackground" Color="{StaticResource CustomColor}" />
+            <SolidColorBrush x:Key="ExtendedSplashBackground" Color="{StaticResource ThemeBackgroundColor}" />
             <SolidColorBrush x:Key="ExtendedSplashForeground" Color="{StaticResource ContrastColor}" />
 
             <SolidColorBrush x:Key="HoverLevelBrush" Color="#22FFFFFF" />

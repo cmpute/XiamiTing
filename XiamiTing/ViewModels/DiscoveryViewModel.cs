@@ -37,11 +37,15 @@ namespace JacobC.Xiami.ViewModels
             //{
             //    Value = suspensionState[nameof(Value)]?.ToString();
             //}
+            //LogService.DebugWrite("Nav to MainPage, mode = " + mode.ToString());
             if (mode == NavigationMode.Back)
                 return;
-            DailyRecs = await WebApi.Instance.GetDailyRecs();
-            var mainbatch = await WebApi.Instance.GetMainRecs();
-            NewInAllRecs = mainbatch.NewInAll;
+            if (NewInAllRecs == null)
+            {
+                DailyRecs = await WebApi.Instance.GetDailyRecs();
+                var mainbatch = await WebApi.Instance.GetMainRecs();
+                NewInAllRecs = mainbatch.NewInAll;
+            }
         }
 
 

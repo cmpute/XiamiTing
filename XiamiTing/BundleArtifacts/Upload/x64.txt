@@ -1,0 +1,2 @@
+MainPackage=D:\编程\GitHub\XiamiTing\XiamiTing\bin\x64\Release\Upload\XiamiTing_0.1.2.0_x64.appx
+SymbolPackage=D:\编程\GitHub\XiamiTing\XiamiTing\AppPackages\XiamiTing_0.1.2.0\XiamiTing_0.1.2.0_x64.appxsym

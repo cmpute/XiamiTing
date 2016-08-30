@@ -39,7 +39,9 @@
         </Grid.RowDefinitions>
         <!--添加全选，反选按钮-->
         <controls:PageHeader x:Name="pageHeader"
-                             Grid.Row="0" Text="Playlist">
+                             x:Uid="PlaylistNavText"
+                             Grid.Row="0"
+                             Frame="{x:Bind Frame}">
             <controls:PageHeader.PrimaryCommands>
                 <AppBarButton x:Name="Delete" Command="{x:Bind DeleteCommand}" Icon="Delete" Label="Delete Selection"/>
                 <AppBarButton x:Name="SelectAll" Command="{x:Bind SelectAllCommand}" Icon="SelectAll" Label="SelectAll" Visibility="Collapsed"/>
