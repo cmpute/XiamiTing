@@ -9,7 +9,8 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <controls:PageHeader x:Uid="LibraryNavText" x:Name="pageHeader" Text="Library">
+        <controls:PageHeader x:Uid="LibraryNavText" x:Name="pageHeader" Text="Library"
+                             Frame="{x:Bind Frame}">  
             <controls:PageHeader.PrimaryCommands>
             </controls:PageHeader.PrimaryCommands>
         </controls:PageHeader>

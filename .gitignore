@@ -7,6 +7,8 @@ XiamiTing/Assets/TestMedia
 *.py
 #Appboundle
 XiamiTing/AppPackages
+XiamiTing/BundleArtifacts
+XiamiTing/BundleArtifacts/Upload
 *.appx
 XiamiTing_StoreKey.pfx
 _pkginfo.txt

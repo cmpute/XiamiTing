@@ -62,6 +62,13 @@ namespace JacobC.Xiami
             NavigationService.Navigate(typeof(Views.DiscoveryPage));
             await Task.CompletedTask;
         }
+         
+        public override Task OnPrelaunchAsync(IActivatedEventArgs args, out bool runOnStartAsync)
+        {
+            PlaybackService.Instance.StartBackgroundAudioTask();
+            runOnStartAsync = true;
+            return Task.CompletedTask;
+        }
 
         /// <summary>
         /// 设置窗口标题栏的样式

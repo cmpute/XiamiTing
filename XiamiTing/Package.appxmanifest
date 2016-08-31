@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="5650Cmpute.34207EE8F288A" Publisher="CN=96DDB1BE-5C1C-4FED-BCC1-A9B1541834D8" Version="0.1.2.0" />
+  <Identity Name="5650Cmpute.34207EE8F288A" Publisher="CN=96DDB1BE-5C1C-4FED-BCC1-A9B1541834D8" Version="0.1.3.0" />
   <mp:PhoneIdentity PhoneProductId="43edb1ea-2022-40b8-b6b9-9928dee5a955" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>虾听</DisplayName>
