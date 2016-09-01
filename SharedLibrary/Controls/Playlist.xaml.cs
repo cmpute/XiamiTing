@@ -245,23 +245,24 @@ namespace JacobC.Xiami.Controls
         /// </summary>
         Download
     }
+
+    /// <summary>
+    /// 标识播放列表的类别
+    /// </summary>
+    public enum PlaylistType
+    {
+        /// <summary>
+        /// 专辑的曲目列表
+        /// </summary>
+        AlbumPlaylist,
+        /// <summary>
+        /// 精选集歌曲列表
+        /// </summary>
+        CollectionPlaylist,
+        /// <summary>
+        /// 本地播放列表
+        /// </summary>
+        LocalPlaylist
+    }
 }
 
-/// <summary>
-/// 标识播放列表的类别
-/// </summary>
-public enum PlaylistType
-{
-    /// <summary>
-    /// 专辑的曲目列表
-    /// </summary>
-    AlbumPlaylist,
-    /// <summary>
-    /// 精选集歌曲列表
-    /// </summary>
-    CollectionPlaylist,
-    /// <summary>
-    /// 本地播放列表
-    /// </summary>
-    LocalPlaylist
-}

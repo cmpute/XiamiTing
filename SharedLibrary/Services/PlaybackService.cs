@@ -27,6 +27,8 @@ namespace JacobC.Xiami.Services
         /// </summary>
         public static PlaybackService Instance { get { return _instance ?? (_instance = new PlaybackService()); } }
 
+        bool _isPlayingRadio = false;
+
         #region Codes for BackgroundTask
 
         const int RPC_S_SERVER_UNAVAILABLE = -2147023174; // 0x800706BA
@@ -316,9 +318,10 @@ namespace JacobC.Xiami.Services
         /// 设置播放内容为播放列表或电台
         /// </summary>
         /// <param name="source">播放来源，null代表播放列表</param>
-        public void SetPlaybackSource(RadioService source)
+        public void SetPlaybackSource(RadioModel source)
         {
             throw new NotImplementedException();
         }
+        
     }
 }

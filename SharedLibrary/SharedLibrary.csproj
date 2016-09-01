@@ -134,6 +134,7 @@
     <Compile Include="Controls\Playlist.xaml.cs">
       <DependentUpon>Playlist.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\BaseModels\RadioModel.cs" />
     <Compile Include="Models\BaseModels\XiamiModelBase.cs" />
     <Compile Include="Models\RecommendationModel.cs" />
     <Compile Include="Controls\RichTextExtended.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="Services\MediaMessageTypes.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
+    <Compile Include="Services\PlaylistBase.cs" />
     <Compile Include="Services\PlaylistService.cs" />
     <Compile Include="Services\RadioService.cs" />
     <Compile Include="Services\SettingsService.cs" />

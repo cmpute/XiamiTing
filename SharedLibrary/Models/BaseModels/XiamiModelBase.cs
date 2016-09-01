@@ -18,7 +18,7 @@ namespace JacobC.Xiami.Models
         /// 获取或设置在虾米中的编号
         /// </summary>
         [JsonProperty]
-        public TID XiamiID { get; set; }
+        public virtual TID XiamiID { get; set; }
 
         PageItemsCollection<CommentModel> _Comments = null;
         /// <summary>

@@ -9,6 +9,8 @@ using Windows.Foundation;
 using Windows.Web.Http;
 using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
 using System.Text.RegularExpressions;
+using Windows.Data.Xml.Dom;
+using System.Xml.Linq;
 
 namespace JacobC.Xiami.Net
 {
@@ -33,7 +35,6 @@ namespace JacobC.Xiami.Net
         }
 
         #region 获取歌曲信息
-
 
         public IAsyncAction GetSongInfo(SongModel song, bool cover = false)
         {
@@ -322,6 +323,7 @@ namespace JacobC.Xiami.Net
         }
 
         #endregion
+        #region 获取推荐
 
         public IAsyncOperation<MainRecBatchModel> GetMainRecs()
         {
@@ -447,5 +449,117 @@ namespace JacobC.Xiami.Net
             });
         }
 
+        #endregion
+        #region 电台操作
+
+        public IAsyncOperation<uint> GetRadioId(RadioType radiotype, uint oid)
+        {
+            if (radiotype == RadioType.UnKnown||oid==0)
+                throw new ArgumentException("Radio参数设置错误");
+            return Run(async token =>
+            {
+                try
+                {
+                    LogService.DebugWrite($"Get id of Radio type={radiotype} oid={oid}", nameof(WebApi));
+
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/radio/play/type/{(int)radiotype}/oid/{oid}"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    var start = content.IndexOf("value=\"");
+                    start += 7;
+                    var end = content.IndexOf("\"", start);
+                    LogService.DebugWrite($"Finish Getting id of Radio oid={oid}", nameof(WebApi));
+                    return uint.Parse(content.Substring(start, end - start));
+                }
+                catch (Exception e)
+                {
+#if DEBUG
+                    System.Diagnostics.Debugger.Break();
+#endif
+                    LogService.ErrorWrite(e, nameof(WebApi));
+                    throw e;
+                }
+            });
+        }
+        public IAsyncOperation<Tuple<RadioType,uint>> GetRadioType(uint radioid)
+        {
+            if (radioid == 0)
+                throw new ArgumentException("SongModel未设置ID");
+            return Run(async token =>
+            {
+                try
+                {
+                    LogService.DebugWrite($"Get type of Radio id={radioid}", nameof(WebApi));
+
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/radio/play/id/{radioid}"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    var start = content.IndexOf("dataUrl=/");
+                    var end = content.IndexOf("&", start);
+                    var cases = content.Substring(start, end - start).Split('/');
+                    var t = new Tuple<RadioType, uint>((RadioType)(Enum.Parse(typeof(RadioType),cases[4])), uint.Parse(cases[6]));
+                    LogService.DebugWrite($"Finish Getting type of Radio id={radioid}", nameof(WebApi));
+                    return t;
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e, nameof(WebApi));
+                    throw e;
+                }
+            });
+        }
+        public IAsyncAction FreshRadio(RadioService radio)
+        {
+            return Run(async token =>
+            {
+                try
+                {
+                    LogService.DebugWrite($"Fresh Radio Songlist {radio.Radio.ToString()}", nameof(WebApi));
+
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/radio/xml/type/{radio.Radio.Type}/id/{radio.Radio.OID}"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(content);//TODO: 用反序列化完成
+                    radio.Clear();
+                    foreach (var item in doc.DocumentElement.SelectNodes(".//track"))
+                    {
+                        SongModel song = SongModel.GetNew(uint.Parse(item.SelectSingleNode("./song_id").InnerText));
+                        song.Name = (from node in item.SelectSingleNode("./title").ChildNodes
+                                    where node.NodeType == NodeType.CommentNode
+                                    select node).First().InnerText;
+                    }
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e, nameof(WebApi));
+                    throw e;
+                }
+            });
+        }
+
+        #endregion
     }
-} 
+}
+
+/*
+            if (song.XiamiID == 0)
+                throw new ArgumentException("SongModel未设置ID");
+            return Run(async token =>
+            {
+                try
+                {
+                    LogService.DebugWrite($"Get info of Song {song.XiamiID}", nameof(WebApi));
+
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/song/{song.XiamiID}"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    LogService.DebugWrite($"Finish Getting info of Song {song.XiamiID}", nameof(WebApi));
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e, nameof(WebApi));
+                    throw e;
+                }
+            });
+*/

@@ -10,30 +10,20 @@ namespace JacobC.Xiami.Services
     /// <summary>
     /// 提供播放电台的服务
     /// </summary>
-    public class RadioService
+    public class RadioService : Queue<SongModel> ,IPlaylist
     {
-        private RadioService() { }
+        public RadioService(RadioModel radio)
+        {
+            Radio = radio;
+        }
+        public RadioModel Radio { get; private set; }
 
-        /// <summary>
-        /// 虾米猜电台
-        /// </summary>
-        public static RadioService XiamiCai
+        public SongModel CurrentPlaying { get; private set; }
+        public void PlayNext()
         {
-            get { throw new NotImplementedException(); }
+            CurrentPlaying = Dequeue();
         }
-        /// <summary>
-        /// 获取艺人电台
-        /// </summary>
-        public static RadioService GetFromArtist(ArtistModel artist)
-        {
-            throw new NotImplementedException();
-        }
-        /// <summary>
-        /// 获取用户电台
-        /// </summary>
-        public static RadioService GetFromUser(UserModel user)
-        {
-            throw new NotImplementedException();
-        }
+
     }
+    //TODO: 多个Radio混合播放
 }

@@ -23,7 +23,7 @@ namespace JacobC.Xiami.Services
     /// <remarks>
     /// 系统的mediaplayer是不会缓存下一轨的(如果缓存可以将所有播放任务均交给后台)，并且也无法在生成list以后更改MediaPlaybackItem的Source，因此无缝播放暂时无法实现
     /// </remarks>
-    public class PlaylistService : ObservableCollection<SongModel>
+    public class PlaylistService : ObservableCollection<SongModel>, IPlaylist
     {
         #region Ctor
         static PlaylistService _instance;
@@ -126,7 +126,7 @@ namespace JacobC.Xiami.Services
 
         private void InitPlaylist()
         {
-            this.AddRange(InitPlaylistE());
+            //this.AddRange(InitPlaylistE());
         }
 
         public IEnumerable<SongModel> InitPlaylistE()
