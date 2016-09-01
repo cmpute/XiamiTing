@@ -7,6 +7,8 @@ using Template10.Services.SettingsService;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 using Windows.Foundation;
+using Windows.Data.Xml.Dom;
+using System.Collections.Generic;
 
 namespace JacobC.Xiami
 {
@@ -73,6 +75,22 @@ namespace JacobC.Xiami
         public static T GetParameter<T>(this NavigationEventArgs e)
         {
             return Template10.Services.SerializationService.SerializationService.Json.Deserialize<T>(e.Parameter?.ToString());
+        }
+        public static IXmlNode Element(this IXmlNode node, string name)
+        {
+            foreach (var item in node.ChildNodes)
+            {
+                if (item.LocalName?.ToString() == name)
+                    return item;
+            }
+            return null;
+        }
+        public static string ElementText(this IXmlNode node, string name) => Element(node, name).InnerText;
+        public static IEnumerable<IXmlNode> Elements(this IXmlNode node,string name)
+        {
+            foreach (var item in node.ChildNodes)
+                if (item.LocalName?.ToString() == name)
+                    yield return item;
         }
     }
 }

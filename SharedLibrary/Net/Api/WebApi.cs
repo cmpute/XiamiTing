@@ -11,6 +11,9 @@ using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
 using System.Text.RegularExpressions;
 using Windows.Data.Xml.Dom;
 using System.Xml.Linq;
+using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace JacobC.Xiami.Net
 {
@@ -516,18 +519,36 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Fresh Radio Songlist {radio.Radio.ToString()}", nameof(WebApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/radio/xml/type/{radio.Radio.Type}/id/{radio.Radio.OID}"));
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/radio/xml/type/{(int)(radio.Radio.Type)}/id/{radio.Radio.OID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     XmlDocument doc = new XmlDocument();
-                    doc.LoadXml(content);//TODO: 用反序列化完成
+                    doc.LoadXml(content);
                     radio.Clear();
                     foreach (var item in doc.DocumentElement.SelectNodes(".//track"))
                     {
-                        SongModel song = SongModel.GetNew(uint.Parse(item.SelectSingleNode("./song_id").InnerText));
-                        song.Name = (from node in item.SelectSingleNode("./title").ChildNodes
-                                    where node.NodeType == NodeType.CommentNode
-                                    select node).First().InnerText;
+                        SongModel song = SongModel.GetNew(uint.Parse(item.ElementText("song_id")));
+                        song.Name = item.Element("title").InnerText;
+                        if (song.Album == null)
+                        {
+                            AlbumModel am = AlbumModel.GetNew(uint.Parse(item.ElementText("album_id")));
+                            am.Name = item.ElementText("album_name");
+                            if (am.Artist == null)
+                            {
+                                ArtistModel ar = ArtistModel.GetNew(uint.Parse(item.ElementText("artist_id")));
+                                ar.Name = item.ElementText("artist");
+                                am.Artist = ar;
+                            }
+                            var image = item.ElementText("pic");
+                            am.Art = new Uri(image.Replace("_1", "2"));
+                            am.ArtFull = new Uri(image.Replace("_1", ""));
+                            song.Album = am;
+                            var encry = item.ElementText("location");
+                            var decry = DataApi.ParseDownloadLink(int.Parse(encry[0].ToString()), encry.Substring(1));
+                            song.MediaUri = new Uri(System.Net.WebUtility.UrlDecode(decry).Replace('^', '0'));
+                            song.Duration = TimeSpan.FromSeconds(double.Parse(item.ElementText("length")) * 1000 + 1);
+                        }
+                        radio.Enqueue(song);
                     }
                 }
                 catch (Exception e)

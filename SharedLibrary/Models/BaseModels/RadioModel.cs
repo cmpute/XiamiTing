@@ -137,3 +137,4 @@ namespace JacobC.Xiami.Models
         Mood = 16
     }
 }
+ 

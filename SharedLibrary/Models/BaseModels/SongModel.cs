@@ -90,6 +90,10 @@ namespace JacobC.Xiami.Models
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Uri MediaUri { get; set; }
+        /// <summary>
+        /// 获取或设置音乐的长度（播放时直接从后台获取长度即可）
+        /// </summary>
+        public TimeSpan Duration { get; set; } = TimeSpan.Zero;
 
 
         string _TrackArtist = null;

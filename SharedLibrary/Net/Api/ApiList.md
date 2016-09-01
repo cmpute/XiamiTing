@@ -2,6 +2,7 @@
 - 返回j代表json，h代表html，x代表xml，jh代表返回json但是主体内容是html，u表示API用于上传信息（这种一般返回都是json）
 - 虾米页面/param/value/param2/value和?param=value&param2=value2访问的结果是一样的
 - 划掉的部分是没有什么卵用或者统计不准确的Api
+
 --------
 #桌面端
 |Api地址|Api说明|返回|
