@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Data;
 namespace JacobC.Xiami
 {
     //需要用到增量加载的内容：歌手的歌曲列表，评论，排行榜等
-    public abstract class IncrementalLoadingBase<T> : ObservableCollection<T>, ISupportIncrementalLoading
+    public abstract class IncrementalLoadingBase<T> : ObservableCollection<T>, IIncrementalLoadingCollection<T>, ISupportIncrementalLoading
     {
         public IncrementalLoadingBase() : base() { }
         public IncrementalLoadingBase(IEnumerable<T> collection) : base(collection) { }
@@ -28,17 +28,17 @@ namespace JacobC.Xiami
                 throw new InvalidOperationException("Only one operation in flight at a time");
             }
             _busy = true;
-            return AsyncInfo.Run((c) => LoadMoreItemsAsync(c, count));
+            return AsyncInfo.Run((c) => LoadMoreItemsInternal(c, count));
         }
 
-        protected async Task<LoadMoreItemsResult> LoadMoreItemsAsync(CancellationToken c, uint count)
+        private async Task<LoadMoreItemsResult> LoadMoreItemsInternal(CancellationToken c, uint count)
         {
             try
             {
                 // 加载开始事件
                 OnLoadMoreStarted?.Invoke(this, count);
                 
-                var items = await LoadMoreItemsOverrideAsync(c, count);
+                var items = await LoadMoreItemsAsync(c, count);
                 AddRange(items);
 
                 // 加载完成事件
@@ -77,7 +77,7 @@ namespace JacobC.Xiami
         /// <summary>
         /// 加载更多项目的实现方法
         /// </summary>
-        protected abstract Task<IEnumerable<T>> LoadMoreItemsOverrideAsync(CancellationToken c, uint count);
+        protected abstract Task<IEnumerable<T>> LoadMoreItemsAsync(CancellationToken c, uint count);
         /// <summary>
         /// 检查是否有更多项目的实现方法
         /// </summary>

@@ -35,26 +35,6 @@ namespace JacobC.Xiami.Models
 
         #region Binding Needed
 
-        //ArtistModel _Artist = null;
-        ///// <summary>
-        ///// 获取或设置专辑艺术家
-        ///// </summary>
-        //[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        //public ArtistModel Artist
-        //{
-        //    get { return _Artist; }
-        //    set
-        //    {
-        //        if (!object.Equals(_Artist, value))
-        //        {
-        //            if (_Artist != null) _Artist.PropertyChanged -= _Artist_PropertyChanged;
-        //            _Artist = value;
-        //            if (_Artist != null) _Artist.PropertyChanged += _Artist_PropertyChanged;
-        //        }
-        //    }
-        //}
-        //private void _Artist_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(Artist));
-
         AlbumModel _Album = null;
         /// <summary>
         /// 获取或设置音轨所属的的专辑
@@ -82,7 +62,6 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public MVModel MV { get { return _MV; } set { Set(ref _MV, value); } }
 
-
         #endregion
 
         /// <summary>
@@ -95,6 +74,11 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public TimeSpan Duration { get; set; } = TimeSpan.Zero;
 
+        bool _Available = default(bool);
+        /// <summary>
+        /// 获取或设置歌曲是否可用（而非下架或者被删除）
+        /// </summary>
+        public bool Available { get { return _Available; } set { Set(ref _Available, value); } }
 
         string _TrackArtist = null;
         /// <summary>
@@ -119,13 +103,11 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string DiscID { get { return _DiscID; } set { Set(ref _DiscID, value); } }
 
-
         TimeSpan _AudioLength = default(TimeSpan);
         /// <summary>
         /// 获取或设置音频时长
         /// </summary>
         public TimeSpan AudioLength { get { return _AudioLength; } set { Set(ref _AudioLength, value); } }
-
 
         string _Composer = null;
         /// <summary>

@@ -136,6 +136,7 @@
       <DependentUpon>Playlist.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TimeSpanConverter.cs" />
+    <Compile Include="IIncrementalLoadingCollection.cs" />
     <Compile Include="Models\BaseModels\RadioModel.cs" />
     <Compile Include="Models\BaseModels\XiamiModelBase.cs" />
     <Compile Include="Models\RecommendationModel.cs" />

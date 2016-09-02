@@ -10,3 +10,8 @@ GridView增加像XAML UI Controls里面一样的动画
 Business:
 把IPlaylist的功能尽量抽离出来
 弄清RadioService的加载时间在什么时候为好(可以用Autoresetevent来控制IPlaylist的预缓存功能)
+
+TODO:
+GetSongInfo的SongModel的MV属性,Available属性
+Playlist添加是否显示编号
+应用getplaycount接口

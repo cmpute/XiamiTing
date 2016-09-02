@@ -59,7 +59,7 @@ namespace JacobC.Xiami.Net
                     process.Add(Task.Run(() =>
                     {
                         if (song.RelatedLovers == null || cover)
-                            song.RelatedLovers = ParseSongRelateUsers(body.SelectSingleNode(".//div[@id='song_fans_block']/div/ul")).ToList();
+                            song.RelatedLovers = new PageItemsCollection<UserModel>(ParseSongRelateUsers(body.SelectSingleNode(".//div[@id='song_fans_block']/div/ul")).ToList());
                     }));
                     process.Add(Task.Run(() =>
                     {
@@ -322,7 +322,31 @@ namespace JacobC.Xiami.Net
 
         public IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = false)
         {
-            throw new NotImplementedException();
+            if (artist.XiamiID == 0)
+                throw new ArgumentException("SongModel未设置ID");
+            return Run(async token =>
+            {
+                try
+                {
+                    LogService.DebugWrite($"Get info of Artist {artist.XiamiID}", nameof(WebApi));
+
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/artist/{artist.XiamiID}"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(content);
+                    var body = doc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
+                    List<Task> process = new List<Task>();
+
+                    await Task.WhenAll(process);
+                    LogService.DebugWrite($"Finish Getting info of Artist {artist.XiamiID}", nameof(WebApi));
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e, nameof(WebApi));
+                    throw e;
+                }
+            });
         }
 
         #endregion

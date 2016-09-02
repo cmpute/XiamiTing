@@ -38,11 +38,11 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public IList<string> Tags { get { return _Tags; } set { Set(ref _Tags, value); } }
 
-        IList<UserModel> _RelatedLovers = default(IList<UserModel>);
+        IIncrementalLoadingCollection<UserModel> _RelatedLovers = default(IIncrementalLoadingCollection<UserModel>);
         /// <summary>
         /// 获取或设置收藏了该内容的用户推荐
         /// </summary>
-        public IList<UserModel> RelatedLovers { get { return _RelatedLovers; } set { Set(ref _RelatedLovers, value); } }
+        public IIncrementalLoadingCollection<UserModel> RelatedLovers { get { return _RelatedLovers; } set { Set(ref _RelatedLovers, value); } }
 
         int _PlayCount = -1;
         /// <summary>

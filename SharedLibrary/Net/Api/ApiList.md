@@ -32,8 +32,11 @@
 |http://www.xiami.com/collect/{collectid}|精选集界面|h|
 ||||
 |http://www.xiami.com/artist/{artistid}|艺人界面|h|
-|http://www.xiami.com/artist/profile/id/23258|艺人简介|h|
-|http://www.xiami.com/artist/album/id/{albumid}/page/{page}/c/{category}|艺人专辑|h|
+|http://www.xiami.com/artist/profile/id/{artistid}|艺人简介|h|
+|http://www.xiami.com/artist/album/id/{artistid}/page/{page}/c/{category}/d/{year}/p/{pub/unpub}|艺人专辑(category=Cd,Ep,Live,Best,Cc,SoundTrack,Joined)|h|
+|http://www.xiami.com/artist/top/id/{artistid}/page/{page}|艺人top100歌曲|h|
+|http://www.xiami.com/artist/pic/id/{artistid}/tab/{tab}|艺人相册(tab=,new)|h|
+|http://www.xiami.com/artist/similar/id/{artistid}/page/{page}|相似艺人Top50|h|
 ||||
 |http://www.xiami.com/radio/play/id/{radioid}|电台页面，radioid=2为虾米猜|h|
 |http://www.xiami.com/radio/play/type/{radiotype}/oid/{oid}|电台页面，radiotype=1星座，2年代，6新歌，4为用户个人电台，5为艺人电台，8为虾米猜，9为每日推荐歌单，12为大类风格电台，13为风格电台，16为心情电台（oid填对应对象的id，虾米猜填userid)可以通过html获得radioid)|h|
@@ -73,9 +76,11 @@
 |http://www.xiami.com/space/charts/u/{userid}|~~试听排行~~|h|
 ||||
 |http://www.xiami.com/ajax/similar-artists?id={artistid}&c={count}|获取某艺人指定数目的相似艺人|j|
+|http://www.xiami.com/ajax/showevents|获取相关专题（需要POST参数和设置referer?）|h|
 ||||
 |http://www.xiami.com/count/playrecord?sid={songid}&type=10&ishq={isHQ}|记录播放了歌曲(2min为界)|u|
 |http://www.xiami.com/count/playstat?song_id={songid}&type={scrobbletype}&vip_role={vip}|scrobble播放状态(scrobbletype 1:30s 2:2min 3:结束, vip? 0普通用户 2vip)|u|
+|http://www.xiami.com/count/getplaycount?id={id}&type={type}|获取播放次数（type=song,?)|j|
 ||||
 |http://www.xiami.com/commentlist/turnpage/id/{radioid}/page/{page}/ajax/1|获取电台评论|h|
 ||||
