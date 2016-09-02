@@ -1,6 +1,0 @@
-Player控件增加音量控制条
-滚动Lrc歌词板，有KTV效果
-多选状态下页面底部弹出多选操作栏
-Player控件可以最大化成歌曲播放界面
-
-GridView增加像XAML UI Controls里面一样的动画

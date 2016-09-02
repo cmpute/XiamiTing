@@ -17,10 +17,10 @@ namespace JacobC.Xiami.Controls
 
         #region Binding Properties
 
-        private SongModel CurrentSong
+        public SongModel CurrentSong
         {
             get { return (SongModel)GetValue(CurrentSongProperty); }
-            set { SetValue(CurrentSongProperty, value); }
+            private set { SetValue(CurrentSongProperty, value); }
         }
         public static readonly DependencyProperty CurrentSongProperty =
             DependencyProperty.Register("CurrentSong", typeof(SongModel), typeof(MusicController), new PropertyMetadata(SongModel.Null));
@@ -41,13 +41,9 @@ namespace JacobC.Xiami.Controls
               DependencyProperty.Register(nameof(IsPlayingRadio), typeof(bool),
                   typeof(MusicController), new PropertyMetadata(false, (d, e) =>
                   {
-                      (d as MusicController).IsPlayingRadioChanged?.Invoke(d, e.ToChangedEventArgs<bool>());
+                      //(d as MusicController).IsPlayingRadioChanged?.Invoke(d, e.ToChangedEventArgs<bool>());
                       (d as MusicController).InternalIsPlayingRadioChanged(e.ToChangedEventArgs<bool>());
                   }));
-        /// <summary>
-        /// 在<see cref="IsPlayingRadio"/>属性发生变更时发生
-        /// </summary>
-        public event EventHandler<ChangedEventArgs<bool>> IsPlayingRadioChanged;
         partial void InternalIsPlayingRadioChanged(ChangedEventArgs<bool> e);
 
 

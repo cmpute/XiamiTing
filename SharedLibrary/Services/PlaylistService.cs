@@ -74,31 +74,40 @@ namespace JacobC.Xiami.Services
         {
             get
             {
-                if (this.Count == 0)
+                if (Count == 0)
                     return -1;
                 return _currentIndex;
             }
             set
             {
-                if(_currentIndex != value)
+                if (_currentIndex != value)
                 {
                     var e = new ChangedEventArgs<int>(_currentIndex, value);
+                    var song1 = _currentIndex == -1 ? null : this[_currentIndex];
+                    var song2 = value == -1 ? null : this[value];
+                    var ep = new ChangedEventArgs<SongModel>(song1, song2);
                     _currentIndex = value;
                     CurrentIndexChanged?.Invoke(this, e);
+                    if (song1 != song2)
+                        CurrentPlayingChanged?.Invoke(this, ep);
                     InternalCurrentIndexChanged(value);
                 }
             }
         }
         /// <summary>
-        /// 在当前播放的音轨发生改变时发生
+        /// 在当前播放的音轨序号发生改变时发生
         /// </summary>
         public event EventHandler<ChangedEventArgs<int>> CurrentIndexChanged;
+        /// <summary>
+        /// 当正在播放的音轨发生变化时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<SongModel>> CurrentPlayingChanged;
         private void InternalCurrentIndexChanged(int newindex)
         {
             //TODO: 向后台发送消息
         }
 
-
+        #region TODO: Unfinished Part
         /// <summary>
         /// 应用程序开始时初始化播放列表
         /// </summary>
@@ -157,6 +166,7 @@ namespace JacobC.Xiami.Services
                 yield return sm;
             }
         }
+        #endregion
 
         #region Playback Order
 

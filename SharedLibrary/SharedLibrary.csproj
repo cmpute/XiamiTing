@@ -176,7 +176,7 @@
     <Compile Include="Services\MediaMessageTypes.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
-    <Compile Include="Services\PlaylistBase.cs" />
+    <Compile Include="Services\IPlaylist.cs" />
     <Compile Include="Services\PlaylistService.cs" />
     <Compile Include="Services\RadioService.cs" />
     <Compile Include="Services\SettingsService.cs" />
@@ -216,7 +216,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="UI Targets.txt" />
+    <Content Include="Targets.txt" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

@@ -7,6 +7,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Template10.Common;
 
 namespace JacobC.Xiami.Controls
 {
@@ -17,11 +18,11 @@ namespace JacobC.Xiami.Controls
     {
         DispatcherTimer songtimer = new DispatcherTimer();
 
+        #region EventListeners
         private void AddListeners()
         {
-            PlaylistService.Instance.CurrentIndexChanged += async (sender, e) =>
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    CurrentSong = e.NewValue == -1 ? SongModel.Null : PlaylistService.Instance[e.NewValue]);
+            PlaybackService.Instance.PlaybackSource.CurrentPlayingChanged += PlaybackSource_CurrentPlayingChanged;
+            PlaybackService.Instance.PlaybackSourceChanged += Instance_PlaybackSourceChanged;
             PlaybackService.Instance.StateChanged += MediaPlayer_StateChanged;
             songtimer.Interval = TimeSpan.FromMilliseconds(300);
             songtimer.Tick += Songtimer_Tick;
@@ -30,7 +31,17 @@ namespace JacobC.Xiami.Controls
                 (Windows.UI.Xaml.Media.VisualTreeHelper.GetChild(sender as DependencyObject, 0) as FrameworkElement).RegisterPropertyChangedCallback(TagProperty, (obj, dp) =>
                     IsDraggingSlider = (bool)((obj as FrameworkElement).Tag));
         }
-
+        private void Instance_PlaybackSourceChanged(object sender, Template10.Common.ChangedEventArgs<IPlaylist> e)
+        {
+            e.OldValue.CurrentPlayingChanged -= PlaybackSource_CurrentPlayingChanged;
+            e.NewValue.CurrentPlayingChanged += PlaybackSource_CurrentPlayingChanged;
+            this.IsPlayingRadio = (sender as PlaybackService).IsPlayingRadio;
+        }
+        private async void PlaybackSource_CurrentPlayingChanged(object sender, Template10.Common.ChangedEventArgs<SongModel> e)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    CurrentSong = e.NewValue ?? SongModel.Null);
+        }
         private async void MediaPlayer_StateChanged(object sender, Template10.Common.ChangedEventArgs<MediaPlayerState> e)
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -48,6 +59,11 @@ namespace JacobC.Xiami.Controls
                 }
             });
         }
+        partial void InternalIsPlayingRadioChanged(ChangedEventArgs<bool> e)
+        {
+            VisualStateManager.GoToState(this, e.NewValue ? "Radio" : "LocalList", true);
+        }
+        #endregion
 
         bool _isDragging = false;
         private bool IsDraggingSlider

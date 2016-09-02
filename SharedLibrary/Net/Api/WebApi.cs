@@ -540,7 +540,7 @@ namespace JacobC.Xiami.Net
                                 am.Artist = ar;
                             }
                             var image = item.ElementText("pic");
-                            am.Art = new Uri(image.Replace("_1", "2"));
+                            am.Art = new Uri(image.Replace("_1", "_2"));
                             am.ArtFull = new Uri(image.Replace("_1", ""));
                             song.Album = am;
                             var encry = item.ElementText("location");

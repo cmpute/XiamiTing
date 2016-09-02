@@ -25,6 +25,15 @@
                 <VisualState x:Name="Paused">
                 </VisualState>
             </VisualStateGroup>
+            <VisualStateGroup x:Name="PlaySource">
+                <VisualState x:Name="LocalList"/>
+                <VisualState x:Name="Radio">
+                    <VisualState.Setters>
+                        <Setter Target="previous.Visibility" Value="Collapsed"/>
+                        <Setter Target="list.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <!--TODO: 此处插入播放详情界面的控件-->
         <Grid x:Name="controlGrid">

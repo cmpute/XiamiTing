@@ -27,7 +27,45 @@ namespace JacobC.Xiami.Services
         /// </summary>
         public static PlaybackService Instance { get { return _instance ?? (_instance = new PlaybackService()); } }
 
+        #region PlaySource
         bool _isPlayingRadio = false;
+        RadioService radio = null;
+        /// <summary>
+        /// 获取是否正在播放电台
+        /// </summary>
+        public bool IsPlayingRadio { get { return _isPlayingRadio; } }
+        public IPlaylist PlaybackSource => radio ?? (IPlaylist)PlaylistService.Instance;
+        /// <summary>
+        /// 设置播放内容为播放列表或电台
+        /// </summary>
+        /// <param name="source">播放来源，null代表播放列表</param>
+        public void SetPlaybackSource(RadioService source)
+        {
+            if (radio == source)
+                return;
+            var e = new ChangedEventArgs<IPlaylist>(radio ?? (IPlaylist)PlaylistService.Instance, source ?? (IPlaylist)PlaylistService.Instance);
+            if (source == null)
+            {
+                radio = null;
+                _isPlayingRadio = false;
+            }
+            else
+            {
+                radio = source;
+                _isPlayingRadio = true;
+            }
+            PlaybackSourceChanged?.Invoke(this, e);
+            InternalPlaybackSourceChanged(_isPlayingRadio);
+        }
+        /// <summary>
+        /// 当播放源发生改变时发生
+        /// </summary>
+        public event EventHandler<ChangedEventArgs<IPlaylist>> PlaybackSourceChanged;
+        private void InternalPlaybackSourceChanged(bool isPlayingRadio)
+        {
+
+        }
+        #endregion
 
         #region Codes for BackgroundTask
 
@@ -193,7 +231,7 @@ namespace JacobC.Xiami.Services
         /// 当<see cref="CurrentState"/>属性发生改变时发生
         /// </summary>
         public event EventHandler<ChangedEventArgs<MediaPlayerState>> StateChanged;
-        
+
         #region Public Controlling Methods 
 
         /// <summary>
@@ -202,6 +240,8 @@ namespace JacobC.Xiami.Services
         /// <param name="song">需要播放的歌曲，如果不在列表中的话将加入列表</param>
         public void PlayTrack(SongModel song)
         {
+            if (_isPlayingRadio)
+                throw new InvalidOperationException("在播放歌曲前应停止电台播放");
             if (!PlaylistService.Instance.Contains(song))
             {
                 PlaylistService.Instance.Add(song);
@@ -216,7 +256,9 @@ namespace JacobC.Xiami.Services
         /// <param name="trackIndex">播放的歌曲位置</param>
         public void PlayTrack(int trackIndex)
         {
-            if(PlayTrackInternal(PlaylistService.Instance[trackIndex]))
+            if (_isPlayingRadio)
+                throw new InvalidOperationException("在播放歌曲前应停止电台播放");
+            if (PlayTrackInternal(PlaylistService.Instance[trackIndex]))
                 PlaylistService.Instance.CurrentIndex = trackIndex;
         }
         /// <summary>
@@ -224,13 +266,18 @@ namespace JacobC.Xiami.Services
         /// </summary>
         public void PlayTrack()
         {
-            var lservice = PlaylistService.Instance;
-            if (lservice.CurrentPlaying == null)
-                if (lservice.Count == 0)
-                    return;
-                else
-                    lservice.CurrentIndex = 0;
-            PlayTrack(lservice.CurrentIndex);
+            if (_isPlayingRadio)
+                PlayTrackInternal(radio.CurrentPlaying);
+            else
+            {
+                var lservice = PlaylistService.Instance;
+                if (lservice.CurrentPlaying == null)
+                    if (lservice.Count == 0)
+                        return;
+                    else
+                        lservice.CurrentIndex = 0;
+                PlayTrack(lservice.CurrentIndex);
+            }
         }
         /// <returns>是否成功开始播放</returns>
         private bool PlayTrackInternal(SongModel song)
@@ -262,22 +309,32 @@ namespace JacobC.Xiami.Services
         /// <summary>
         /// 播放下一首
         /// </summary>
-        public void SkipNext()
+        public async void SkipNext()
         {
             //TODO:判断播放模式
             //TODO:判断暂停状态
             //TODO:判断是播放列表还是电台
-            var list = PlaylistService.Instance;
-            if (list.CurrentIndex == list.Count - 1)
-                PlayTrack(0);
+            if (_isPlayingRadio)
+            {
+                await radio.PlayNext();
+                PlayTrackInternal(radio.CurrentPlaying);
+            }
             else
-                PlayTrack(list.CurrentIndex + 1);
+            {
+                var list = PlaylistService.Instance;
+                if (list.CurrentIndex == list.Count - 1)
+                    PlayTrack(0);
+                else
+                    PlayTrack(list.CurrentIndex + 1);
+            }
         }
         /// <summary>
         /// 播放上一首
         /// </summary>
         public void SkipPrevious()
         {
+            if(_isPlayingRadio)
+                throw new InvalidOperationException("电台不支持上一首功能");
             var list = PlaylistService.Instance;
             if (list.CurrentIndex == 0)
                 PlayTrack(list.Count - 1);
@@ -314,14 +371,6 @@ namespace JacobC.Xiami.Services
         }
         #endregion
 
-        /// <summary>
-        /// 设置播放内容为播放列表或电台
-        /// </summary>
-        /// <param name="source">播放来源，null代表播放列表</param>
-        public void SetPlaybackSource(RadioModel source)
-        {
-            throw new NotImplementedException();
-        }
         
     }
 }

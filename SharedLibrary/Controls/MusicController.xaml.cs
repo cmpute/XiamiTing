@@ -47,7 +47,7 @@ namespace JacobC.Xiami.Controls
                 pservice.StartPlayback();
             }
             else
-            {
+            { 
                 pservice.PlayTrack();
                 //else if (MediaPlayerState.Closed == CurrentPlayer.CurrentState)
                 //{
