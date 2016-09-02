@@ -62,6 +62,7 @@ namespace JacobC.Xiami.Controls
         partial void InternalIsPlayingRadioChanged(ChangedEventArgs<bool> e)
         {
             VisualStateManager.GoToState(this, e.NewValue ? "Radio" : "LocalList", true);
+            MessageService.SendMediaMessageToBackground(MediaMessageTypes.SourceTypeChanged, e.NewValue);
         }
         #endregion
 

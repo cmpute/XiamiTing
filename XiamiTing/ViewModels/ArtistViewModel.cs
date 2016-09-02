@@ -9,9 +9,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace JacobC.Xiami.ViewModels
 {
-    public class AlbumViewModel : ViewModelBase
+    public class ArtistViewModel : ViewModelBase
     {
-        public AlbumViewModel()
+        public ArtistViewModel()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
             {
@@ -24,15 +24,16 @@ namespace JacobC.Xiami.ViewModels
             uint id = 0;
             if (!uint.TryParse(parameter.ToString(), out id))
                 NavigationService.Navigate(typeof(Views.LibraryPage));
-            Album = AlbumModel.GetNew(id);
-            if (Album.Introduction == null)
-                await Net.WebApi.Instance.GetAlbumInfo(Album);
+            Artist = ArtistModel.GetNew(id);
+            if (Artist.Profile == null)
+                await Net.WebApi.Instance.GetArtistInfo(Artist);
         }
 
-        AlbumModel _Album = default(AlbumModel);
+        ArtistModel _Artist = default(ArtistModel);
         /// <summary>
-        /// 获取或设置内容专辑属性
+        /// 获取或设置Artist属性
         /// </summary>
-        public AlbumModel Album { get { return _Album; } set { Set(ref _Album, value); } }
+        public ArtistModel Artist { get { return _Artist; } set { Set(ref _Artist, value); } }
+
     }
 }

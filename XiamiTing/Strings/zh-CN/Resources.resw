@@ -207,4 +207,16 @@
     <value>当前版本：</value>
     <comment>About页 版本号 文字</comment>
   </data>
+  <data name="RadioRecommend.Header" xml:space="preserve">
+    <value>电台</value>
+    <comment>首页选项卡</comment>
+  </data>
+  <data name="AlbumPageHeader.Text" xml:space="preserve">
+    <value>专辑</value>
+    <comment>Album页标题</comment>
+  </data>
+  <data name="ArtistPageHeader.Text" xml:space="preserve">
+    <value>艺术家</value>
+    <comment>Artist页标题</comment>
+  </data>
 </root>

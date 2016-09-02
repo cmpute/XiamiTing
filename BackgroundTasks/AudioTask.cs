@@ -311,6 +311,9 @@ namespace JacobC.Xiami.Services
                     UpdateUVCOnNewTrack(song);
                     DebugWrite($"PlaySong {song.XiamiID} Address:{song.MediaUri}", "BackgroundPlayer");
                     return;
+                case MediaMessageTypes.SourceTypeChanged:
+                    smtc.IsPreviousEnabled = !MessageService.GetMediaMessage<bool>(e.Data);
+                    return;
             }
 
         }

@@ -12,25 +12,19 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Documents;
-using JacobC.Xiami.ViewModels;
+
+// “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上有介绍
 
 namespace JacobC.Xiami.Views
 {
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class AlbumPage : Page
+    public sealed partial class ArtistPage : Page
     {
-        public AlbumPage()
+        public ArtistPage()
         {
             this.InitializeComponent();
-        }
-
-        private void Artist_Click(Hyperlink sender, HyperlinkClickEventArgs args)
-        {
-            var vm = this.DataContext as AlbumViewModel;
-            vm.NavigationService.Navigate(typeof(ArtistPage), vm.Album.Artist.XiamiID);
         }
     }
 }

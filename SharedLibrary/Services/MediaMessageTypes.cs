@@ -13,6 +13,7 @@
         AppSuspended,
         SetSong,
         StartPlayback,
+        SourceTypeChanged,
 
         //发向前台
         SkipNext,

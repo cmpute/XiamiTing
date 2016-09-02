@@ -1,0 +1,26 @@
+﻿<Page
+    x:Class="JacobC.Xiami.Views.ArtistPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JacobC.Xiami.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Template10.Controls"
+    xmlns:c="using:JacobC.Xiami.Controls"
+    xmlns:vm="using:JacobC.Xiami.ViewModels"
+    mc:Ignorable="d">
+    <Page.DataContext>
+        <vm:ArtistViewModel x:Name="VM"/>
+    </Page.DataContext>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader x:Uid="ArtistPageHeader" Grid.Row="0" Text="艺术家"/>
+        <StackPanel Grid.Row="1" MaxWidth="{StaticResource ContentMaxWidth}" Margin="8,8">
+            <TextBlock FontSize="28" FontWeight="Bold" Text="{x:Bind VM.Artist.Name}" TextWrapping="WrapWholeWords"/>
+        </StackPanel>
+    </Grid>
+</Page>

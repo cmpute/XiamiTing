@@ -119,8 +119,9 @@
       <DependentUpon>CoveredItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DependencyExtended.cs" />
+    <Compile Include="Controls\GridLengthConverter.cs" />
     <Compile Include="Controls\IconButton.cs" />
-    <Compile Include="Controls\LocalConverters.cs" />
+    <Compile Include="Controls\MinusConverters.cs" />
     <Compile Include="Controls\ImageEx.cs" />
     <Compile Include="Controls\MusicController.declaration.cs">
       <DependentUpon>MusicController.xaml</DependentUpon>
@@ -134,6 +135,7 @@
     <Compile Include="Controls\Playlist.xaml.cs">
       <DependentUpon>Playlist.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TimeSpanConverter.cs" />
     <Compile Include="Models\BaseModels\RadioModel.cs" />
     <Compile Include="Models\BaseModels\XiamiModelBase.cs" />
     <Compile Include="Models\RecommendationModel.cs" />

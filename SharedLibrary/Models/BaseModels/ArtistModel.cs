@@ -49,6 +49,13 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Area { get { return _Area; } set { Set(ref _Area, value); } }
 
+        string _Profile = default(string);
+        /// <summary>
+        /// 获取或设置艺术家简介属性
+        /// </summary>
+        public string Profile { get { return _Profile; } set { Set(ref _Profile, value); } }
+
+
         #region ICovered Members
         Uri _ArtistAvatarUri = new Uri(SmallDefaultUri);
         /// <summary>
