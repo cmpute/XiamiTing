@@ -27,7 +27,7 @@ namespace JacobC.Xiami.Controls
         public SongItem()
         {
             this.InitializeComponent();
-            this.DoubleTapped += (sender, e) => PlayButton_Click(sender, e); 
+            this.DoubleTapped += (sender, e) => PlayButton_Click(sender, e);
         }
 
 
@@ -39,14 +39,11 @@ namespace JacobC.Xiami.Controls
         DependencyObject _LinkedItem = null;
         ItemsControl _LinkedList = null;
         INotifyCollectionChanged _LinkedCollection = null;
+        bool isIncreTtem = false;
         private void Group_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
         {
             //LogService.DebugWrite($"VisualState:{e.NewState.Name}", nameof(SongItem));
             VisualStateManager.GoToState(this, e.NewState.Name, true);
-        }
-        protected override void OnApplyTemplate()
-        {
-            Services.LogService.DebugWrite($"OnApplyTemplate with {ItemSource}");
         }
         private void SongItem_Loaded(object sender, RoutedEventArgs e)
         {
@@ -76,17 +73,18 @@ namespace JacobC.Xiami.Controls
                         _listtype = list.ListType;
                         VisualStateManager.GoToState(this, list.ListType.ToString(), true);
                     }
-                    var index = _LinkedList.IndexFromContainer(item);
+                    if (_LinkedList.ItemsSource is INotifyCollectionChanged)
+                    {
+                        _LinkedCollection = _LinkedList.ItemsSource as INotifyCollectionChanged;
+                        _LinkedCollection.CollectionChanged += _Linkedlist_CollectionChanged;
+                        isIncreTtem = _LinkedList.ItemsSource is ISupportIncrementalLoading;
+                    }
+                    var index = isIncreTtem?(_LinkedCollection as IList<SongModel>).IndexOf(ItemSource): _LinkedList.IndexFromContainer(item);
                     ListIndex = index + 1;
                     if (PlaylistService.Instance.CurrentIndex == index && index != -1)//正在播放则更新状态
                         VisualStateManager.GoToState(this, "Playing", true);
                     else
                         VisualStateManager.GoToState(this, "NotPlaying", true);
-                    if (_LinkedList.ItemsSource is INotifyCollectionChanged)
-                    {
-                        _LinkedCollection = _LinkedList.ItemsSource as INotifyCollectionChanged;
-                        _LinkedCollection.CollectionChanged += _Linkedlist_CollectionChanged;
-                    }
                 }
 
                 var groups = VisualStateManager.GetVisualStateGroups(obj as FrameworkElement);
@@ -159,7 +157,7 @@ namespace JacobC.Xiami.Controls
         }
         public void UpdateIndex()
         {
-            ListIndex = _LinkedList.IndexFromContainer(_LinkedItem) + 1;
+            ListIndex = isIncreTtem ? (_LinkedCollection as IList<SongModel>).IndexOf(ItemSource) : _LinkedList.IndexFromContainer(_LinkedItem) + 1;
         }
 
         #endregion
@@ -186,7 +184,9 @@ namespace JacobC.Xiami.Controls
                   }));
         private void InternalItemSourceChanged(DependencyPropertyChangedEventArgs e)
         {
-            if (PlaylistService.Instance.CurrentIndex == ListIndex - 1)
+            if (isIncreTtem)
+                UpdateIndex();
+            if (PlaylistService.Instance.CurrentPlaying == ItemSource)
                 VisualStateManager.GoToState(this, "Playing", true);
         }
 
