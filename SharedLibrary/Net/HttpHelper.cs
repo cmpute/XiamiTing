@@ -25,9 +25,11 @@ namespace JacobC.Xiami.Net
         {
             get
             {
-                if(_handler == null)
+                if (_handler == null)
+                {
                     _handler = new HttpClientHandler();
-                _handler.AutomaticDecompression = System.Net.DecompressionMethods.GZip;
+                    _handler.AutomaticDecompression = System.Net.DecompressionMethods.GZip;
+                }
                 return _handler;
             }
         }
@@ -48,20 +50,24 @@ namespace JacobC.Xiami.Net
         }
 
         static HttpClient _client;
+        static object clientlocker = new object();
         public static HttpClient Client
         {
             get
             {
-                if (_client == null)
+                lock (clientlocker)
                 {
-                    _client = new HttpClient(Handler);
-                    _client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
-                    //_client.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-                    _client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, sdch");
-                    _client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("zh-CN,zh;q=0.8");
-                    _client.DefaultRequestHeaders.Referrer = new Uri("http://www.xiami.com/play?ids=/song/playlist/id/1/type/9");
-                    //_client.DefaultRequestHeaders.Connection.ParseAdd("keep-alive");
-                    _client.Timeout = TimeSpan.FromSeconds(5);
+                    if (_client == null)
+                    {
+                        _client = new HttpClient(Handler);
+                        _client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
+                        //_client.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                        _client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, sdch");
+                        _client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("zh-CN,zh;q=0.8");
+                        _client.DefaultRequestHeaders.Referrer = new Uri("http://www.xiami.com/play?ids=/song/playlist/id/1/type/9");
+                        //_client.DefaultRequestHeaders.Connection.ParseAdd("keep-alive");
+                        _client.Timeout = TimeSpan.FromSeconds(5);
+                    }
                 }
                 return _client;
             }
@@ -105,7 +111,7 @@ namespace JacobC.Xiami.Net
                 try
                 {
                     var t = Client.GetAsync(uri, token);
-                    using (var get = await t) 
+                    using (var get = await t)
                     {
                         if (!get.IsSuccessStatusCode)
                             throw new ConnectException("在HttpRequest中出现错误", new System.Net.Http.HttpRequestException(get.StatusCode.ToString()));

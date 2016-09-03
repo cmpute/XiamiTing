@@ -26,6 +26,8 @@
 |http://www.xiami.com/song/playlist/id/{id}/type/{playlisttype}|获取歌曲信息(playlisttype=0歌曲1专辑3精选集)|x|
 |http://www.xiami.com/song/playlist/id/1/type/{playlisttype}|获取播放列表(playlisttype=9每日歌单15未登录每日歌单)|x|
 ||||
+|http://www.xiami.com/lrc/{songid}|文本歌词|h|
+||||
 |http://www.xiami.com/album/{albumid}|专辑界面|h|
 |http://www.xiami.com/album/list/year/{year}/month/{month}/p/{pub/unpub}|获取制定日期的所有专辑|h|
 ||||
@@ -73,7 +75,7 @@
 |http://www.xiami.com/space/lib-mv/u/{userid}|用户收藏的MV|h|
 |http://www.xiami.com/space/unlib-song/u/{userid}|用户不喜欢的歌曲|h|
 |http://www.xiami.com/space/unlib-artist/u/{userid}|用户不喜欢的艺人|h|
-|http://www.xiami.com/space/charts/u/{userid}|~~试听排行~~|h|
+|~~http://www.xiami.com/space/charts/u/{userid}~~|~~试听排行~~|h|
 ||||
 |http://www.xiami.com/ajax/similar-artists?id={artistid}&c={count}|获取某艺人指定数目的相似艺人|j|
 |http://www.xiami.com/ajax/showevents|获取相关专题（需要POST参数和设置referer?）|h|

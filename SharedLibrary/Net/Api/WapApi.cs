@@ -15,7 +15,7 @@ namespace JacobC.Xiami.Net
     /// 虾米旧版移动客户端使用的Api集
     /// </summary>
     /// <remarks>
-    /// Api完成情况：
+    /// Api弃置
     /// </remarks>
     public class WapApi : IXiamiApi
     {

@@ -8,5 +8,10 @@ namespace JacobC.Xiami.Models
 {
     public class MVModel : LovableModelBase<string>
     {
+        public static MVModel GetNew(string key)
+        {
+            return new MVModel() { XiamiID = key };
+        }
+        private MVModel() { }
     }
 }

@@ -92,6 +92,7 @@ namespace JacobC.Xiami
                 //针对第一页未满的情况
                 var r = await _fetchPage(1, c);
                 var tc = Count;
+                var sc = Count;
                 foreach (var item in r)
                 {
                     if (tc > 0)
@@ -100,9 +101,10 @@ namespace JacobC.Xiami
                         continue;
                     }
                     returnlist.Add(item);
+                    sc++;
                     if (count > 0) count--;
                 }
-                if (Count < PageCapacity)
+                if (sc < PageCapacity)
                 {
                     _hasMore = false;
                     return returnlist;

@@ -12,6 +12,7 @@ Business:
 弄清RadioService的加载时间在什么时候为好(可以用Autoresetevent来控制IPlaylist的预缓存功能)
 
 TODO:
-GetSongInfo的SongModel的MV属性,Available属性
+GetSongInfo的SongModel的MV属性,Available属性 测试： http://www.xiami.com/song/1771554257， http://www.xiami.com/album/411520
+GetArtistInfo
 Playlist添加是否显示编号
 应用getplaycount接口

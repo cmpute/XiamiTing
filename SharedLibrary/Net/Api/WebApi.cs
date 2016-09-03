@@ -37,9 +37,36 @@ namespace JacobC.Xiami.Net
             }
         }
 
+        internal void ParseListSong(SongModel song, HtmlNode tr)
+        {
+            song.Available = tr.SelectSingleNode(".//input").GetAttributeValue("checked", "") == "checked";
+            var name = tr.SelectSingleNode("./td[@class='song_name']");
+            foreach (var item in name.ChildNodes)
+            {
+                if(item.Name == "a")
+                {
+                    if (item.Element("b") != null)
+                    {
+                        var mvlink = item.GetAttributeValue("href", "/0");
+                        song.MV = MVModel.GetNew(mvlink.Substring(mvlink.LastIndexOf('/') + 1));
+                    }
+                    else if (item.GetAttributeValue("class", "") == "show_zhcn")
+                        song.Description = item.InnerText;
+                    else
+                        song.Name = item.InnerText;
+                }
+                else
+                {
+                    string t = item.InnerText.Trim();
+                    if (t.Length > 0)
+                        song.TrackArtist = t;
+                }
+            }
+        }
+
         #region 获取歌曲信息
 
-        public IAsyncAction GetSongInfo(SongModel song, bool cover = false)
+        public IAsyncAction GetSongInfo(SongModel song, bool cover = true)
         {
             if (song.XiamiID == 0)
                 throw new ArgumentException("SongModel未设置ID");
@@ -60,27 +87,35 @@ namespace JacobC.Xiami.Net
                     {
                         if (song.RelatedLovers == null || cover)
                             song.RelatedLovers = new PageItemsCollection<UserModel>(ParseSongRelateUsers(body.SelectSingleNode(".//div[@id='song_fans_block']/div/ul")).ToList());
-                    }));
+                    }, token));
                     process.Add(Task.Run(() =>
                     {
                         if (song.RelateHotSongs == null || cover)
                             song.RelateHotSongs = ParseSongRelateSongs(body.SelectSingleNode(".//div[@id='relate_song']/div/table")).ToList();
-                    }));
+                    }, token));
                     process.Add(Task.Run(() =>
                     {
                         if (song.Tags == null || cover)
                             song.Tags = ParseTags(body.SelectSingleNode(".//div[@id='song_tags_block']/div")).ToList();
-                    }));
+                    }, token));
 
                     var title = body.SelectSingleNode(".//h1");
                     if (song.Name == null || cover)
                         song.Name = title.FirstChild.InnerText;
+                    var mva = title.SelectSingleNode("./a");
+                    if ((mva != null) && (song.MV == null || cover))
+                    {
+                        var mvlink = mva.GetAttributeValue("href", "/0");
+                        song.MV = MVModel.GetNew(mvlink.Substring(mvlink.LastIndexOf('/') + 1));
+                    }
                     if (song.Description == null || cover)
-                        song.Description = title.LastChild.InnerText;
+                        if (title.LastChild.Name == "span")
+                            song.Description = title.LastChild.InnerText;
                     var loveop = body.SelectSingleNode(".//ul/li[1]");
                     song.IsLoved = loveop.GetAttributeValue("style", "") == "display:none";
+                    if (loveop.ParentNode.ParentNode.ParentNode.InnerText.IndexOf("单曲下架") != -1) song.Available = false;
                     var detail = body.SelectSingleNode(".//table");
-                    foreach (var item in detail.SelectNodes(".//tr"))
+                    foreach (var item in detail.SelectNodes("./tr"))
                     {
                         switch (item.ChildNodes[1].InnerText)
                         {
@@ -171,7 +206,7 @@ namespace JacobC.Xiami.Net
 
         #endregion
         #region 获取专辑信息
-        public IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = false)
+        public IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = true)
         {
             if (album.XiamiID == 0)
                 throw new ArgumentException("SongModel未设置ID");
@@ -195,7 +230,7 @@ namespace JacobC.Xiami.Net
                             album.SongList = ParseAlbumSongs(listnode, album).ToList();
                         else
                             ParseAlbumSongs(listnode, album.SongList);
-                    }));
+                    }, token));
 
                     var title = body.SelectSingleNode(".//h1");
                     if (album.Name == null || cover)
@@ -214,27 +249,37 @@ namespace JacobC.Xiami.Net
                     album.ShareCount = int.Parse(share.Substring(1, share.Length - 2));
                     foreach (var item in info.SelectNodes(".//tr"))
                     {
-                        switch (item.ChildNodes[1].InnerText)
+                        var tds = item.SelectNodes("./td");
+                        switch (tds[0].InnerText)
                         {
                             case "艺人：":
                                 if (album.Artist == null)
                                 {
-                                    var linknode = item.SelectSingleNode(".//a");
+                                    var linknode = tds[1].SelectSingleNode(".//a");
                                     var id = linknode.GetAttributeValue("href", "/0");
                                     album.Artist = ArtistModel.GetNew(uint.Parse(id.Substring(id.LastIndexOf('/') + 1)));
                                 }
                                 break;
                             case "语种：":
-                                album.Language = item.ChildNodes[3].InnerText;
+                                album.Language = tds[1].InnerText;
                                 break;
                             case "唱片公司：":
-                                album.Publisher = item.SelectSingleNode(".//a").InnerText;
+                                album.Publisher = tds[1].InnerText;
                                 break;
                             case "发行时间":
-                                album.ReleaseDate = item.ChildNodes[3].InnerText;
+                                album.ReleaseDate = tds[1].InnerText;
                                 break;
                             case "专辑类别":
-                                album.Type = item.ChildNodes[3].InnerText;
+                                album.Type = tds[1].InnerText;
+                                break;
+                            case "专辑风格":
+                                album.Genre = tds[1].SelectNodes("./a").Select((node) =>
+                                {
+                                    var link = node.GetAttributeValue("href", "/0");
+                                    var gen = GenreModel.GetNew(uint.Parse(link.Substring(link.LastIndexOf('/') + 1)));
+                                    gen.Name = node.InnerText;
+                                    return gen;
+                                }).ToList();
                                 break;
                         }
                     }
@@ -272,19 +317,20 @@ namespace JacobC.Xiami.Net
                     {
                         if (songitem.NodeType != HtmlNodeType.Element)
                             continue;
-                        SongModel song = SongModel.GetNew(uint.Parse(songitem.ChildNodes[1].FirstChild.GetAttributeValue("value", "0")));
+                        SongModel song = SongModel.GetNew(uint.Parse(songitem.SelectSingleNode("//input").GetAttributeValue("value", "0")));
                         song.Album = album;
                         song.DiscID = disc;
                         song.TrackID = int.Parse(songitem.ChildNodes[3].InnerText);
-                        var title = songitem.SelectSingleNode(".//a");
-                        if (song.Name == null)
-                            song.Name = title.InnerText;
-                        if (song.TrackArtist == null)
-                        {
-                            string t = title.NextSibling.InnerText.Trim();
-                            if (t.Length > 0)
-                                song.TrackArtist = t;
-                        }
+                        ParseListSong(song, songitem);
+                        //var title = songitem.SelectSingleNode(".//a");
+                        //if (song.Name == null)
+                        //    song.Name = title.InnerText;
+                        //if (song.TrackArtist == null)
+                        //{
+                        //    string t = title.NextSibling.InnerText.Trim();
+                        //    if (t.Length > 0)
+                        //        song.TrackArtist = t;
+                        //}
                         yield return song;
                     }
             }
@@ -306,13 +352,13 @@ namespace JacobC.Xiami.Net
                             continue;
                         if (!iter.MoveNext())
                             throw new ArgumentException("歌曲列表不匹配");
-                        if (songitem.ChildNodes[1].FirstChild.GetAttributeValue("value", "0") != iter.Current.XiamiID.ToString())
+                        if (songitem.SelectSingleNode(".//input").GetAttributeValue("value", "0") != iter.Current.XiamiID.ToString())
                             throw new ArgumentException("歌曲列表ID不匹配");
+                        //TODO: 增加Available判断
                         var cur = iter.Current;
                         cur.DiscID = disc;
                         cur.TrackID = int.Parse(songitem.ChildNodes[3].InnerText);
-                        if (cur.Name == null)
-                            cur.Name = songitem.ChildNodes[3].ChildNodes[1].InnerText;
+                        ParseListSong(cur, songitem);
                     }
             }
         }
@@ -320,7 +366,7 @@ namespace JacobC.Xiami.Net
         #endregion
         #region 获取艺术家信息
 
-        public IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = false)
+        public IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = true)
         {
             if (artist.XiamiID == 0)
                 throw new ArgumentException("SongModel未设置ID");
@@ -330,13 +376,75 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get info of Artist {artist.XiamiID}", nameof(WebApi));
 
+                    List<Task> process = new List<Task>();
+                    process.Add(Task.Run(async () =>
+                    {
+                        var pgettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/artist/profile/id/{artist.XiamiID}"));
+                        token.Register(() => pgettask.Cancel());
+                        var pcontent = await pgettask;
+                        HtmlDocument pdoc = new HtmlDocument();
+                        pdoc.LoadHtml(pcontent);
+                        var pdiv = pdoc.DocumentNode.SelectSingleNode(".//div[@class='profile']");
+                        pdiv.RemoveChild(pdiv.SelectSingleNode("./h3"));
+                        artist.Profile = pdiv.InnerHtml;
+                    }, token));
                     var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/artist/{artist.XiamiID}"));
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
                     var body = doc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
-                    List<Task> process = new List<Task>();
+                    process.Add(Task.Run(() =>
+                    {
+                        var id = artist.XiamiID;
+                        artist.HotSongs = new PageItemsCollection<SongModel>(20, ParseArtistTopSongs(
+                            body.SelectSingleNode(".//div[@class='common_sec']/table")).ToList(),
+                            async (page, ptoken) =>
+                            {
+                                if (page == 5)
+                                    return new List<SongModel>();//TODO： 第五次的时候会提醒需要登录
+                                var pgettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/artist/top/id/{id}/page/{page}"));
+                                token.Register(() => pgettask.Cancel());
+                                var pcontent = await pgettask;
+                                HtmlDocument pdoc = new HtmlDocument();
+                                pdoc.LoadHtml(pcontent);
+                                var pbody = pdoc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
+                                return ParseArtistTopSongs(pbody.SelectSingleNode(".//table[@class]")).ToList();
+                            });
+                    }, token));
+                    var title = body.SelectSingleNode(".//h1");
+                    if (artist.Name == null || cover)
+                        artist.Name = title.FirstChild.InnerText;
+                    if (artist.Description == null || cover)
+                        if (title.LastChild.Name == "span")
+                            artist.Description = title.LastChild.InnerText;
+                    var detail = body.SelectSingleNode(".//table");
+
+                    foreach (var item in detail.SelectNodes("./tr"))
+                    {
+                        var tds = item.SelectNodes("./td");
+                        switch (tds[0].InnerText)
+                        {
+                            case "地区：":
+                                artist.Area = tds[1].InnerText;
+                                break;
+                            case "风格：":
+                                artist.Genre = tds[1].SelectNodes("./a").Select((node) =>
+                                  {
+                                      var link = node.GetAttributeValue("href", "/0");
+                                      var gen = GenreModel.GetNew(uint.Parse(link.Substring(link.LastIndexOf('/') + 1)));
+                                      gen.Name = node.InnerText;
+                                      return gen;
+                                  }).ToList();
+                                break;
+                        }
+                    }
+                    if (artist.Art == null || cover)
+                    {
+                        var image = body.SelectSingleNode(".//img");
+                        artist.Art = new Uri(image.GetAttributeValue("src", ArtistModel.SmallDefaultUri));
+                        artist.ArtFull = new Uri(image.GetAttributeValue("src", ArtistModel.LargeDefaultUri).Replace("_2", ""));
+                    }
 
                     await Task.WhenAll(process);
                     LogService.DebugWrite($"Finish Getting info of Artist {artist.XiamiID}", nameof(WebApi));
@@ -344,10 +452,24 @@ namespace JacobC.Xiami.Net
                 catch (Exception e)
                 {
                     LogService.ErrorWrite(e, nameof(WebApi));
+#if DEBUG
+                    System.Diagnostics.Debugger.Break();
+#endif
                     throw e;
                 }
             });
         }
+
+        internal IEnumerable<SongModel> ParseArtistTopSongs(HtmlNode listnode)
+        {
+            foreach (var item in listnode.SelectNodes(".//tr"))
+            {
+                SongModel song = SongModel.GetNew(uint.Parse(item.SelectSingleNode(".//input").GetAttributeValue("value", "0")));
+                ParseListSong(song, item);
+                yield return song;
+            }
+        }
+
 
         #endregion
         #region 获取推荐
@@ -500,10 +622,10 @@ namespace JacobC.Xiami.Net
                 }
                 catch (Exception e)
                 {
+                    LogService.ErrorWrite(e, nameof(WebApi));
 #if DEBUG
                     System.Diagnostics.Debugger.Break();
 #endif
-                    LogService.ErrorWrite(e, nameof(WebApi));
                     throw e;
                 }
             });

@@ -16,6 +16,9 @@ namespace JacobC.Xiami.Net
     /// <summary>
     /// Windows桌面客户端使用的Api
     /// </summary>
+    /// <remarks>
+    /// Api弃置
+    /// </remarks>
     public class WindowsDesktopApi : IXiamiApi
     {
         //TODO: 需要增加cookieContainer，av=4.5

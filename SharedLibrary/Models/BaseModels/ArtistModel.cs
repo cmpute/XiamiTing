@@ -51,7 +51,7 @@ namespace JacobC.Xiami.Models
 
         string _Profile = default(string);
         /// <summary>
-        /// 获取或设置艺术家简介属性
+        /// 获取或设置艺术家简介属性(Html格式)
         /// </summary>
         public string Profile { get { return _Profile; } set { Set(ref _Profile, value); } }
 
@@ -108,6 +108,13 @@ namespace JacobC.Xiami.Models
         /// 获取或设置艺人所属的专辑
         /// </summary>
         public PageItemsCollection<AlbumModel> Albums { get { return _Albums; } set { Set(ref _Albums, value); } }
+
+
+        IList<GenreModel> _Genre = default(IList<GenreModel>);
+        /// <summary>
+        /// 获取或设置艺人的风格
+        /// </summary>
+        public IList<GenreModel> Genre { get { return _Genre; } set { Set(ref _Genre, value); } }
 
         public override string ToString()
         {

@@ -28,6 +28,11 @@ namespace JacobC.Xiami.Models
         }
         private GenreModel() { }
 
+        /// <summary>
+        /// 获取该风格是不是风格大类
+        /// </summary>
+        public bool IsGroup { get { return XiamiID < 25; } }
+
         PageItemsCollection<SongModel> _TypicalSongs = null;
         /// <summary>
         /// 获取或设置代表曲目列表

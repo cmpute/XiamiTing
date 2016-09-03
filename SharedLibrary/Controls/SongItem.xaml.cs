@@ -44,6 +44,10 @@ namespace JacobC.Xiami.Controls
             //LogService.DebugWrite($"VisualState:{e.NewState.Name}", nameof(SongItem));
             VisualStateManager.GoToState(this, e.NewState.Name, true);
         }
+        protected override void OnApplyTemplate()
+        {
+            Services.LogService.DebugWrite($"OnApplyTemplate with {ItemSource}");
+        }
         private void SongItem_Loaded(object sender, RoutedEventArgs e)
         {
             //System.Diagnostics.Debugger.Break();

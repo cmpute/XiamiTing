@@ -15,8 +15,8 @@ namespace JacobC.Xiami.Net
      */
     public interface IXiamiApi
     {
-        IAsyncAction GetSongInfo(SongModel song, bool cover = false);
-        IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = false);
-        IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = false);
+        IAsyncAction GetSongInfo(SongModel song, bool cover);
+        IAsyncAction GetAlbumInfo(AlbumModel album, bool cover);
+        IAsyncAction GetArtistInfo(ArtistModel artist, bool cover);
     }
 }
