@@ -35,7 +35,7 @@ namespace JacobC.Xiami.Services
         private PlaylistService()
         {
             //TODO: 读取上一次播放的位置
-            CurrentIndex = SettingsService.Instance.Playback.ReadAndReset("TrackID", -1);
+            CurrentIndex = SettingsService.Playback.ReadAndReset("TrackID", -1);
             InitPlaylist();
         }
         #endregion

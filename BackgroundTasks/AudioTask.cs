@@ -33,7 +33,7 @@ namespace JacobC.Xiami.Services
         private AppState foregroundAppState = AppState.Unknown;
         private ManualResetEvent backgroundTaskStarted = new ManualResetEvent(false);
         private bool playbackStartedPreviously = false;
-        Template10.Services.SettingsService.ISettingsService settinghelper = SettingsService.Instance.Playback;
+        Template10.Services.SettingsService.ISettingsService settinghelper = SettingsService.Playback;
         #endregion
 
         #region Helper methods

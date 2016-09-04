@@ -14,19 +14,20 @@ namespace JacobC.Xiami.Services
         /// <summary>
         /// 普通设置
         /// </summary>
-        public ISettingsService General
+        public static ISettingsService General
         {
             get { return Template10.Services.SettingsService.SettingsService.Local; }
         }
 
-        ISettingsService _playback = Template10.Services.SettingsService.SettingsService.Local.Open("Playback");
         /// <summary>
         /// 播放相关设置
         /// </summary>
-        public ISettingsService Playback
-        {
-            get { return _playback; }
-        }
+        public static ISettingsService Playback { get; } = Template10.Services.SettingsService.SettingsService.Local.Open("Playback");
+
+        /// <summary>
+        /// Cookie相关设置
+        /// </summary>
+        public static ISettingsService NetCookies { get; } = Template10.Services.SettingsService.SettingsService.Local.Open("NetCookies");
 
         /// <summary>
         /// 是否在标题栏显示返回按钮

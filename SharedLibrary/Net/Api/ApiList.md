@@ -87,3 +87,5 @@
 |http://www.xiami.com/commentlist/turnpage/id/{radioid}/page/{page}/ajax/1|获取电台评论|h|
 ||||
 |http://www.xiami.com/music/category|~~音乐类别~~|h|
+||||
+|http://www.xiami.com/member/logout|用户登出|u|

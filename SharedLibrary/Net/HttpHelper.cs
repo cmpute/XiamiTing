@@ -11,11 +11,14 @@ using JacobC.Xiami.Services;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using System.Net;
 
 namespace JacobC.Xiami.Net
 {
     public static class HttpHelper
     {
+        public static readonly Uri XiamiDomain = new Uri("http://www.xiami.com");
+
         static HttpClientHandler _handler;
         /// <summary>
         /// 获取控制Http请求属性的<see cref=""/>
@@ -29,8 +32,33 @@ namespace JacobC.Xiami.Net
                 {
                     _handler = new HttpClientHandler();
                     _handler.AutomaticDecompression = System.Net.DecompressionMethods.GZip;
+                    ReadCookies(_handler);
                 }
                 return _handler;
+            }
+        }
+
+        public static void SaveCookies(HttpClientHandler handler)
+        {
+            foreach (var item in handler.CookieContainer.GetCookies(XiamiDomain))
+            {
+                var c = item as System.Net.Cookie;
+                SettingsService.NetCookies.Write(c.Name, c);
+            }
+        }
+        /// <summary>
+        /// 读取Cookie以后删除设置中的Cookie
+        /// </summary>
+        /// <param name="handler"></param>
+        public static void ReadCookies(HttpClientHandler handler, bool reset = true)
+        {
+            if (handler.CookieContainer == null)
+                handler.CookieContainer = new System.Net.CookieContainer();
+            foreach (var item in SettingsService.NetCookies.Values)
+            {
+                var t = reset ? SettingsService.NetCookies.ReadAndReset<Cookie>(item.Key) :
+                    SettingsService.NetCookies.Read<Cookie>(item.Key);
+                if (t != null) handler.CookieContainer.Add(XiamiDomain, t);
             }
         }
 
@@ -39,7 +67,7 @@ namespace JacobC.Xiami.Net
             _handler = new HttpClientHandler();
             _client = new HttpClient(_handler);
         }
-        public static void PrintCookies() => PrintCookies(new Uri("http://www.xiami.com"));
+        public static void PrintCookies() => PrintCookies(XiamiDomain);
         public static void PrintCookies(Uri domain)
         {
             var container = Handler.CookieContainer;
