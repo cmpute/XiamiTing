@@ -219,4 +219,16 @@
     <value>艺术家</value>
     <comment>Artist页标题</comment>
   </data>
+  <data name="ArtistArea.Text" xml:space="preserve">
+    <value>地区：	</value>
+    <comment>ArtistPage艺人地区</comment>
+  </data>
+  <data name="ArtistGenre.Text" xml:space="preserve">
+    <value>风格：	</value>
+    <comment>ArtistPage艺人风格</comment>
+  </data>
+  <data name="GenrePageHeader.Text" xml:space="preserve">
+    <value>风格</value>
+    <comment>GenrePage的标题栏文字</comment>
+  </data>
 </root>

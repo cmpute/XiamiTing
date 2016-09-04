@@ -9,9 +9,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace JacobC.Xiami.ViewModels
 {
-    public class ArtistViewModel : ViewModelBase
+    public class GenreViewModel : ViewModelBase
     {
-        public ArtistViewModel()
+        public GenreViewModel()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
             {
@@ -24,19 +24,16 @@ namespace JacobC.Xiami.ViewModels
             uint id = 0;
             if (!uint.TryParse(parameter.ToString(), out id))
                 NavigationService.Navigate(typeof(Views.LibraryPage));
-            Artist = ArtistModel.GetNew(id);
-            if (Artist.Profile == null)
-                await Net.WebApi.Instance.GetArtistInfo(Artist);
+            Genre = GenreModel.GetNew(id);
+            //if (Genre.Introduction == null)
+            //    await Net.WebApi.Instance.GetAlbumInfo(Album);
         }
 
-        ArtistModel _Artist = default(ArtistModel);
+        GenreModel _Genre = default(GenreModel);
         /// <summary>
-        /// 获取或设置Artist属性
+        /// 获取或设置Genre属性
         /// </summary>
-        public ArtistModel Artist { get { return _Artist; } set { Set(ref _Artist, value); } }
-
-        public DelegateCommand<GenreModel> NavigateGenre => 
-            new DelegateCommand<GenreModel>(async (genre) => await NavigationService.NavigateAsync(typeof(Views.GenrePage), genre.XiamiID));
-
+        public GenreModel Genre { get { return _Genre; } set { Set(ref _Genre, value); } }
+        
     }
 }

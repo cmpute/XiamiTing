@@ -103,6 +103,7 @@
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\DiscoveryViewModel.cs" />
+    <Compile Include="ViewModels\GenreViewModel.cs" />
     <Compile Include="ViewModels\PlaylistPageViewModel.cs" />
     <Compile Include="ViewModels\SettingsPageViewModel.cs" />
     <Compile Include="Views\AlbumPage.xaml.cs">
@@ -116,6 +117,9 @@
     </Compile>
     <Compile Include="Views\DiscoveryPage.xaml.cs">
       <DependentUpon>DiscoveryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GenrePage.xaml.cs">
+      <DependentUpon>GenrePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LibraryPage.xaml.cs">
       <DependentUpon>LibraryPage.xaml</DependentUpon>
@@ -229,6 +233,10 @@
     <Page Include="Views\DiscoveryPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\GenrePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LibraryPage.xaml">
       <SubType>Designer</SubType>

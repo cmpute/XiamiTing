@@ -1,0 +1,25 @@
+﻿<Page
+    x:Class="JacobC.Xiami.Views.GenrePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JacobC.Xiami"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Template10.Controls"
+    xmlns:c="using:JacobC.Xiami.Controls"
+    xmlns:vm="using:JacobC.Xiami.ViewModels"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <vm:GenreViewModel x:Name="VM"/>
+    </Page.DataContext>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader x:Uid="GenrePageHeader" Grid.Row="0" Text="风格" Frame="{x:Bind Frame}"/>
+        <Grid Grid.Row="1" MaxWidth="{StaticResource ContentMaxWidth}">
+        </Grid>
+    </Grid>
+</Page>

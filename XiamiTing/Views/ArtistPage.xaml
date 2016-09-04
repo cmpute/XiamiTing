@@ -15,12 +15,35 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:PageHeader x:Uid="ArtistPageHeader" Grid.Row="0" Text="艺术家"/>
-        <StackPanel Grid.Row="1" MaxWidth="{StaticResource ContentMaxWidth}" Margin="8,8">
-            <TextBlock FontSize="28" FontWeight="Bold" Text="{x:Bind VM.Artist.Name}" TextWrapping="WrapWholeWords"/>
-        </StackPanel>
+        <controls:PageHeader x:Uid="ArtistPageHeader" Grid.Row="0" Text="艺术家" Frame="{x:Bind Frame}"/>
+        <Grid Grid.Row="1" MaxWidth="{StaticResource ContentMaxWidth}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="28"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Margin="8,8">
+                <TextBlock FontSize="28" FontWeight="Bold" Text="{x:Bind VM.Artist.Name}" TextWrapping="WrapWholeWords"/>
+                <TextBlock FontSize="20" Text="{x:Bind VM.Artist.Description}" TextWrapping="WrapWholeWords"/>
+                <Grid Margin="0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <c:ImageEx Width="200" Height="200" Source="{x:Bind VM.Artist.ArtFull}"/>
+                    <StackPanel Grid.Column="1" Margin="24,0,0,0">
+                        <TextBlock FontSize="20">
+                            <Run x:Uid="ArtistArea" Text="Area"/><Run Text="{x:Bind VM.Artist.Area}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="20"
+                                   c:RichTextExtended.Genres="{x:Bind VM.Artist.Genre, Mode=OneWay}" 
+                                   c:RichTextExtended.Navigate="{x:Bind VM.NavigateGenre, Mode=OneWay}"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+            <TextBlock Grid.Row="1" TextWrapping="WrapWholeWords" c:RichTextExtended.Document="{x:Bind VM.Artist.Profile, Mode=OneWay}"/>
+        </Grid>
     </Grid>
 </Page>

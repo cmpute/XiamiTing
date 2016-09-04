@@ -13,42 +13,50 @@
     <Page.DataContext>
         <vm:AlbumViewModel x:Name="VM"/>
     </Page.DataContext>
-    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:PageHeader x:Uid="AlbumPageHeader" Grid.Row="0" Text="专辑"/>
-        <StackPanel Grid.Row="1" MaxWidth="{StaticResource ContentMaxWidth}" Margin="8,8">
-            <TextBlock FontSize="28" FontWeight="Bold" Text="{x:Bind VM.Album.Name}" TextWrapping="WrapWholeWords"/>
-            <TextBlock FontSize="20" Text="{x:Bind VM.Album.Description}" TextWrapping="WrapWholeWords"/>
-            <Grid Margin="0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <c:ImageEx Width="200" Height="200" Source="{x:Bind VM.Album.ArtFull}"/>
-                <StackPanel Grid.Column="1" Margin="24,0,0,0">
-                    <TextBlock FontSize="20">
-                        <Run x:Uid="AlbumArtist" Text="Artist"/><Hyperlink Click="Artist_Click"><Run Text="{x:Bind VM.Album.Artist.Name}"/></Hyperlink>
-                        <LineBreak/>
-                        <Run x:Uid="AlbumLanguage" Text="Language"/><Run Text="{x:Bind VM.Album.Language}"/>
-                        <LineBreak/>
-                        <Run x:Uid="AlbumType" Text="Type"/><Run Text="{x:Bind VM.Album.Type}"/>
-                        <LineBreak/>
-                        <Run x:Uid="AlbumReleaseDate" Text="ReleaseDate"/><Run Text="{x:Bind VM.Album.ReleaseDate}"/>
-                        <LineBreak/>
-                        <Run x:Uid="AlbumPublisher" Text="Publisher"/><Run Text="{x:Bind VM.Album.Publisher}"/>
-                    </TextBlock>
-                </StackPanel>
-            </Grid>
-        </StackPanel>
-        <c:Playlist Grid.Row="2"
-                    MaxWidth="{StaticResource ContentMaxWidth}"
-                    x:Name="Songlist"
-                    SongSource="{x:Bind VM.Album.SongList}"
-                    ListType="AlbumPlaylist"/>
+        <controls:PageHeader x:Uid="AlbumPageHeader" Grid.Row="0" Text="专辑" Frame="{x:Bind Frame}"/>
+        <Grid Grid.Row="1" MaxWidth="{StaticResource ContentMaxWidth}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="28"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Margin="8,8">
+                <TextBlock FontSize="28" FontWeight="Bold" Text="{x:Bind VM.Album.Name}" TextWrapping="WrapWholeWords"/>
+                <TextBlock FontSize="20" Text="{x:Bind VM.Album.Description}" TextWrapping="WrapWholeWords"/>
+                <Grid Margin="0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <c:ImageEx Width="200" Height="200" Source="{x:Bind VM.Album.ArtFull}"/>
+                    <StackPanel Grid.Column="1" Margin="24,0,0,0">
+                        <TextBlock FontSize="20">
+                            <Run x:Uid="AlbumArtist" Text="Artist"/><Hyperlink Click="{x:Bind VM.Artist_Click}"><Run Text="{x:Bind VM.Album.Artist.Name}"/></Hyperlink>
+                            <LineBreak/>
+                            <Run x:Uid="AlbumLanguage" Text="Language"/><Run Text="{x:Bind VM.Album.Language}"/>
+                            <LineBreak/>
+                            <Run x:Uid="AlbumType" Text="Type"/><Run Text="{x:Bind VM.Album.Type}"/>
+                            <LineBreak/>
+                            <Run x:Uid="AlbumReleaseDate" Text="ReleaseDate"/><Run Text="{x:Bind VM.Album.ReleaseDate}"/>
+                            <LineBreak/>
+                            <Run x:Uid="AlbumPublisher" Text="Publisher"/><Run Text="{x:Bind VM.Album.Publisher}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="20"
+                                   c:RichTextExtended.Genres="{x:Bind VM.Album.Genre, Mode=OneWay}" 
+                                   c:RichTextExtended.Navigate="{x:Bind VM.NavigateGenre, Mode=OneWay}"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+            <TextBlock Grid.Row="1" TextWrapping="WrapWholeWords" c:RichTextExtended.Document="{x:Bind VM.Album.Introduction}"/>
+            <c:Playlist Grid.Row="2"
+                        x:Name="Songlist"
+                        SongSource="{x:Bind VM.Album.SongList}"
+                        ListType="AlbumPlaylist"/>
+        </Grid>
     </Grid>
 </Page>

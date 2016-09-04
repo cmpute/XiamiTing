@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace JacobC.Xiami.Models
 {
@@ -44,5 +45,11 @@ namespace JacobC.Xiami.Models
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Name { get { return _Name; } set { Set(ref _Name, WebUtility.HtmlDecode(value)); } }
+
+        //对string的设置默认decode一遍
+        public bool Set(ref string storage, string value, [CallerMemberName] string propertyName = null)
+        {
+            return base.Set<string>(ref storage, WebUtility.HtmlDecode(value), propertyName);
+        }
     }
 }

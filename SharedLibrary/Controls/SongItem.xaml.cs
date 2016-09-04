@@ -79,7 +79,7 @@ namespace JacobC.Xiami.Controls
                         _LinkedCollection.CollectionChanged += _Linkedlist_CollectionChanged;
                         isIncreTtem = _LinkedList.ItemsSource is ISupportIncrementalLoading;
                     }
-                    var index = isIncreTtem?(_LinkedCollection as IList<SongModel>).IndexOf(ItemSource): _LinkedList.IndexFromContainer(item);
+                    var index = isIncreTtem ? (_LinkedCollection as IList<SongModel>).IndexOf(ItemSource) : _LinkedList.IndexFromContainer(item);
                     ListIndex = index + 1;
                     if (PlaylistService.Instance.CurrentIndex == index && index != -1)//正在播放则更新状态
                         VisualStateManager.GoToState(this, "Playing", true);

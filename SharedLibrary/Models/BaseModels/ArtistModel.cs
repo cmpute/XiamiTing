@@ -55,6 +55,12 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Profile { get { return _Profile; } set { Set(ref _Profile, value); } }
 
+        bool _IsXiamiMusician = false;
+        /// <summary>
+        /// 获取或设置是否是虾米音乐人
+        /// </summary>
+        public bool IsXiamiMusician { get { return _IsXiamiMusician; } set { Set(ref _IsXiamiMusician, value); } }
+
 
         #region ICovered Members
         Uri _ArtistAvatarUri = new Uri(SmallDefaultUri);

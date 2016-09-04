@@ -23,6 +23,8 @@ namespace JacobC.Xiami.Models
         /// <returns></returns>
         public static SongModel GetNew(uint xiamiID)
         {
+            if (xiamiID == 0)
+                throw new ArgumentException("歌曲ID错误");
             SongModel song = null;
             if (!(_dict?.TryGetValue(xiamiID, out song) ?? false))
             {

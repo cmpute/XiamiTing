@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Navigation;
 
 namespace JacobC.Xiami.ViewModels
@@ -34,5 +35,14 @@ namespace JacobC.Xiami.ViewModels
         /// 获取或设置内容专辑属性
         /// </summary>
         public AlbumModel Album { get { return _Album; } set { Set(ref _Album, value); } }
+
+
+        public void Artist_Click(Hyperlink sender, HyperlinkClickEventArgs args)
+        {
+            NavigationService.Navigate(typeof(Views.ArtistPage), Album.Artist.XiamiID);
+        }
+
+        public DelegateCommand<GenreModel> NavigateGenre =>
+            new DelegateCommand<GenreModel>(async (genre) => await NavigationService.NavigateAsync(typeof(Views.GenrePage), genre.XiamiID));
     }
 }

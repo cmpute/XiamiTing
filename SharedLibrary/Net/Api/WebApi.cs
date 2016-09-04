@@ -37,6 +37,7 @@ namespace JacobC.Xiami.Net
             }
         }
 
+        #region Common Methods
         internal void ParseListSong(SongModel song, HtmlNode tr)
         {
             song.Available = tr.SelectSingleNode(".//input").GetAttributeValue("checked", "") == "checked";
@@ -63,7 +64,7 @@ namespace JacobC.Xiami.Net
                 }
             }
         }
-
+        #endregion
         #region 获取歌曲信息
 
         public IAsyncAction GetSongInfo(SongModel song, bool cover = true)
@@ -290,7 +291,7 @@ namespace JacobC.Xiami.Net
                         album.ArtFull = new Uri(art.ParentNode.GetAttributeValue("href", AlbumModel.LargeDefaultUri));
                     }
                     if (album.Introduction == null || cover)
-                        album.Introduction = body.SelectSingleNode(".//span[@property='v:summary']").InnerText.Replace("<br />", "");
+                        album.Introduction = body.SelectSingleNode(".//span[@property='v:summary']")?.InnerText?.Replace("<br />", "");
 
                     await Task.WhenAll(process);
                     LogService.DebugWrite($"Finishi Getting info of Album {album.XiamiID}", nameof(WebApi));
@@ -317,7 +318,7 @@ namespace JacobC.Xiami.Net
                     {
                         if (songitem.NodeType != HtmlNodeType.Element)
                             continue;
-                        SongModel song = SongModel.GetNew(uint.Parse(songitem.SelectSingleNode("//input").GetAttributeValue("value", "0")));
+                        SongModel song = SongModel.GetNew(uint.Parse(songitem.SelectSingleNode(".//input").GetAttributeValue("value", "0")));
                         song.Album = album;
                         song.DiscID = disc;
                         song.TrackID = int.Parse(songitem.ChildNodes[3].InnerText);
@@ -375,8 +376,22 @@ namespace JacobC.Xiami.Net
                 try
                 {
                     LogService.DebugWrite($"Get info of Artist {artist.XiamiID}", nameof(WebApi));
-
+                    
                     List<Task> process = new List<Task>();
+                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/artist/{artist.XiamiID}"));
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(content);
+                    //System.Diagnostics.Debugger.Break();
+                    if (artist.IsXiamiMusician)
+                    { ParseMusicianInfo(artist, doc.DocumentNode.SelectSingleNode("/html/body/div[@id='Glory']"), cover); return; }
+                    else if (doc.DocumentNode.SelectSingleNode("//h1").SelectSingleNode("../i[@title='音乐人']") != null)
+                    {
+                        artist.IsXiamiMusician = true;
+                        ParseMusicianInfo(artist, doc.DocumentNode.SelectSingleNode("/html/body/div[@id='Glory']"), cover); return;
+                    }
+                    var body = doc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
                     process.Add(Task.Run(async () =>
                     {
                         var pgettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/artist/profile/id/{artist.XiamiID}"));
@@ -388,12 +403,6 @@ namespace JacobC.Xiami.Net
                         pdiv.RemoveChild(pdiv.SelectSingleNode("./h3"));
                         artist.Profile = pdiv.InnerHtml;
                     }, token));
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/artist/{artist.XiamiID}"));
-                    token.Register(() => gettask.Cancel());
-                    var content = await gettask;
-                    HtmlDocument doc = new HtmlDocument();
-                    doc.LoadHtml(content);
-                    var body = doc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
                     process.Add(Task.Run(() =>
                     {
                         var id = artist.XiamiID;
@@ -401,8 +410,7 @@ namespace JacobC.Xiami.Net
                             body.SelectSingleNode(".//div[@class='common_sec']/table")).ToList(),
                             async (page, ptoken) =>
                             {
-                                if (page == 5)
-                                    return new List<SongModel>();//TODO： 第五次的时候会提醒需要登录
+                                System.Diagnostics.Debugger.Break();
                                 var pgettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/artist/top/id/{id}/page/{page}"));
                                 token.Register(() => pgettask.Cancel());
                                 var pcontent = await pgettask;
@@ -459,7 +467,6 @@ namespace JacobC.Xiami.Net
                 }
             });
         }
-
         internal IEnumerable<SongModel> ParseArtistTopSongs(HtmlNode listnode)
         {
             foreach (var item in listnode.SelectNodes(".//tr"))
@@ -470,7 +477,10 @@ namespace JacobC.Xiami.Net
             }
         }
 
-
+        internal void ParseMusicianInfo(ArtistModel artist, HtmlNode contentnode, bool cover = true)
+        {
+            System.Diagnostics.Debug.Write("尚未完成获取音乐人信息");
+        }
         #endregion
         #region 获取推荐
 
@@ -532,14 +542,18 @@ namespace JacobC.Xiami.Net
                     album.Art = new Uri(art.Replace("_5", "_1"));
                     album.ArtFull = new Uri(art.Replace("_5", ""));
                 }
-                var infonodes = nodes[1].SelectNodes(".//a");
+                var infonodes = nodes[1].SelectNodes("./p");
                 if (album.Name == null)
                     album.Name = infonodes[0].InnerText;
                 if (album.Artist == null)
                 {
-                    var arlink = infonodes[1].GetAttributeValue("href", "/0");
+                    var alinks = infonodes[1].SelectNodes("./a");
+                    var arlink = alinks[0].GetAttributeValue("href", "/0");
                     album.Artist = ArtistModel.GetNew(uint.Parse(arlink.Substring(arlink.LastIndexOf('/') + 1)));
-                    album.Artist.Name = infonodes[1].InnerText;
+                    album.Artist.Name = alinks[0].InnerText;
+                    if (alinks.Count > 1)
+                        if (alinks[1].GetAttributeValue("title", "") == "音乐人")
+                            album.Artist.IsXiamiMusician = true;
                 }
                 yield return album;
             }
