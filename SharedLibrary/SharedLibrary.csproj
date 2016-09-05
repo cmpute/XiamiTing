@@ -169,6 +169,7 @@
     <Compile Include="Net\ConnectException.cs" />
     <Compile Include="Net\HttpHelper.cs" />
     <Compile Include="Net\LoginHelper.cs" />
+    <Compile Include="Net\LoginResult.cs" />
     <Compile Include="PageItemsCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />

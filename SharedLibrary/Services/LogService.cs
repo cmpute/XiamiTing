@@ -18,14 +18,21 @@ namespace JacobC.Xiami.Services
         public static void DebugWrite(string text, string sourcetype="Log", [CallerMemberName]string caller = null)
         {
 #if DEBUG
-            System.Diagnostics.Debug.WriteLine($"[{DateTime.UtcNow.ToString("T")} {sourcetype}][caller:{caller}] {text}");
+            System.Diagnostics.Debug.WriteLine($"[{DateTime.Now.ToString("T")} {sourcetype}][caller:{caller}] {text}");
 #endif
         }
 
-        public static void ErrorWrite(Exception e, string sourcetype = "Log", [CallerMemberName]string caller = null)
+        /// <summary>
+        /// 向调试输出台写入错误
+        /// </summary>
+        /// <returns>是否处理了错误</returns>
+        public static bool ErrorWrite(Exception e, string sourcetype = "Log", [CallerMemberName]string caller = null)
         {
 #if DEBUG
             DebugWrite($"{e.Message} [inner:{e.InnerException?.Message}]", $"{sourcetype} Error", caller);
+            return false;
+#else
+            return true;
 #endif
         }
     }

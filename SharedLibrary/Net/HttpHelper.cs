@@ -1,24 +1,22 @@
-﻿using System;
+﻿using JacobC.Xiami.Services;
+using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
-using Windows.Foundation;
-using System.Net.Http;
-using JacobC.Xiami.Services;
-using Windows.ApplicationModel;
-using Windows.Storage;
-using Windows.Storage.Streams;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Storage;
+using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
 
 namespace JacobC.Xiami.Net
 {
+    //TODO: 针对具体的网络异常进行处理
     public static class HttpHelper
     {
         public static readonly Uri XiamiDomain = new Uri("http://www.xiami.com");
 
+        #region Public Objects
         static HttpClientHandler _handler;
         /// <summary>
         /// 获取控制Http请求属性的<see cref=""/>
@@ -38,6 +36,32 @@ namespace JacobC.Xiami.Net
             }
         }
 
+        static HttpClient _client;
+        static object clientlocker = new object();
+        public static HttpClient Client
+        {
+            get
+            {
+                lock (clientlocker)
+                {
+                    if (_client == null)
+                    {
+                        _client = new HttpClient(Handler);
+                        _client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
+                        //_client.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                        _client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, sdch");
+                        _client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("zh-CN,zh;q=0.8");
+                        _client.DefaultRequestHeaders.Referrer = new Uri("http://www.xiami.com/play?ids=/song/playlist/id/1/type/9");
+                        //_client.DefaultRequestHeaders.Connection.ParseAdd("keep-alive");
+                        _client.Timeout = TimeSpan.FromSeconds(5);
+                    }
+                }
+                return _client;
+            }
+        }
+        #endregion
+
+        #region Cookies
         public static void SaveCookies(HttpClientHandler handler)
         {
             foreach (var item in handler.CookieContainer.GetCookies(XiamiDomain))
@@ -76,31 +100,9 @@ namespace JacobC.Xiami.Net
                 LogService.DebugWrite(item.ToString(), "Cookie");
             }
         }
+        #endregion
 
-        static HttpClient _client;
-        static object clientlocker = new object();
-        public static HttpClient Client
-        {
-            get
-            {
-                lock (clientlocker)
-                {
-                    if (_client == null)
-                    {
-                        _client = new HttpClient(Handler);
-                        _client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
-                        //_client.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-                        _client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip, deflate, sdch");
-                        _client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("zh-CN,zh;q=0.8");
-                        _client.DefaultRequestHeaders.Referrer = new Uri("http://www.xiami.com/play?ids=/song/playlist/id/1/type/9");
-                        //_client.DefaultRequestHeaders.Connection.ParseAdd("keep-alive");
-                        _client.Timeout = TimeSpan.FromSeconds(5);
-                    }
-                }
-                return _client;
-            }
-        }
-
+        #region Get/Post
         public static IAsyncOperation<string> PostAsync(Uri uri, HttpContent content)
         {
             return Run(async token =>
@@ -113,7 +115,7 @@ namespace JacobC.Xiami.Net
                     using (var get = await postTask)
                     {
                         if (!get.IsSuccessStatusCode)
-                            throw new ConnectException("在HttpRequest中出现错误", new System.Net.Http.HttpRequestException(get.StatusCode.ToString()));
+                            throw new ConnectException("在HttpRequest中出现错误", new HttpRequestException(get.StatusCode.ToString()));
                         else
                             return await get.Content.ReadAsStringAsync();
                     }
@@ -121,6 +123,13 @@ namespace JacobC.Xiami.Net
                 catch (System.Runtime.InteropServices.COMException ce)
                 {
                     throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
+                }
+                catch(Exception e)
+                {
+#if DEBUG
+                    System.Diagnostics.Debugger.Break();
+#endif
+                    throw new ConnectException("待处理异常",e);
                 }
             });
         }
@@ -151,6 +160,13 @@ namespace JacobC.Xiami.Net
                 {
                     throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
                 }
+                catch (Exception e)
+                {
+#if DEBUG
+                    System.Diagnostics.Debugger.Break();
+#endif
+                    throw new ConnectException("待处理异常", e);
+                }
             });
         }
         public static IAsyncOperation<Stream> GetAsyncAsStream(Uri uri)
@@ -173,6 +189,13 @@ namespace JacobC.Xiami.Net
                 {
                     throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
                 }
+                catch (Exception e)
+                {
+#if DEBUG
+                    System.Diagnostics.Debugger.Break();
+#endif
+                    throw new ConnectException("待处理异常", e);
+                }
             });
         }
         //TODO: HTML解析的时候使用Stream进行解析
@@ -194,5 +217,13 @@ namespace JacobC.Xiami.Net
                 }
             }
         }
+        #endregion
+
+        #region Extended Methods
+        public static void ParseAdd(this HttpContentHeaders headers, string key, string value)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }
