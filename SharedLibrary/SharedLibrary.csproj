@@ -107,6 +107,7 @@
     <None Include="Net\Api\Api Compare.xlsx" />
     <None Include="Net\Api\ApiList.md" />
     <None Include="Net\WebAnalysis.log" />
+    <None Include="Net\xiami-tools.py" />
     <None Include="Net\xiami.py" />
     <None Include="project.json" />
   </ItemGroup>

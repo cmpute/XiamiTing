@@ -23,8 +23,8 @@
 ||||
 |http://www.xiami.com/song/{songid}|歌曲页面|h|
 |http://www.xiami.com/song/fav?ids={songid}&trace_fm=47.078186793084285&_xiamitoken={xiamitoken}|收藏某歌曲|u|
-|http://www.xiami.com/song/playlist/id/{id}/type/{playlisttype}|获取歌曲信息(playlisttype=0歌曲1专辑3精选集)|x|
-|http://www.xiami.com/song/playlist/id/1/type/{playlisttype}|获取播放列表(playlisttype=9每日歌单15未登录每日歌单)|x|
+|http://www.xiami.com/song/playlist/id/{id}/type/{playlisttype}|获取歌曲信息(playlisttype=0歌曲1专辑3精选集)(可选参数cat=json返回json)|x|
+|http://www.xiami.com/song/playlist/id/1/type/{playlisttype}|获取播放列表(playlisttype=9每日歌单15未登录每日歌单)(可选参数cat=json返回json)|x|
 ||||
 |http://www.xiami.com/lrc/{songid}|文本歌词|h|
 ||||

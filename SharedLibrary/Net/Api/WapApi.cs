@@ -69,7 +69,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get info of Song {song.XiamiID}", nameof(WapApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
@@ -150,7 +150,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get info of Album {album.XiamiID}", nameof(WapApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/album?id={album.XiamiID}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/app/xiating/album?id={album.XiamiID}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
@@ -239,7 +239,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get info of Artist {artist.XiamiID}", nameof(WapApi));
                     
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/artist?id={artist.XiamiID}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/app/xiating/artist?id={artist.XiamiID}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
@@ -293,7 +293,7 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/artist?id={artistId}&page={pageindex}&callback=JQuery"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/app/xiating/artist?id={artistId}&page={pageindex}&callback=JQuery");
                     c.Register(() => gettask.Cancel());
                     var content = System.Text.RegularExpressions.Regex.Unescape(await gettask);
                     HtmlDocument doc = new HtmlDocument();
@@ -314,7 +314,7 @@ namespace JacobC.Xiami.Net
             {
                 try
                 {
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/artist-album2?id={artistId}&page={pageindex}&callback=JQuery"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/app/xiating/artist-album2?id={artistId}&page={pageindex}&callback=JQuery");
                     c.Register(() => gettask.Cancel());
                     var content = System.Text.RegularExpressions.Regex.Unescape(await gettask);
                     HtmlDocument doc = new HtmlDocument();

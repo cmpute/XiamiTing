@@ -77,7 +77,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get info of Song {song.XiamiID}", nameof(WebApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/song/{song.XiamiID}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/song/{song.XiamiID}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
@@ -217,7 +217,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get info of Album {album.XiamiID}", nameof(WebApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/album/{album.XiamiID}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/album/{album.XiamiID}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
@@ -378,7 +378,7 @@ namespace JacobC.Xiami.Net
                     LogService.DebugWrite($"Get info of Artist {artist.XiamiID}", nameof(WebApi));
                     
                     List<Task> process = new List<Task>();
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/artist/{artist.XiamiID}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/artist/{artist.XiamiID}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
@@ -394,7 +394,7 @@ namespace JacobC.Xiami.Net
                     var body = doc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
                     process.Add(Task.Run(async () =>
                     {
-                        var pgettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/artist/profile/id/{artist.XiamiID}"));
+                        var pgettask = HttpHelper.GetAsync($"http://www.xiami.com/artist/profile/id/{artist.XiamiID}");
                         token.Register(() => pgettask.Cancel());
                         var pcontent = await pgettask;
                         HtmlDocument pdoc = new HtmlDocument();
@@ -411,7 +411,7 @@ namespace JacobC.Xiami.Net
                             async (page, ptoken) =>
                             {
                                 System.Diagnostics.Debugger.Break();
-                                var pgettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/artist/top/id/{id}/page/{page}"));
+                                var pgettask = HttpHelper.GetAsync($"http://www.xiami.com/artist/top/id/{id}/page/{page}");
                                 token.Register(() => pgettask.Cancel());
                                 var pcontent = await pgettask;
                                 HtmlDocument pdoc = new HtmlDocument();
@@ -492,7 +492,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get info of MainPage", nameof(WebApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri("http://www.xiami.com/"));
+                    var gettask = HttpHelper.GetAsync("http://www.xiami.com/");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
@@ -567,7 +567,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get Daily Recommendation", nameof(WebApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri("http://www.xiami.com/index/recommend?_" + ParamHelper.GetTimestamp()));
+                    var gettask = HttpHelper.GetAsync("http://www.xiami.com/index/recommend?_" + ParamHelper.GetTimestamp());
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     var i1 = content.IndexOf("\"data\"") + 7;
@@ -625,7 +625,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get id of Radio type={radiotype} oid={oid}", nameof(WebApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/radio/play/type/{(int)radiotype}/oid/{oid}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/radio/play/type/{(int)radiotype}/oid/{oid}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     var start = content.IndexOf("value=\"");
@@ -654,7 +654,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get type of Radio id={radioid}", nameof(WebApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/radio/play/id/{radioid}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/radio/play/id/{radioid}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     var start = content.IndexOf("dataUrl=/");
@@ -679,7 +679,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Fresh Radio Songlist {radio.Radio.ToString()}", nameof(WebApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/radio/xml/type/{(int)(radio.Radio.Type)}/id/{radio.Radio.OID}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/radio/xml/type/{(int)(radio.Radio.Type)}/id/{radio.Radio.OID}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     XmlDocument doc = new XmlDocument();

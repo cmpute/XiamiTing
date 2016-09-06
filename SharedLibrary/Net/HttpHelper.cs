@@ -59,6 +59,7 @@ namespace JacobC.Xiami.Net
                 return _client;
             }
         }
+
         #endregion
 
         #region Cookies
@@ -103,11 +104,11 @@ namespace JacobC.Xiami.Net
         #endregion
 
         #region Get/Post
-        public static IAsyncOperation<string> PostAsync(Uri uri, HttpContent content)
+        public static IAsyncOperation<string> PostAsync(string uri, HttpContent content)
         {
             return Run(async token =>
             {
-                //re.Headers.ContentType = new Windows.Web.Http.Headers.HttpMediaTypeHeaderValue("application/x-www-form-urlencoded");
+                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
                 var postTask = Client.PostAsync(uri, content);
                 token.Register(() => postTask.AsAsyncOperation().Cancel());
                 try
@@ -133,15 +134,48 @@ namespace JacobC.Xiami.Net
                 }
             });
         }
-        public static IAsyncOperation<string> PostAsync(Uri uri, string request)
+        public static IAsyncOperation<string> PostAsync(string uri, string request)
         {
             using (var re = new StringContent(request))
             {
                 return PostAsync(uri, re);
             }
         }
+        public static IAsyncOperation<string> PostAsync(string uri, HttpContent content, Action<HttpRequestHeaders> headersOperation)
+        {
+            return Run(async token =>
+            {
+                HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Post, uri);
+                message.Content = content;
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                headersOperation(message.Headers);
+                var postTask = Client.SendAsync(message, token);
+                try
+                {
+                    using (var get = await postTask)
+                    {
+                        if (!get.IsSuccessStatusCode)
+                            throw new ConnectException("在HttpRequest中出现错误", new HttpRequestException(get.StatusCode.ToString()));
+                        else
+                            return await get.Content.ReadAsStringAsync();
+                    }
+                }
+                catch (System.Runtime.InteropServices.COMException ce)
+                {
+                    throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
+                }
+                catch (Exception e)
+                {
+#if DEBUG
+                    System.Diagnostics.Debugger.Break();
+#endif
+                    throw new ConnectException("待处理异常", e);
+                }
+            });
+        }
+        public static IAsyncOperation<string> PostAsync(string uri, string request, Action<HttpRequestHeaders> headersOperation) => PostAsync(uri, new StringContent(request), headersOperation);
 
-        public static IAsyncOperation<string> GetAsync(Uri uri)
+        public static IAsyncOperation<string> GetAsync(string uri)
         {
             return Run(async token =>
             {
@@ -156,7 +190,7 @@ namespace JacobC.Xiami.Net
                             return await get.Content.ReadAsStringAsync();
                     }
                 }
-                catch(System.Runtime.InteropServices.COMException ce)
+                catch (System.Runtime.InteropServices.COMException ce)
                 {
                     throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
                 }
@@ -169,7 +203,7 @@ namespace JacobC.Xiami.Net
                 }
             });
         }
-        public static IAsyncOperation<Stream> GetAsyncAsStream(Uri uri)
+        public static IAsyncOperation<Stream> GetAsyncAsStream(string uri)
         {
             return Run(async token =>
             {

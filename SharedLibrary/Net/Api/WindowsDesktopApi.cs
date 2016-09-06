@@ -55,7 +55,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get info of Song {song.XiamiID}", nameof(WindowsDesktopApi));
                     
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/app/xiating/song?id={song.XiamiID}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();

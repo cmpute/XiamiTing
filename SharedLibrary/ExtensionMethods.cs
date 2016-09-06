@@ -9,6 +9,8 @@ using Windows.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.Data.Xml.Dom;
 using System.Collections.Generic;
+using System.Text;
+using System.Net;
 
 namespace JacobC.Xiami
 {
@@ -23,16 +25,19 @@ namespace JacobC.Xiami
             setting.Remove(key);
             return val;
         }
+
         /// <summary>
         /// 将对象转换成枚举类型
         /// </summary>
         public static T ParseEnum<T>(object value) => (T)(Enum.Parse(typeof(T), value.ToString()));
+
         /// <summary>
         /// 将<see cref="DependencyPropertyChangedEventArgs"/>类型转换成<see cref="ChangedEventArgs{TValue}"类型/>
         /// </summary>
         /// <typeparam name="T">ChangedEventArgs参数类型</typeparam>
         public static ChangedEventArgs<T> ToChangedEventArgs<T>(this DependencyPropertyChangedEventArgs e)
             => new ChangedEventArgs<T>((T)e.OldValue, (T)e.NewValue);
+
         /// <summary>
         /// 使async方法同步运行
         /// </summary>
@@ -68,6 +73,7 @@ namespace JacobC.Xiami
         /// </summary>
         /// <param name="asyncMethod">要同步运行的方法</param>
         public static T InvokeAndWait<T>(Func<IAsyncOperation<T>> asyncMethod) => InvokeAndWait(async () => await asyncMethod());
+
         /// <summary>
         /// 获取指定类型的参数
         /// </summary>
@@ -76,6 +82,7 @@ namespace JacobC.Xiami
         {
             return Template10.Services.SerializationService.SerializationService.Json.Deserialize<T>(e.Parameter?.ToString());
         }
+
         public static IXmlNode Element(this IXmlNode node, string name)
         {
             foreach (var item in node.ChildNodes)
@@ -91,6 +98,26 @@ namespace JacobC.Xiami
             foreach (var item in node.ChildNodes)
                 if (item.LocalName?.ToString() == name)
                     yield return item;
+        }
+
+        /// <summary>
+        /// 将字典对象转化成Html的Query格式字符串
+        /// </summary>
+        public static string ToQueryString(this Dictionary<string,string> dic, bool encode = true)
+        {
+            bool isfirst = true;
+            StringBuilder res = new StringBuilder();
+            foreach (var item in dic)
+            {
+                if (isfirst)
+                    isfirst = false;
+                else
+                    res.Append("&");
+                res.Append(encode ? WebUtility.UrlEncode(item.Key) : item.Key);
+                res.Append("=");
+                res.Append(encode ? WebUtility.UrlEncode(item.Value) : item.Value);
+            }
+            return res.ToString();
         }
     }
 }

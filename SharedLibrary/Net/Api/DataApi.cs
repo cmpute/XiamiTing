@@ -26,7 +26,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get basic info of Song {song.XiamiID}", nameof(DataApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/song/playlist?id={song.XiamiID}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/song/playlist?id={song.XiamiID}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     //TODO: 完成剩下的部分
@@ -64,7 +64,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get link of Song {songID}", nameof(DataApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri(isHQ ? $"http://www.xiami.com/song/gethqsong/sid/{songID}" : $"http://www.xiami.com/song/playlist/id/{songID}"));
+                    var gettask = HttpHelper.GetAsync(isHQ ? $"http://www.xiami.com/song/gethqsong/sid/{songID}" : $"http://www.xiami.com/song/playlist/id/{songID}");
 
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
@@ -107,6 +107,12 @@ namespace JacobC.Xiami.Net
             if (song.XiamiID == 0)
                 throw new ArgumentException("SongModel未设置ID");
             return PushPlayStateXiami(song.XiamiID, state);
+        }
+
+        public static IAsyncOperation<bool> CheckUserIsVip(string username)
+        {
+            //http://www.xiami.com/vip/role?user_id={userid}&_ksTS={timestamp}_{x}&callback=jsonp{x+1}
+            throw new NotImplementedException();
         }
     }
     /// <summary>
