@@ -4,6 +4,8 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
@@ -104,132 +106,85 @@ namespace JacobC.Xiami.Net
         #endregion
 
         #region Get/Post
-        public static IAsyncOperation<string> PostAsync(string uri, HttpContent content)
+        /// <summary>
+        /// 发送Http请求
+        /// </summary>
+        /// <param name="uri">请求地址</param>
+        /// <param name="method">HTTP方法</param>
+        /// <param name="content">请求内容</param>
+        /// <param name="headersOperation">对请求标头的操作</param>
+        /// <returns>请求的Response内容，注意Dispose</returns>
+        internal static IAsyncOperation<HttpContent> SendMessageInternal(
+            string uri,
+            HttpMethod method,
+            HttpContent content,
+            Action<HttpRequestHeaders> headersOperation,
+            [CallerMemberName]string caller = "")
         {
-            return Run(async token =>
+            return Run(async (rtoken) =>
             {
-                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                var postTask = Client.PostAsync(uri, content);
-                token.Register(() => postTask.AsAsyncOperation().Cancel());
+                HttpRequestMessage msg = new HttpRequestMessage(method, uri);
+                if (content != null)
+                    msg.Content = content;
+                headersOperation?.Invoke(msg.Headers);
+                var request = Client.SendAsync(msg);
+                rtoken.Register(() => request.AsAsyncOperation().Cancel());
                 try
                 {
-                    using (var get = await postTask)
-                    {
-                        if (!get.IsSuccessStatusCode)
-                            throw new ConnectException("在HttpRequest中出现错误", new HttpRequestException(get.StatusCode.ToString()));
-                        else
-                            return await get.Content.ReadAsStringAsync();
-                    }
+                    var get = await request;
+                    if (!get.IsSuccessStatusCode)
+                        throw new ConnectException("在HttpRequest中出现错误", new HttpRequestException(get.StatusCode.ToString()));
+                    else
+                        return get.Content;
                 }
                 catch (System.Runtime.InteropServices.COMException ce)
                 {
-                    throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
+                    throw new ConnectException($"在{caller}中出现错误", ce);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
 #if DEBUG
                     System.Diagnostics.Debugger.Break();
 #endif
-                    throw new ConnectException("待处理异常",e);
+                    throw new ConnectException("待处理异常", e);
                 }
             });
         }
-        public static IAsyncOperation<string> PostAsync(string uri, string request)
+
+        public static IAsyncOperation<string> PostAsync(string uri, HttpContent content, Action<HttpRequestHeaders> headersOperation = null)
+        {
+            return Run(async token =>
+            {
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                var postTask = SendMessageInternal(uri,HttpMethod.Post,content, headersOperation);
+                token.Register(() => postTask.Cancel());
+                using (var resp = await postTask)
+                    return await resp.ReadAsStringAsync();
+            });
+        }
+        public static IAsyncOperation<string> PostAsync(string uri, string request, Action<HttpRequestHeaders> headersOperation = null)
         {
             using (var re = new StringContent(request))
-            {
-                return PostAsync(uri, re);
-            }
+                return PostAsync(uri, re, headersOperation);
         }
-        public static IAsyncOperation<string> PostAsync(string uri, HttpContent content, Action<HttpRequestHeaders> headersOperation)
+        public static IAsyncOperation<string> GetAsync(string uri, Action<HttpRequestHeaders> headersOperation = null)
         {
             return Run(async token =>
             {
-                HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Post, uri);
-                message.Content = content;
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                headersOperation(message.Headers);
-                var postTask = Client.SendAsync(message, token);
-                try
-                {
-                    using (var get = await postTask)
-                    {
-                        if (!get.IsSuccessStatusCode)
-                            throw new ConnectException("在HttpRequest中出现错误", new HttpRequestException(get.StatusCode.ToString()));
-                        else
-                            return await get.Content.ReadAsStringAsync();
-                    }
-                }
-                catch (System.Runtime.InteropServices.COMException ce)
-                {
-                    throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    System.Diagnostics.Debugger.Break();
-#endif
-                    throw new ConnectException("待处理异常", e);
-                }
-            });
-        }
-        public static IAsyncOperation<string> PostAsync(string uri, string request, Action<HttpRequestHeaders> headersOperation) => PostAsync(uri, new StringContent(request), headersOperation);
-
-        public static IAsyncOperation<string> GetAsync(string uri)
-        {
-            return Run(async token =>
-            {
-                try
-                {
-                    var t = Client.GetAsync(uri, token);
-                    using (var get = await t)
-                    {
-                        if (!get.IsSuccessStatusCode)
-                            throw new ConnectException("在HttpRequest中出现错误", new System.Net.Http.HttpRequestException(get.StatusCode.ToString()));
-                        else
-                            return await get.Content.ReadAsStringAsync();
-                    }
-                }
-                catch (System.Runtime.InteropServices.COMException ce)
-                {
-                    throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    System.Diagnostics.Debugger.Break();
-#endif
-                    throw new ConnectException("待处理异常", e);
-                }
+                var gettask = SendMessageInternal(uri, HttpMethod.Get, null, headersOperation);
+                token.Register(() => gettask.Cancel());
+                using (var resp = await gettask)
+                    return await resp.ReadAsStringAsync();
             });
         }
         public static IAsyncOperation<Stream> GetAsyncAsStream(string uri)
         {
             return Run(async token =>
             {
-                var postTask = Client.GetAsync(uri);
-                token.Register(() => postTask.AsAsyncOperation().Cancel());
-                try
-                {
-                    using (var get = await postTask)
-                    {
-                        if (!get.IsSuccessStatusCode)
-                            throw new ConnectException("在HttpRequest中出现错误", new System.Net.Http.HttpRequestException(get.StatusCode.ToString()));
-                        else
-                            return await get.Content.ReadAsStreamAsync();
-                    }
-                }
-                catch (System.Runtime.InteropServices.COMException ce)
-                {
-                    throw new ConnectException($"在{nameof(GetAsync)}中出现错误", ce);
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    System.Diagnostics.Debugger.Break();
-#endif
-                    throw new ConnectException("待处理异常", e);
-                }
+                var gettask = SendMessageInternal(uri, HttpMethod.Get, null, null);
+                token.Register(() => gettask.Cancel());
+                using (var resp = await gettask)
+                    return await resp.ReadAsStreamAsync();
             });
         }
         //TODO: HTML解析的时候使用Stream进行解析
@@ -250,13 +205,6 @@ namespace JacobC.Xiami.Net
                         await content.Content.CopyToAsync(stream);
                 }
             }
-        }
-        #endregion
-
-        #region Extended Methods
-        public static void ParseAdd(this HttpContentHeaders headers, string key, string value)
-        {
-            throw new NotImplementedException();
         }
         #endregion
     }

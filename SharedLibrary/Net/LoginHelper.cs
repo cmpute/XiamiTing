@@ -7,6 +7,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Security.Credentials;
+using Windows.Security.Cryptography;
+using System.Security.Cryptography;
 using Newtonsoft.Json;
 using HtmlAgilityPack;
 
@@ -50,17 +52,39 @@ namespace JacobC.Xiami.Net
             else
                 return new LoginResult(LoginStatus.Unknown);
         }
-        public static async Task<LoginResult> TaoBaoLogin(string username,string password)
+        public static async Task<LoginResult> TaoBaoLogin(string username, string password)
         {
             var response = await HttpHelper.GetAsync("https://passport.alipay.com/mini_login.htm?lang=&appName=xiami&appEntrance=taobao&cssLink=&styleType=vertical&bizParams=&notLoadSsoView=&notKeepLogin=&rnd=0.6477347570091512?lang=zh_cn&appName=xiami&appEntrance=taobao&cssLink=https%3A%2F%2Fh.alipayobjects.com%2Fstatic%2Fapplogin%2Fassets%2Flogin%2Fmini-login-form-min.css%3Fv%3D20140402&styleType=vertical&bizParams=&notLoadSsoView=true&notKeepLogin=true&rnd=0.9090916193090379");
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(response);
             var form = doc.DocumentNode.SelectSingleNode("/html/body/div");
             Func<string, string> GetValue = (string name) => form.SelectSingleNode($".//input[@name='{name}']").GetAttributeValue("value", "");
+            string encrypt = "";
+            try
+            {
+                using (var rsa = RSA.Create())
+                {
+                    Encoding provider = Encoding.UTF8;
+                    RSAParameters publickey = new RSAParameters()
+                    {
+                        Modulus = Convert.FromBase64String(GetValue("modulus")),
+                        Exponent = Convert.FromBase64String("00010001")
+                    };
+                    rsa.ImportParameters(publickey);
+                    StringBuilder res = new StringBuilder();
+                    foreach (var d in rsa.Encrypt(provider.GetBytes(password), RSAEncryptionPadding.Pkcs1))
+                        res.Append(Convert.ToString(d, 16));
+                    encrypt = res.ToString();
+                    System.Diagnostics.Debugger.Break();
+                }
+            }
+            catch
+            { System.Diagnostics.Debugger.Break(); }
             var data = new Dictionary<string, string>()
             {
                 ["loginId"] = username,
-                ["password"] = password,
+                //["password"] = password,
+                ["password2"] = encrypt,
                 ["appname"] = "xiami",
                 ["appEntrance"] = "taobao",
                 ["hsid"] = GetValue("hsid"),
@@ -72,9 +96,9 @@ namespace JacobC.Xiami.Net
             };
             response = await HttpHelper.PostAsync("https://passport.alipay.com/newlogin/login.do?fromSite=0",
                 new FormUrlEncodedContent(data),
-                (headers)=> headers.Referrer=new Uri("https://passport.alipay.com/mini_login.htm"));
+                (headers) => headers.Referrer = new Uri("https://passport.alipay.com/mini_login.htm"));
             System.Diagnostics.Debugger.Break();
-            
+
             return new LoginResult(LoginStatus.Unknown);
         }
         public static async Task Logout()
