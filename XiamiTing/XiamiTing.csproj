@@ -124,6 +124,9 @@
     <Compile Include="Views\LibraryPage.xaml.cs">
       <DependentUpon>LibraryPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LoginDialog.xaml.cs">
+      <DependentUpon>LoginDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PlaylistPage.xaml.cs">
       <DependentUpon>PlaylistPage.xaml</DependentUpon>
     </Compile>
@@ -135,6 +138,9 @@
     </Compile>
     <Compile Include="Views\Splash.xaml.cs">
       <DependentUpon>Splash.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserInfoPage.xaml.cs">
+      <DependentUpon>UserInfoPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -153,9 +159,15 @@
     <Content Include="Assets\BadgeLogo.scale-400.png" />
     <Content Include="Assets\Pictures\cd100.gif" />
     <Content Include="Assets\Pictures\cd500.gif" />
+    <Content Include="Assets\Pictures\qq.png" />
+    <Content Include="Assets\Pictures\qq_mono.png" />
+    <Content Include="Assets\Pictures\tb.png" />
+    <Content Include="Assets\Pictures\tb_mono.png" />
     <Content Include="Assets\Pictures\usr100.gif" />
     <Content Include="Assets\Pictures\usr200.gif" />
     <Content Include="Assets\Pictures\usr50.gif" />
+    <Content Include="Assets\Pictures\weibo.png" />
+    <Content Include="Assets\Pictures\weibo_mono.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-125.png" />
     <Content Include="Assets\SplashScreen.scale-150.png" />
@@ -242,6 +254,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\LoginDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PlaylistPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -257,6 +273,10 @@
     <Page Include="Views\Splash.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UserInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

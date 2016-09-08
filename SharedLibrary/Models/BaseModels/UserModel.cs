@@ -10,6 +10,7 @@ namespace JacobC.Xiami.Models
     public class UserModel : XiamiModelBase<uint>, ICovered
     {
         static Dictionary<uint, UserModel> _dict = new Dictionary<uint, UserModel>();
+        public static readonly UserModel Null = new UserModel() { Name = "未登录" };
         /// <summary>
         /// 获取一个新的<see cref="UserModel"/>实例，如果已经创建过则返回这个实例
         /// </summary>

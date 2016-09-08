@@ -11,6 +11,7 @@ using Windows.Security.Cryptography;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
 using HtmlAgilityPack;
+using Template10.Common;
 
 namespace JacobC.Xiami.Net
 {
@@ -180,7 +181,21 @@ namespace JacobC.Xiami.Net
 
         //TODO:如果保存了Cookie的话自动读取
         public static string NickName { get; private set; }
-        public static uint UserId { get; private set; }
-        public static bool IsLoggedIn { get; private set; }
+        static uint userid = 0;
+        public static uint UserId
+        {
+            get { return userid; }
+            private set
+            {
+                if (userid != value)
+                {
+                    var e = new ChangedEventArgs<uint>(userid, value);
+                    userid = value;
+                    UserChanged?.Invoke(null, e);
+                }
+            }
+        }
+        public static event EventHandler<ChangedEventArgs<uint>> UserChanged;
+        public static bool IsLoggedIn { get; private set; } // TODO: IsLoggedIn Or CheckMemberAuth
     }
 }

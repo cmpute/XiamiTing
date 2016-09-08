@@ -42,10 +42,21 @@
             </Controls:HamburgerMenu.PrimaryButtons>
 
             <Controls:HamburgerMenu.SecondaryButtons>
-                <Controls:HamburgerButtonInfo x:Name="FeedbackButton">
+                <Controls:HamburgerButtonInfo x:Name="UserButton" PageType="views:UserInfoPage">
                     <StackPanel Orientation="Horizontal">
-                        <FontIcon Width="48" Height="48" Glyph="&#xE76E;"/>
-                        <TextBlock x:Uid="FeedbackNavText" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        <!--<Border CornerRadius="24" Width="48" Height="48">
+                            <BitmapIcon UriSource="{x:Bind CurrentUser.Art}"/>
+                        </Border>-->
+                        <Ellipse Width="32" Height="32" Margin="8,16">
+                            <Ellipse.Fill>
+                                <ImageBrush>
+                                    <ImageBrush.ImageSource>
+                                        <BitmapImage UriSource="{x:Bind CurrentUser.Art}"/>
+                                    </ImageBrush.ImageSource>
+                                </ImageBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Text="{x:Bind CurrentUser.Name}"  Margin="12,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Controls:HamburgerButtonInfo>
                 <!--  settingspage button  -->
