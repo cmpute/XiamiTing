@@ -31,12 +31,14 @@ namespace JacobC.Xiami.Net
 
         public static async Task<LoginResult> XiamiLogin(string useremail, string password)
         {
+            if (CheckMemberAuth())
+                return new LoginResult(LoginStatus.LoggedInAlready);
             var token = await GetToken();
             string content = $"_xiamitoken={token}&done=http%253A%252F%252Fwww.xiami.com&from=web&havanaId=&email={WebUtility.UrlEncode(useremail)}&password={WebUtility.UrlEncode(password)}&submit=%E7%99%BB+%E5%BD%95";
             HttpContent pcontent = new StringContent(content);
             //pcontent.Headers.Add("Referer", "https://login.xiami.com/member/login");
             pcontent.Headers.Add("Origin", "https://login.xiami.com/");
-            var callback = await HttpHelper.PostAsync("https://login.xiami.com/member/login?callback=jQuery", pcontent);
+            var callback = await HttpHelper.PostAsync("https://login.xiami.com/member/login?callback=jQuery", pcontent, (headers) => headers.Referrer = new Uri("https://login.xiami.com/member/login"));
             _logincallback callbackdata = JsonConvert.DeserializeObject<_logincallback>(callback.Substring(8, callback.Length - 9));//"JQuery(...)"
             var success = callbackdata.status;
             if (success)
@@ -52,9 +54,82 @@ namespace JacobC.Xiami.Net
             else
                 return new LoginResult(LoginStatus.Unknown);
         }
+        public static async Task<LoginResult> XiamiLogin(string taobaoCallback_st)
+        {
+            if (CheckMemberAuth())
+                return new LoginResult(LoginStatus.LoggedInAlready);
+            var response = await HttpHelper.SendMessageInternal($"http://www.xiami.com/accounts/back?st={taobaoCallback_st}&done=http%3A%2F%2Fwww.xiami.com%2F%2F", HttpMethod.Get, null, null);
+            return new LoginResult(CheckMemberAuth()?LoginStatus.Success: LoginStatus.Failed);
+        }
+        public static async Task Logout()
+        {
+            if(IsLoggedIn)
+                await HttpHelper.GetAsync("http://www.xiami.com/member/logout");
+        }
+        public static async Task<LoginResult> CheckNeedTaobaoLogin(string useremail)
+        {
+            var callback = await HttpHelper.GetAsync($"https://login.xiami.com/accounts/checkxiaminame?email={WebUtility.HtmlEncode(useremail)}");
+            _logincallback callbackdata = JsonConvert.DeserializeObject<_logincallback>(callback);
+            if (callbackdata.status)
+                return new LoginResult(LoginStatus.Success);
+            else
+                return new LoginResult(LoginStatus.NeedTaobaoLogin, callbackdata.data.taobao_nick);
+            
+        }
+        public static async Task<string> GetToken()
+        {
+            var cookies = HttpHelper.Handler.CookieContainer.GetCookies(HttpHelper.XiamiDomain);
+            if (cookies["_xiamitoken"] == null)
+                await HttpHelper.GetAsync(HttpHelper.XiamiDomain.ToString());
+            return HttpHelper.Handler.CookieContainer.GetCookies(HttpHelper.XiamiDomain)["_xiamitoken"].Value;
+        }
+        public static bool CheckMemberAuth()
+        {
+            return !(HttpHelper.Handler.CookieContainer.GetCookies(HttpHelper.XiamiDomain)["_MemberAuth"] == null);
+        }
+
+        #region Taobao Login Part [弃置改用WebView]
+        /*
+        public static byte[] ConvertFrom16String(string base16)
+        {
+            List<byte> res = new List<byte>();
+            int p = base16.Length - 2;
+            for (; p >= 0; p -= 2)
+                res.Insert(0, Convert.ToByte(base16.Substring(p, 2), 16));
+            if (p == -1)
+                res.Insert(0, Convert.ToByte("0" + base16[0], 16));
+            return res.ToArray();
+        }
+        public static string ConvertTo16String(byte[] bytes)
+        {
+            StringBuilder s = new StringBuilder();
+            foreach (var item in bytes)
+            {
+                var str = Convert.ToString(item, 16);
+                switch (str.Length)
+                {
+                    case 1:
+                        s.Append("0");
+                        s.Append(str);
+                        break;
+                    case 0:
+                        s.Append("00");
+                        break;
+                    default:
+                        s.Append(str);
+                        break;
+                }
+            }
+            return s.ToString();
+        }
+        public static async Task<LoginResult> CheckTaobaoUsernameExist(string username)
+        {
+            //https://passport.alipay.com/newlogin/account/check.do?fromSite=-2
+            throw new NotImplementedException();
+        }
         public static async Task<LoginResult> TaoBaoLogin(string username, string password)
         {
-            var response = await HttpHelper.GetAsync("https://passport.alipay.com/mini_login.htm?lang=&appName=xiami&appEntrance=taobao&cssLink=&styleType=vertical&bizParams=&notLoadSsoView=&notKeepLogin=&rnd=0.6477347570091512?lang=zh_cn&appName=xiami&appEntrance=taobao&cssLink=https%3A%2F%2Fh.alipayobjects.com%2Fstatic%2Fapplogin%2Fassets%2Flogin%2Fmini-login-form-min.css%3Fv%3D20140402&styleType=vertical&bizParams=&notLoadSsoView=true&notKeepLogin=true&rnd=0.9090916193090379");
+            var response = await HttpHelper.GetAsync("https://passport.alipay.com/mini_login.htm?lang=&appName=xiami&appEntrance=taobao&cssLink=&styleType=vertical&bizParams=&notLoadSsoView=&notKeepLogin=&rnd=0.6477347570091512?lang=zh_cn&appName=xiami&appEntrance=taobao&cssLink=https%3A%2F%2Fh.alipayobjects.com%2Fstatic%2Fapplogin%2Fassets%2Flogin%2Fmini-login-form-min.css%3Fv%3D20140402&styleType=vertical&bizParams=&notLoadSsoView=true&notKeepLogin=true&rnd=" + new Random().NextDouble().ToString());
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(response);
             var form = doc.DocumentNode.SelectSingleNode("/html/body/div");
@@ -67,14 +142,11 @@ namespace JacobC.Xiami.Net
                     Encoding provider = Encoding.UTF8;
                     RSAParameters publickey = new RSAParameters()
                     {
-                        Modulus = Convert.FromBase64String(GetValue("modulus")),
-                        Exponent = Convert.FromBase64String("00010001")
+                        Modulus = ConvertFrom16String(GetValue("modulus")),
+                        Exponent = Convert.FromBase64String("AQAB")
                     };
                     rsa.ImportParameters(publickey);
-                    StringBuilder res = new StringBuilder();
-                    foreach (var d in rsa.Encrypt(provider.GetBytes(password), RSAEncryptionPadding.Pkcs1))
-                        res.Append(Convert.ToString(d, 16));
-                    encrypt = res.ToString();
+                    encrypt = ConvertTo16String(rsa.Encrypt(provider.GetBytes(password), RSAEncryptionPadding.Pkcs1)); ;
                     System.Diagnostics.Debugger.Break();
                 }
             }
@@ -99,35 +171,12 @@ namespace JacobC.Xiami.Net
                 (headers) => headers.Referrer = new Uri("https://passport.alipay.com/mini_login.htm"));
             System.Diagnostics.Debugger.Break();
 
+
+
             return new LoginResult(LoginStatus.Unknown);
         }
-        public static async Task Logout()
-        {
-            if(IsLoggedIn)
-                await HttpHelper.GetAsync("http://www.xiami.com/member/logout");
-        }
-        public static async Task<LoginResult> CheckNeedTaobaoLogin(string useremail)
-        {
-            var callback = await HttpHelper.GetAsync($"https://login.xiami.com/accounts/checkxiaminame?email={WebUtility.HtmlEncode(useremail)}");
-            _logincallback callbackdata = JsonConvert.DeserializeObject<_logincallback>(callback);
-            if (callbackdata.status)
-                return new LoginResult(LoginStatus.Success);
-            else
-                return new LoginResult(LoginStatus.NeedTaobaoLogin, callbackdata.data.taobao_nick);
-            
-        }
-        public static async Task<LoginResult> CheckTaobaoUsernameExist(string username)
-        {
-            //https://passport.alipay.com/newlogin/account/check.do?fromSite=-2
-            throw new NotImplementedException();
-        }
-        public static async Task<string> GetToken()
-        {
-            var cookies = HttpHelper.Handler.CookieContainer.GetCookies(HttpHelper.XiamiDomain);
-            if (cookies["_xiamitoken"] == null)
-                await HttpHelper.GetAsync(HttpHelper.XiamiDomain.ToString());
-            return HttpHelper.Handler.CookieContainer.GetCookies(HttpHelper.XiamiDomain)["_xiamitoken"].Value;
-        }
+        */
+        #endregion
 
         //TODO:如果保存了Cookie的话自动读取
         public static string NickName { get; private set; }

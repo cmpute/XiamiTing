@@ -32,6 +32,11 @@ namespace JacobC.Xiami.Net
     {
         Success,
         NeedTaobaoLogin,
+        /// <summary>
+        /// 登录失败，一般是密码错误或证书错误
+        /// </summary>
+        Failed,
+        LoggedInAlready,
         Unknown
     }
 }
