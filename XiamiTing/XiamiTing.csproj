@@ -168,6 +168,8 @@
     <Content Include="Assets\Pictures\usr50.gif" />
     <Content Include="Assets\Pictures\weibo.png" />
     <Content Include="Assets\Pictures\weibo_mono.png" />
+    <Content Include="Assets\Pictures\xia.png" />
+    <Content Include="Assets\Pictures\xia_mono.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-125.png" />
     <Content Include="Assets\SplashScreen.scale-150.png" />
