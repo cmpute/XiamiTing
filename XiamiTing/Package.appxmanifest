@@ -39,6 +39,9 @@
           </BackgroundTasks>
         </Extension>
       </Extensions>
+      <uap:ApplicationContentUriRules>
+        <uap:Rule Match="https://passport.alipay.com/*" Type="include" WindowsRuntimeAccess="all" />
+      </uap:ApplicationContentUriRules>
     </Application>
   </Applications>
   <Capabilities>

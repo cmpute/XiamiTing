@@ -5,9 +5,13 @@
     xmlns:local="using:JacobC.Xiami.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:JacobC.Xiami.ViewModels"
     mc:Ignorable="d">
+    <Page.DataContext>
+        <vm:UserInfoPageViewModel x:Name="VM"/>
+    </Page.DataContext>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button Content="登录" Click="Button_Click"/>
+        <TextBlock FontSize="48" Text="等待登录"/>
     </Grid>
 </Page>

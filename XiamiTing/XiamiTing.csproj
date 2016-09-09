@@ -106,6 +106,7 @@
     <Compile Include="ViewModels\GenreViewModel.cs" />
     <Compile Include="ViewModels\PlaylistPageViewModel.cs" />
     <Compile Include="ViewModels\SettingsPageViewModel.cs" />
+    <Compile Include="ViewModels\UserInfoPageViewModel.cs" />
     <Compile Include="Views\AlbumPage.xaml.cs">
       <DependentUpon>AlbumPage.xaml</DependentUpon>
     </Compile>

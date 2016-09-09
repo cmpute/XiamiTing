@@ -145,8 +145,10 @@ namespace JacobC.Xiami.Net
                 {
 #if DEBUG
                     System.Diagnostics.Debugger.Break();
-#endif
+                    return null;
+#else
                     throw new ConnectException("待处理异常", e);
+#endif
                 }
             });
         }
@@ -206,6 +208,6 @@ namespace JacobC.Xiami.Net
                 }
             }
         }
-        #endregion
+#endregion
     }
 }

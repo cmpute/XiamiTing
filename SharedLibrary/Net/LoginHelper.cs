@@ -60,7 +60,8 @@ namespace JacobC.Xiami.Net
             if (CheckMemberAuth())
                 return new LoginResult(LoginStatus.LoggedInAlready);
             var response = await HttpHelper.SendMessageInternal($"http://www.xiami.com/accounts/back?st={taobaoCallback_st}&done=http%3A%2F%2Fwww.xiami.com%2F%2F", HttpMethod.Get, null, null);
-            return new LoginResult(CheckMemberAuth()?LoginStatus.Success: LoginStatus.Failed);
+            IsLoggedIn = CheckMemberAuth();
+            return new LoginResult(IsLoggedIn ? LoginStatus.Success : LoginStatus.Failed);
         }
         public static async Task Logout()
         {
@@ -84,7 +85,7 @@ namespace JacobC.Xiami.Net
                 await HttpHelper.GetAsync(HttpHelper.XiamiDomain.ToString());
             return HttpHelper.Handler.CookieContainer.GetCookies(HttpHelper.XiamiDomain)["_xiamitoken"].Value;
         }
-        public static bool CheckMemberAuth()
+        private static bool CheckMemberAuth()
         {
             return !(HttpHelper.Handler.CookieContainer.GetCookies(HttpHelper.XiamiDomain)["_MemberAuth"] == null);
         }
@@ -196,6 +197,6 @@ namespace JacobC.Xiami.Net
             }
         }
         public static event EventHandler<ChangedEventArgs<uint>> UserChanged;
-        public static bool IsLoggedIn { get; private set; } // TODO: IsLoggedIn Or CheckMemberAuth
+        public static bool IsLoggedIn { get; private set; }
     }
 }

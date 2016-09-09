@@ -47,7 +47,7 @@
                         <!--<Border CornerRadius="24" Width="48" Height="48">
                             <BitmapIcon UriSource="{x:Bind CurrentUser.Art}"/>
                         </Border>-->
-                        <Ellipse Width="32" Height="32" Margin="8,16">
+                        <Ellipse Width="32" Height="32" Margin="8,8">
                             <Ellipse.Fill>
                                 <ImageBrush>
                                     <ImageBrush.ImageSource>
