@@ -253,6 +253,7 @@
                             <TextBlock Text="uID："/>
                             <TextBox x:Name="uid" Margin="8,0"  Width="160"/>
                         </StackPanel>
+                        <Button x:Name="LoginButton" Content="登录" Margin="4,4" HorizontalAlignment="Stretch" Click="LoginButton_Click"/>
                     </StackPanel>
                 </PivotItem>
                 <PivotItem>

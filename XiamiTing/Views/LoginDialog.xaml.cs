@@ -23,7 +23,6 @@ namespace JacobC.Xiami.Views
         public LoginDialog()
         {
             this.InitializeComponent();
-            
         }
 
         int _index = 0;
@@ -51,6 +50,14 @@ namespace JacobC.Xiami.Views
                 }
             }
         }
+        private void IconButton_Click(object sender, RoutedEventArgs e)
+        {
+            var modal = this.Parent as ModalDialog;
+            if (modal == null)
+                modal = Window.Current.Content as ModalDialog;
+            modal.IsModal = false;
+            modal.ModalContent = null;
+        }
 
         private async void TaobaoLogin_DOMContentLoaded(WebView sender, WebViewDOMContentLoadedEventArgs args)
         {
@@ -60,7 +67,6 @@ namespace JacobC.Xiami.Views
                 });";
             await sender.InvokeScriptAsync("eval", new string[] { inject });
         }
-
         private async void TaobaoLogin_ScriptNotify(object sender, NotifyEventArgs e)
         {
             var t = System.Net.WebUtility.UrlDecode(e.Value);
@@ -72,20 +78,19 @@ namespace JacobC.Xiami.Views
                 System.Diagnostics.Debug.WriteLine(result.Status);
             }
         }
-
         private void TaobaoLogin_NavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
         {
             System.Diagnostics.Debugger.Break();
         }
 
-        private void IconButton_Click(object sender, RoutedEventArgs e)
+        private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var modal = this.Parent as ModalDialog;
-            if (modal == null)
-                modal = Window.Current.Content as ModalDialog;
-            modal.IsModal = false;
-            modal.ModalContent = null;
+            var result = await LoginHelper.XiamiLogin(UserName.Text, Password.Password);
+            if (result.Status == LoginStatus.Success)
+            {
+                System.Diagnostics.Debugger.Break();
+                IconButton_Click(sender, e);
+            }
         }
-
     }
 }

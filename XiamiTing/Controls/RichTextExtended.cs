@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using JacobC.Xiami.Models;
 using Template10.Services.NavigationService;
 using System.Windows.Input;
+using JacobC.Xiami.Views;
 
 namespace JacobC.Xiami.Controls
 {
@@ -71,13 +72,13 @@ namespace JacobC.Xiami.Controls
                     //链接
                     case "a":
                         var link = new Hyperlink();
-                        link.NavigateUri = new Uri(node.GetAttributeValue("href", ""));//针对链接需要进行分析
+                        ParseRelativeUrl(item.GetAttributeValue("href", ""), link, App.Current.NavigationService);
                         Analyse(item, link.Inlines, style);
                         container.Add(link);
                         continue;
                     //图片
                     case "img":
-                        var image = new Image() { Source = new BitmapImage(new Uri(node.GetAttributeValue("src", ""))) };
+                        var image = new Image() { Source = new BitmapImage(new Uri(item.GetAttributeValue("src", ""))) };
                         var cont = new InlineUIContainer();
                         cont.Child = image;
                         container.Add(cont);
@@ -100,6 +101,41 @@ namespace JacobC.Xiami.Controls
                 Analyse(item, container, style);
             }
         }
+        internal static void ParseRelativeUrl(string url, Hyperlink linkobject, INavigationService nav)
+        {
+            if (url == null)
+                return;
+            else if (url.Length <= 1)
+                return;
+            else if (url.StartsWith("/"))
+            {
+                var data = url.Split('/');
+                switch (data[1])
+                {
+                    case "song":
+                        //导航SongPage
+                        break;
+                    case "album":
+                        linkobject.Click += (sender, e) =>
+                              nav.Navigate(typeof(AlbumPage), uint.Parse(data[2]));
+                        break;
+                    case "artist":
+                        linkobject.Click += (sender, e) =>
+                              nav.Navigate(typeof(ArtistPage), uint.Parse(data[2]));
+                        break;
+                }
+            }
+            else if (url.IndexOf("www.xiami.com") >= 0)
+                linkobject.NavigateUri = new Uri(url);
+            else
+#if DEBUG
+                System.Diagnostics.Debugger.Break();
+#else
+                throw new InvalidCastException("Url地址格式转换错误");
+#endif
+
+        }
+
         [Flags]
         internal enum ParsingStyle
         {

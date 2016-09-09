@@ -7,6 +7,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
+using Windows.ApplicationModel;
 
 namespace JacobC.Xiami
 {
@@ -68,6 +69,13 @@ namespace JacobC.Xiami
             PlaybackService.Instance.StartBackgroundAudioTask();
             runOnStartAsync = true;
             return Task.CompletedTask;
+        }
+
+        public override async Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
+        {
+            HttpHelper.SaveCookies();
+            LoginHelper.SaveAccountInfo();
+            await Task.CompletedTask;
         }
 
         /// <summary>

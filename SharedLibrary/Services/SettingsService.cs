@@ -30,6 +30,11 @@ namespace JacobC.Xiami.Services
         public static ISettingsService NetCookies { get; } = Template10.Services.SettingsService.SettingsService.Local.Open("NetCookies");
 
         /// <summary>
+        /// 帐户相关设置
+        /// </summary>
+        public static ISettingsService Account { get; } = Template10.Services.SettingsService.SettingsService.Local.Open("Account");
+
+        /// <summary>
         /// 是否在标题栏显示返回按钮
         /// </summary>
         public bool UseShellBackButton

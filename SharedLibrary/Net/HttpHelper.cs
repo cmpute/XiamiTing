@@ -69,10 +69,11 @@ namespace JacobC.Xiami.Net
         {
             foreach (var item in handler.CookieContainer.GetCookies(XiamiDomain))
             {
-                var c = item as System.Net.Cookie;
+                var c = item as Cookie;
                 SettingsService.NetCookies.Write(c.Name, c);
             }
         }
+        public static void SaveCookies() => SaveCookies(Handler);
         /// <summary>
         /// 读取Cookie以后删除设置中的Cookie
         /// </summary>
@@ -80,15 +81,26 @@ namespace JacobC.Xiami.Net
         public static void ReadCookies(HttpClientHandler handler, bool reset = true)
         {
             if (handler.CookieContainer == null)
-                handler.CookieContainer = new System.Net.CookieContainer();
+                handler.CookieContainer = new CookieContainer();
             foreach (var item in SettingsService.NetCookies.Values)
             {
                 var t = reset ? SettingsService.NetCookies.ReadAndReset<Cookie>(item.Key) :
                     SettingsService.NetCookies.Read<Cookie>(item.Key);
-                if (t != null) handler.CookieContainer.Add(XiamiDomain, t);
+                if (t != null)
+                {
+                    //直接Deserialize会设置Port，导致多出"$Port"
+                    var copy = new Cookie(t.Name, t.Value, t.Path, t.Domain)
+                    {
+                        Comment = t.Comment,
+                        Expired = t.Expired,
+                        Expires = t.Expires,
+                        HttpOnly = t.HttpOnly,
+                        Secure = t.Secure,
+                    };
+                    handler.CookieContainer.Add(XiamiDomain, copy);
+                }
             }
         }
-
         public static void ClearCookies()
         {
             _handler = new HttpClientHandler();

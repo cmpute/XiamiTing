@@ -33,7 +33,14 @@ namespace JacobC.Xiami.ViewModels
                 modal.ModalBackground = new SolidColorBrush(Color.FromArgb(150, 255, 255, 255));
                 modal.IsModal = true;
             }
+            infotext = LoginHelper.IsLoggedIn ? $"id: {LoginHelper.UserId} Name:{LoginHelper.NickName}" : "请登录";
             await Task.CompletedTask;
         }
+        string _infotext = default(string);
+        /// <summary>
+        /// 获取或设置infotext属性
+        /// </summary>
+        public string infotext { get { return _infotext; } set { Set(ref _infotext, value); } }
+
     }
 }

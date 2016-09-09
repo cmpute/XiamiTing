@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using Newtonsoft.Json;
 using HtmlAgilityPack;
 using Template10.Common;
+using JacobC.Xiami.Services;
 
 namespace JacobC.Xiami.Net
 {
@@ -28,6 +29,11 @@ namespace JacobC.Xiami.Net
                 public string user_id, nick_name, taobao_nick;
             }
             public _logindata data;
+        }
+
+        static LoginHelper()
+        {
+            ReadAccountInfo();
         }
 
         public static async Task<LoginResult> XiamiLogin(string useremail, string password)
@@ -87,7 +93,7 @@ namespace JacobC.Xiami.Net
         }
         private static bool CheckMemberAuth()
         {
-            return !(HttpHelper.Handler.CookieContainer.GetCookies(HttpHelper.XiamiDomain)["_MemberAuth"] == null);
+            return !(HttpHelper.Handler.CookieContainer.GetCookies(HttpHelper.XiamiDomain)["member_auth"] == null);
         }
 
         #region Taobao Login Part [弃置改用WebView]
@@ -186,7 +192,7 @@ namespace JacobC.Xiami.Net
         public static uint UserId
         {
             get { return userid; }
-            private set
+            set
             {
                 if (userid != value)
                 {
@@ -197,6 +203,23 @@ namespace JacobC.Xiami.Net
             }
         }
         public static event EventHandler<ChangedEventArgs<uint>> UserChanged;
-        public static bool IsLoggedIn { get; private set; }
+        public static bool IsLoggedIn { get; private set; } = false;
+
+        public static void SaveAccountInfo()
+        {
+            if (NickName != default(string)) SettingsService.Account.Write(nameof(NickName), NickName);
+            if (UserId != 0) SettingsService.Account.Write(nameof(UserId), UserId);
+            if (IsLoggedIn != false) SettingsService.Account.Write(nameof(IsLoggedIn), IsLoggedIn);
+        }
+        public static void ReadAccountInfo(bool reset = true)
+        {
+            if(reset)
+            {
+                NickName = SettingsService.Account.ReadAndReset<string>(nameof(NickName));
+                UserId = SettingsService.Account.ReadAndReset(nameof(UserId), 0u);
+                IsLoggedIn = SettingsService.Account.ReadAndReset(nameof(IsLoggedIn), false);
+            }
+        }
+
     }
 }

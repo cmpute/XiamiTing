@@ -12,6 +12,6 @@
     </Page.DataContext>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock FontSize="48" Text="等待登录"/>
+        <TextBlock x:Name="info" FontSize="48" Text="{x:Bind VM.infotext}"/>
     </Grid>
 </Page>

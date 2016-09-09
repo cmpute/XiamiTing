@@ -4,8 +4,8 @@
     xmlns:local="using:JacobC.Xiami.Controls">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="ms-appx:///SharedLibrary/Controls/ImageEx.xaml"/>
-        <ResourceDictionary Source="ms-appx:///SharedLibrary/Controls/IconButton.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/ImageEx.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Controls/IconButton.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
  
