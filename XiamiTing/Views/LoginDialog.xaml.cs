@@ -1,4 +1,5 @@
 ﻿using JacobC.Xiami.Net;
+using JacobC.Xiami.Services;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -88,9 +89,10 @@ namespace JacobC.Xiami.Views
             var result = await LoginHelper.XiamiLogin(UserName.Text, Password.Password);
             if (result.Status == LoginStatus.Success)
             {
-                System.Diagnostics.Debugger.Break();
+                LogService.DebugWrite("Login Success", nameof(LoginDialog));
                 IconButton_Click(sender, e);
             }
+            //TODO: GetUserInfo
         }
     }
 }

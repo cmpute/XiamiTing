@@ -1,4 +1,5 @@
-﻿using JacobC.Xiami.Net;
+﻿using JacobC.Xiami.Models;
+using JacobC.Xiami.Net;
 using JacobC.Xiami.Views;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,13 @@ namespace JacobC.Xiami.ViewModels
             {
                 //DesignData
             }
+            LoginHelper.UserChanged += LoginHelper_UserChanged;
+
+        }
+
+        private void LoginHelper_UserChanged(object sender, Template10.Common.ChangedEventArgs<uint> e)
+        {
+            Current = e.NewValue > 0 ? UserModel.GetNew(e.NewValue) : UserModel.Null;
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -33,14 +41,15 @@ namespace JacobC.Xiami.ViewModels
                 modal.ModalBackground = new SolidColorBrush(Color.FromArgb(150, 255, 255, 255));
                 modal.IsModal = true;
             }
-            infotext = LoginHelper.IsLoggedIn ? $"id: {LoginHelper.UserId} Name:{LoginHelper.NickName}" : "请登录";
             await Task.CompletedTask;
         }
-        string _infotext = default(string);
+
+
+        UserModel _Current = UserModel.Null;
         /// <summary>
-        /// 获取或设置infotext属性
+        /// 获取或设置当前用户属性
         /// </summary>
-        public string infotext { get { return _infotext; } set { Set(ref _infotext, value); } }
+        public UserModel Current { get { return _Current; } set { Set(ref _Current, value); } }
 
     }
 }

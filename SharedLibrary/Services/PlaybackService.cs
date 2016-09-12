@@ -41,7 +41,7 @@ namespace JacobC.Xiami.Services
         /// <param name="source">播放来源，null代表播放列表</param>
         public void SetPlaybackSource(RadioService source)
         {
-            if (radio == source)
+            if (radio.Radio == source.Radio)
                 return;
             var e = new ChangedEventArgs<IPlaylist>(radio ?? (IPlaylist)PlaylistService.Instance, source ?? (IPlaylist)PlaylistService.Instance);
             if (source == null)
@@ -56,6 +56,7 @@ namespace JacobC.Xiami.Services
             }
             PlaybackSourceChanged?.Invoke(this, e);
             InternalPlaybackSourceChanged(_isPlayingRadio);
+            SkipNext();
         }
         /// <summary>
         /// 当播放源发生改变时发生
@@ -359,12 +360,12 @@ namespace JacobC.Xiami.Services
         /// <summary>
         /// 播放专辑
         /// </summary>
-        public void PlayAlbum(AlbumModel album)
+        public async void PlayAlbum(AlbumModel album)
         {
             if (album == null)
                 return;
             if (album.SongList == null)
-                return;
+                await Net.WebApi.Instance.GetAlbumInfo(album);
             PlaylistService.Instance.Clear();
             PlaylistService.Instance.AddAlbum(album);
             PlayTrack();

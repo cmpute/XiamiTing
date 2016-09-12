@@ -51,12 +51,12 @@
                             <Ellipse.Fill>
                                 <ImageBrush>
                                     <ImageBrush.ImageSource>
-                                        <BitmapImage UriSource="{x:Bind CurrentUser.Art}"/>
+                                        <BitmapImage UriSource="{x:Bind CurrentUser.Art, Mode=OneWay}"/>
                                     </ImageBrush.ImageSource>
                                 </ImageBrush>
                             </Ellipse.Fill>
                         </Ellipse>
-                        <TextBlock Text="{x:Bind CurrentUser.Name}"  Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind CurrentUser.Name, Mode=OneWay}"  Margin="12,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Controls:HamburgerButtonInfo>
                 <!--  settingspage button  -->

@@ -15,6 +15,7 @@ using JacobC.Xiami.Models;
 using JacobC.Xiami.Net;
 using Windows.UI.Xaml;
 using JacobC.Xiami.Views;
+using Windows.UI.Xaml.Documents;
 
 namespace JacobC.Xiami.ViewModels
 {
@@ -88,6 +89,23 @@ namespace JacobC.Xiami.ViewModels
 
         public void NavigateAlbum(AlbumModel album)=>
              NavigationService.Navigate(typeof(AlbumPage), album?.XiamiID);
+
+        #region EventHandlers
+
+        public void LibLink_Click(Hyperlink sender, HyperlinkClickEventArgs args)
+        {
+            if (LoginHelper.UserId != 0)
+            {
+                if (LoginHelper.IsLoggedIn)
+                    PlaybackService.Instance.SetPlaybackSource(new RadioService(RadioModel.XiamiCai));
+                else
+                    PlaybackService.Instance.SetPlaybackSource(new RadioService(RadioModel.GetFromUser(UserModel.GetNew(LoginHelper.UserId))));
+            }
+            else
+                PlaybackService.Instance.SetPlaybackSource(new RadioService(RadioModel.PublicRec));
+        }
+
+        #endregion
 
 
     }

@@ -6,12 +6,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:JacobC.Xiami.ViewModels"
+    xmlns:controls="using:Template10.Controls"
+    xmlns:m="using:JacobC.Xiami.Models"
+    xmlns:c="using:JacobC.Xiami.Controls"
     mc:Ignorable="d">
     <Page.DataContext>
         <vm:UserInfoPageViewModel x:Name="VM"/>
     </Page.DataContext>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock x:Name="info" FontSize="48" Text="{x:Bind VM.infotext}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader Text="{x:Bind VM.Current.Name}"/>
+        <TextBlock Grid.Row="1" x:Name="info" FontSize="48" Text="{x:Bind VM.Current.Name}"/>
     </Grid>
 </Page>

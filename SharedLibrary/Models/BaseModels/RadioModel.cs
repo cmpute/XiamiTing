@@ -15,7 +15,7 @@ namespace JacobC.Xiami.Models
         #region ctor
         static Dictionary<uint, RadioModel> _dict = new Dictionary<uint, RadioModel>()
         {
-            [2] = new RadioModel(2, RadioType.Guess, 0)
+            [2] = new RadioModel(2, RadioType.Guess, 0),
         };
         //public static readonly RadioModel Null = new RadioModel() { };
         /// <summary>
@@ -78,6 +78,10 @@ namespace JacobC.Xiami.Models
         /// 虾米猜电台
         /// </summary>
         public static RadioModel XiamiCai => GetNew(2);
+        /// <summary>
+        /// （未登录用户）每日推荐
+        /// </summary>
+        public static RadioModel PublicRec => GetNew(RadioType.DailyRecommendaition, 1);
         /// <summary>
         /// 获取艺人电台
         /// </summary>

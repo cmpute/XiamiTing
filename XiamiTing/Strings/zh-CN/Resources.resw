@@ -231,4 +231,7 @@
     <value>风格</value>
     <comment>GenrePage的标题栏文字</comment>
   </data>
+  <data name="LicenseTab.Text" xml:space="preserve">
+    <value>许可</value>
+  </data>
 </root>
