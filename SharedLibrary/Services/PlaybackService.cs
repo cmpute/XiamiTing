@@ -41,7 +41,7 @@ namespace JacobC.Xiami.Services
         /// <param name="source">播放来源，null代表播放列表</param>
         public void SetPlaybackSource(RadioService source)
         {
-            if (radio.Radio == source.Radio)
+            if (radio?.Radio == source?.Radio)
                 return;
             var e = new ChangedEventArgs<IPlaylist>(radio ?? (IPlaylist)PlaylistService.Instance, source ?? (IPlaylist)PlaylistService.Instance);
             if (source == null)

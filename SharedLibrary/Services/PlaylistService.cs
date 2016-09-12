@@ -14,6 +14,7 @@ using Windows.Media.Core;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using System.Collections.Specialized;
 
 namespace JacobC.Xiami.Services
 {
@@ -234,6 +235,17 @@ namespace JacobC.Xiami.Services
         public void AddAlbum(AlbumModel model) => this.AddRange(model?.SongList);//TODO 如果Songlist为空则获取SongList
         #endregion
 
+        protected override void ClearItems()
+        {
+            CurrentIndex = -1;
+            base.ClearItems();
+        }
+        protected override void InsertItem(int index, SongModel item)
+        {
+            bool newone = Count == 0;
+            base.InsertItem(index, item);
+            if(newone) CurrentIndex = 0;
+        }
     }
 
     /// <summary>

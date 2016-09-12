@@ -226,7 +226,7 @@ namespace JacobC.Xiami.Net
                     List<Task> process = new List<Task>();
                     process.Add(Task.Run(() =>
                     {
-                        var listnode = body.SelectSingleNode(".//div[@class='chapter mgt10']");
+                        var listnode = body.SelectSingleNode(".//table[@id='track_list']");
                         if (album.SongList == null || cover)
                             album.SongList = ParseAlbumSongs(listnode, album).ToList();
                         else
@@ -307,33 +307,28 @@ namespace JacobC.Xiami.Net
         internal IEnumerable<SongModel> ParseAlbumSongs(HtmlNode listnode, AlbumModel album)
         {
             string disc = null;
-            foreach (var item in listnode.ChildNodes)
+            foreach (var item in listnode.SelectNodes("./tbody/tr"))
             {
-                if (item.NodeType != HtmlNodeType.Element)
-                    continue;
-                if (item.Name == "strong")
+                if (item.SelectSingleNode("./td/strong") != null)
                     disc = item.InnerText;
                 else
-                    foreach (var songitem in item.SelectSingleNode("./tbody").ChildNodes)
-                    {
-                        if (songitem.NodeType != HtmlNodeType.Element)
-                            continue;
-                        SongModel song = SongModel.GetNew(uint.Parse(songitem.SelectSingleNode(".//input").GetAttributeValue("value", "0")));
-                        song.Album = album;
-                        song.DiscID = disc;
-                        song.TrackID = int.Parse(songitem.ChildNodes[3].InnerText);
-                        ParseListSong(song, songitem);
-                        //var title = songitem.SelectSingleNode(".//a");
-                        //if (song.Name == null)
-                        //    song.Name = title.InnerText;
-                        //if (song.TrackArtist == null)
-                        //{
-                        //    string t = title.NextSibling.InnerText.Trim();
-                        //    if (t.Length > 0)
-                        //        song.TrackArtist = t;
-                        //}
-                        yield return song;
-                    }
+                {
+                    SongModel song = SongModel.GetNew(uint.Parse(item.SelectSingleNode(".//input").GetAttributeValue("value", "0")));
+                    song.Album = album;
+                    song.DiscID = disc;
+                    song.TrackID = int.Parse(item.ChildNodes[3].InnerText);
+                    ParseListSong(song, item);
+                    //var title = songitem.SelectSingleNode(".//a");
+                    //if (song.Name == null)
+                    //    song.Name = title.InnerText;
+                    //if (song.TrackArtist == null)
+                    //{
+                    //    string t = title.NextSibling.InnerText.Trim();
+                    //    if (t.Length > 0)
+                    //        song.TrackArtist = t;
+                    //}
+                    yield return song;
+                }
             }
         }
         internal void ParseAlbumSongs(HtmlNode listnode, IEnumerable<SongModel> former)

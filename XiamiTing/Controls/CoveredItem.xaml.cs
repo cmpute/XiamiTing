@@ -51,7 +51,7 @@ namespace JacobC.Xiami.Controls
             if (_hoverdown)
                 return;
             _hoverup = true;
-            LogService.DebugWrite("PointerEnteredUp", nameof(CoveredItem));
+            //LogService.DebugWrite("PointerEnteredUp", nameof(CoveredItem));
             VisualStateManager.GoToState(this, "PointerOverUp", true);
         }
         protected override void OnPointerExited(PointerRoutedEventArgs e)
@@ -62,7 +62,7 @@ namespace JacobC.Xiami.Controls
 
         private void Rectangle_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            LogService.DebugWrite("PointerEnteredDown", nameof(CoveredItem));
+            //LogService.DebugWrite("PointerEnteredDown", nameof(CoveredItem));
             _hoverdown = true;
             VisualStateManager.GoToState(this, "PointerOverDown", true);
             if (_hoverup)
