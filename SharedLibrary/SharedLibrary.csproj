@@ -115,6 +115,7 @@
     <Compile Include="IIncrementalLoadingCollection.cs" />
     <Compile Include="Models\BaseModels\RadioModel.cs" />
     <Compile Include="Models\BaseModels\XiamiModelBase.cs" />
+    <Compile Include="Models\ListenLogModel.cs" />
     <Compile Include="Models\RecommendationModel.cs" />
     <Compile Include="IncrementalLoadingBase.cs" />
     <Compile Include="Models\BaseModels\AlbumModel.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Models\RecommendationBatchModel.cs" />
     <Compile Include="Models\BaseModels\SongModel.cs" />
     <Compile Include="Models\BaseModels\UserModel.cs" />
+    <Compile Include="Models\UserRadioModel.cs" />
     <Compile Include="Net\Api\CombinedApi.cs" />
     <Compile Include="Net\Api\DataApi.cs" />
     <Compile Include="Net\Api\IXiamiApi.cs" />

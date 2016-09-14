@@ -11,6 +11,7 @@ using Windows.Data.Xml.Dom;
 using System.Collections.Generic;
 using System.Text;
 using System.Net;
+using HtmlAgilityPack;
 
 namespace JacobC.Xiami
 {

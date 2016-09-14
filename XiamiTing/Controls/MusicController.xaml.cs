@@ -44,10 +44,12 @@ namespace JacobC.Xiami.Controls
             }
             else if (MediaPlayerState.Paused == CurrentPlayer.CurrentState)
             {
+                IsDownloadBarDisabled = false;
                 pservice.StartPlayback();
             }
             else
-            { 
+            {
+                IsDownloadBarDisabled = false;
                 pservice.PlayTrack();
                 //else if (MediaPlayerState.Closed == CurrentPlayer.CurrentState)
                 //{
@@ -60,6 +62,7 @@ namespace JacobC.Xiami.Controls
         private DelegateCommand<object> _PreviousCommand;
         public DelegateCommand<object> PreviousCommand => _PreviousCommand ?? (_PreviousCommand = new DelegateCommand<object>((model) =>
         {
+            IsDownloadBarDisabled = false;
             PlaybackService.Instance.SkipPrevious();
             //TODO: 判断是否循环/随机，并且设置Next的可用性
 
@@ -72,6 +75,7 @@ namespace JacobC.Xiami.Controls
         private DelegateCommand<object> _NextCommand;
         public DelegateCommand<object> NextCommand => _NextCommand ?? (_NextCommand = new DelegateCommand<object>((model) =>
         {
+            IsDownloadBarDisabled = false;
             PlaybackService.Instance.SkipNext();
             //TODO: 判断是否循环/随机，并且设置Next的可用性
 

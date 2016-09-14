@@ -66,6 +66,7 @@ namespace JacobC.Xiami.Net
             if (CheckMemberAuth())
                 return new LoginResult(LoginStatus.LoggedInAlready);
             var response = await HttpHelper.SendMessageInternal($"http://www.xiami.com/accounts/back?st={taobaoCallback_st}&done=http%3A%2F%2Fwww.xiami.com%2F%2F", HttpMethod.Get, null, null);
+            await response.Content.ReadAsStringAsync();
             IsLoggedIn = CheckMemberAuth();
             return new LoginResult(IsLoggedIn ? LoginStatus.Success : LoginStatus.Failed);
         }

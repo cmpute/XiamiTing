@@ -52,12 +52,15 @@ namespace JacobC.Xiami.Models
             RadioModel radio = null;
             if (!(_dict?.TryGetValue(xiamiID, out radio) ?? false))
             {
-                radio = new RadioModel(xiamiID, type, oid);
+                if (type == RadioType.User)
+                    radio = new UserRadioModel(xiamiID, oid);
+                else
+                    radio = new RadioModel(xiamiID, type, oid);
                 _dict?.Add(xiamiID, radio);
             }
             return radio;
         }
-        private RadioModel(uint xiamiID, RadioType type, uint oid)
+        protected RadioModel(uint xiamiID, RadioType type, uint oid)
         {
             XiamiID = xiamiID;
             Type = type;
@@ -89,7 +92,7 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取用户电台
         /// </summary>
-        public static RadioModel GetFromUser(UserModel user) => GetNew(RadioType.User, user.XiamiID);
+        public static UserRadioModel GetFromUser(UserModel user) => GetNew(RadioType.User, user.XiamiID) as UserRadioModel;
 
     }
 

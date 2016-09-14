@@ -22,7 +22,7 @@ namespace JacobC.Xiami.Net
     /// </summary>
     public class WebApi : IXiamiApi
     {
-
+        #region Ctor & Common Methods
         private WebApi() { }
         static WebApi _instance;
         /// <summary>
@@ -37,10 +37,8 @@ namespace JacobC.Xiami.Net
             }
         }
 
-        #region Common Methods
-        internal void ParseListSong(SongModel song, HtmlNode tr)
+        internal void ParsePlayListSong(SongModel song, HtmlNode tr)
         {
-            song.Available = tr.SelectSingleNode(".//input").GetAttributeValue("checked", "") == "checked";
             var name = tr.SelectSingleNode("./td[@class='song_name']");
             foreach (var item in name.ChildNodes)
             {
@@ -317,7 +315,7 @@ namespace JacobC.Xiami.Net
                     song.Album = album;
                     song.DiscID = disc;
                     song.TrackID = int.Parse(item.ChildNodes[3].InnerText);
-                    ParseListSong(song, item);
+                    ParsePlayListSong(song, item);
                     //var title = songitem.SelectSingleNode(".//a");
                     //if (song.Name == null)
                     //    song.Name = title.InnerText;
@@ -354,7 +352,7 @@ namespace JacobC.Xiami.Net
                         var cur = iter.Current;
                         cur.DiscID = disc;
                         cur.TrackID = int.Parse(songitem.ChildNodes[3].InnerText);
-                        ParseListSong(cur, songitem);
+                        ParsePlayListSong(cur, songitem);
                     }
             }
         }
@@ -405,9 +403,11 @@ namespace JacobC.Xiami.Net
                             body.SelectSingleNode(".//div[@class='common_sec']/table")).ToList(),
                             async (page, ptoken) =>
                             {
+#if DEBUG
                                 System.Diagnostics.Debugger.Break();
+#endif
                                 var pgettask = HttpHelper.GetAsync($"http://www.xiami.com/artist/top/id/{id}/page/{page}");
-                                token.Register(() => pgettask.Cancel());
+                                ptoken.Register(() => pgettask.Cancel());
                                 var pcontent = await pgettask;
                                 HtmlDocument pdoc = new HtmlDocument();
                                 pdoc.LoadHtml(pcontent);
@@ -467,7 +467,7 @@ namespace JacobC.Xiami.Net
             foreach (var item in listnode.SelectNodes(".//tr"))
             {
                 SongModel song = SongModel.GetNew(uint.Parse(item.SelectSingleNode(".//input").GetAttributeValue("value", "0")));
-                ParseListSong(song, item);
+                ParsePlayListSong(song, item);
                 yield return song;
             }
         }
@@ -715,6 +715,100 @@ namespace JacobC.Xiami.Net
         }
 
         #endregion
+        #region 获取用户信息
+
+        public IAsyncAction GetUserInfo(UserModel user)
+        {
+            if (user.XiamiID == 0)
+                throw new ArgumentException("SongModel未设置ID");
+            return Run(async token =>
+            {
+                try
+                {
+                    LogService.DebugWrite($"Get info of User {user.XiamiID}", nameof(WebApi));
+
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/u/{user.XiamiID}");
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(content);
+                    var body = doc.DocumentNode.SelectSingleNode(".//div[@id='profile_index']");
+                    var title = body.SelectSingleNode("./div/div");
+                    if (user.Name == null)
+                        user.Name = title.SelectSingleNode(".//h1/a").InnerText;
+                    if (title.SelectSingleNode(".//i") != null)
+                        user.IsVIP = true;
+                    var mainpaneldivs = body.SelectSingleNode(".//div[@class='proMain_left_inner']");
+                    var radionode = mainpaneldivs.SelectSingleNode("./div[@id='p_radio']");
+                    if(user.UserRadio == null)
+                    {
+                        UserRadioModel radio = RadioModel.GetFromUser(user);
+                        var radioimg = radionode.SelectSingleNode(".//img").GetAttributeValue("src", UserRadioModel.LargeDefaultUri);
+                        radio.Art = new Uri(radioimg);
+                        radio.ArtFull = new Uri(radioimg.Replace("_1", ""));
+                        radio.Description = radionode.SelectSingleNode(".//p[@class='des']").InnerText;
+                    }
+                    System.Diagnostics.Debugger.Break();
+                    user.Description = mainpaneldivs.SelectSingleNode(".//p[@class='tweeting_full']").InnerHtml;
+                    user.RecentTracks = new PageItemsCollection<ListenLogModel>(50,
+                        ParseLogSong(mainpaneldivs.SelectSingleNode("./div[@id='p_tracks']")),
+                        async (page, ptoken) =>
+                        {
+                            var pgettask = HttpHelper.GetAsync($"http://www.xiami.com/space/charts-recent/u/{user.XiamiID}/page/{page}");
+                            ptoken.Register(() => pgettask.Cancel());
+                            var pcontent = await pgettask;
+                            HtmlDocument pdoc = new HtmlDocument();
+                            pdoc.LoadHtml(pcontent);
+                            var pbody = pdoc.DocumentNode.SelectSingleNode("/html/body/div[@id='page']");
+                            return ParseLogSong(pbody.SelectSingleNode(".//table[@class]")).ToList();
+                        });
+                    var rightpaneldivs = body.SelectNodes(".//div[@class='proMain_side']/div");
+                    if (user.Art.Host == "")
+                    {
+                        var art = rightpaneldivs[0].SelectSingleNode(".//img[last()]").GetAttributeValue("src", @"ms-appx:///Assets/Pictures/usr50.gif");
+                        user.Art = new Uri(art.Replace("_3", "_2"));
+                        user.ArtFull = new Uri(art.Replace("_3", ""));
+                    }
+                    var details = rightpaneldivs[1];
+                    var dps = details.SelectNodes("./p");
+                    user.PersonalDescription = dps[0].InnerText;
+                    user.JoinDate = dps[1].InnerText;
+                    var lever = details.SelectSingleNode("./div[2]/div");
+                    user.Level = lever.SelectSingleNode("./a").InnerText;
+                    string vcount = lever.NextSibling.InnerText;
+                    user.VisitedCount = int.Parse(vcount.Remove(vcount.IndexOf("次访问")));
+                    var counts = details.Element("ul").SelectNodes("./li/a/span");
+                    user.FollowingCount = int.Parse(counts[0].InnerText);
+                    user.FollowerCount = int.Parse(counts[1].InnerText);
+
+                    //其他的PageLoad集合：收藏的歌曲、专辑、艺人
+
+                    LogService.DebugWrite($"Finish Getting info of User {user.XiamiID}", nameof(WebApi));
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e, nameof(WebApi));
+                    throw e;
+                }
+            });
+        }
+
+        internal IEnumerable<ListenLogModel> ParseLogSong(HtmlNode listnode)
+        {
+            foreach (var tr in listnode.SelectNodes(".//tr"))
+            {
+                var input = tr.SelectSingleNode(".//input");
+                SongModel song = SongModel.GetNew(uint.Parse(input.GetAttributeValue("value", "0")));
+                song.Available = input.GetAttributeValue("checked", "") == "checked";
+                var namenodes = tr.SelectNodes("./td[@class='song_name']/a");
+                song.Name = namenodes[0].GetAttributeValue("title", null);
+                song.TrackArtist = namenodes[1].GetAttributeValue("title", null);
+                LogDevices device = LogDevices.Web;//TODO：分析记录设备
+                yield return new ListenLogModel(song, device, tr.SelectSingleNode("./td[@class='track_time']").InnerText);
+            }
+        }
+        
+        #endregion
     }
 }
 
@@ -727,7 +821,7 @@ namespace JacobC.Xiami.Net
                 {
                     LogService.DebugWrite($"Get info of Song {song.XiamiID}", nameof(WebApi));
 
-                    var gettask = HttpHelper.GetAsync(new Uri($"http://www.xiami.com/song/{song.XiamiID}"));
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/song/{song.XiamiID}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     LogService.DebugWrite($"Finish Getting info of Song {song.XiamiID}", nameof(WebApi));

@@ -67,7 +67,6 @@
                         <FontIcon x:Name="PlayIcon" FontSize="40" FontWeight="Bold" Glyph="&#xE102;"/>
                     </local:IconButton>
                     <local:IconButton x:Name="next"
-                            Background="Transparent"
                             VerticalAlignment="Center"
                             Command="{x:Bind NextCommand}" 
                             Foreground="{StaticResource BackColorBrush}"

@@ -362,9 +362,11 @@
     <ReservedNames>
       <ReservedName>虾听</ReservedName>
       <ReservedName>XiamiTing</ReservedName>
+      <ReservedName>虾听 Beta</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
+    <MainPackageIdentityName>5650Cmpute.iTV6</MainPackageIdentityName>
     <MainPackageIdentityName>5650Cmpute.MicrosoftDevelopersDocumentation</MainPackageIdentityName>
   </AccountPackageIdentityNames>
   <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9NBLGGH4SMG0" />

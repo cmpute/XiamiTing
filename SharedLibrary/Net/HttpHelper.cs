@@ -126,7 +126,7 @@ namespace JacobC.Xiami.Net
         /// <param name="content">请求内容</param>
         /// <param name="headersOperation">对请求标头的操作</param>
         /// <returns>请求的Response内容，注意Dispose</returns>
-        internal static IAsyncOperation<HttpContent> SendMessageInternal(
+        internal static IAsyncOperation<HttpResponseMessage> SendMessageInternal(
             string uri,
             HttpMethod method,
             HttpContent content,
@@ -147,7 +147,7 @@ namespace JacobC.Xiami.Net
                     if (!get.IsSuccessStatusCode)
                         throw new ConnectException("在HttpRequest中出现错误", new HttpRequestException(get.StatusCode.ToString()));
                     else
-                        return get.Content;
+                        return get;
                 }
                 catch (System.Runtime.InteropServices.COMException ce)
                 {
@@ -173,7 +173,7 @@ namespace JacobC.Xiami.Net
                 var postTask = SendMessageInternal(uri,HttpMethod.Post,content, headersOperation);
                 token.Register(() => postTask.Cancel());
                 using (var resp = await postTask)
-                    return await resp.ReadAsStringAsync();
+                    return await resp.Content.ReadAsStringAsync();
             });
         }
         public static IAsyncOperation<string> PostAsync(string uri, string request, Action<HttpRequestHeaders> headersOperation = null)
@@ -188,7 +188,7 @@ namespace JacobC.Xiami.Net
                 var gettask = SendMessageInternal(uri, HttpMethod.Get, null, headersOperation);
                 token.Register(() => gettask.Cancel());
                 using (var resp = await gettask)
-                    return await resp.ReadAsStringAsync();
+                    return await resp.Content.ReadAsStringAsync();
             });
         }
         public static IAsyncOperation<Stream> GetAsyncAsStream(string uri)
@@ -198,7 +198,7 @@ namespace JacobC.Xiami.Net
                 var gettask = SendMessageInternal(uri, HttpMethod.Get, null, null);
                 token.Register(() => gettask.Cancel());
                 using (var resp = await gettask)
-                    return await resp.ReadAsStreamAsync();
+                    return await resp.Content.ReadAsStreamAsync();
             });
         }
         //TODO: HTML解析的时候使用Stream进行解析

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Template10.Controls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -53,11 +54,7 @@ namespace JacobC.Xiami.Views
         }
         private void IconButton_Click(object sender, RoutedEventArgs e)
         {
-            var modal = this.Parent as ModalDialog;
-            if (modal == null)
-                modal = Window.Current.Content as ModalDialog;
-            modal.IsModal = false;
-            modal.ModalContent = null;
+            ExitModal();
         }
 
         private async void TaobaoLogin_DOMContentLoaded(WebView sender, WebViewDOMContentLoadedEventArgs args)
@@ -73,11 +70,8 @@ namespace JacobC.Xiami.Views
             var t = System.Net.WebUtility.UrlDecode(e.Value);
             System.Diagnostics.Debug.WriteLine("ScriptNotify:" + t);
             if (t.IndexOf("\"st\"") >= 0)
-            {
-                JObject a = JObject.Parse(t);
-                var result = await LoginHelper.XiamiLogin(a.GetValue("st").Value<string>());
-                System.Diagnostics.Debug.WriteLine(result.Status);
-            }
+                await LoggedProcess(await LoginHelper.XiamiLogin(
+                    JObject.Parse(t).GetValue("st").Value<string>()));
         }
         private void TaobaoLogin_NavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
         {
@@ -86,13 +80,25 @@ namespace JacobC.Xiami.Views
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var result = await LoginHelper.XiamiLogin(UserName.Text, Password.Password);
+            await LoggedProcess(await LoginHelper.XiamiLogin(UserName.Text, Password.Password));
+        }
+
+        private void ExitModal()
+        {
+            var modal = this.Parent as ModalDialog;
+            if (modal == null)
+                modal = Window.Current.Content as ModalDialog;
+            modal.IsModal = false;
+            modal.ModalContent = null;
+        }
+        private async Task LoggedProcess(LoginResult result)
+        {
             if (result.Status == LoginStatus.Success)
             {
                 LogService.DebugWrite("Login Success", nameof(LoginDialog));
-                IconButton_Click(sender, e);
+                ExitModal();
+                await WebApi.Instance.GetUserInfo(Models.UserModel.GetNew(LoginHelper.UserId));
             }
-            //TODO: GetUserInfo
         }
     }
 }

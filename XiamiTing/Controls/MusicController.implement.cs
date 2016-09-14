@@ -21,9 +21,11 @@ namespace JacobC.Xiami.Controls
         #region EventListeners
         private void AddListeners()
         {
-            PlaybackService.Instance.PlaybackSource.CurrentPlayingChanged += PlaybackSource_CurrentPlayingChanged;
-            PlaybackService.Instance.PlaybackSourceChanged += Instance_PlaybackSourceChanged;
-            PlaybackService.Instance.StateChanged += MediaPlayer_StateChanged;
+            var inst = PlaybackService.Instance;
+            inst.PlaybackSource.CurrentPlayingChanged += PlaybackSource_CurrentPlayingChanged;
+            inst.PlaybackSourceChanged += Instance_PlaybackSourceChanged;
+            inst.StateChanged += MediaPlayer_StateChanged;
+            inst.PlaybackOperated += (sender, e) => IsDownloadBarDisabled = false;
             songtimer.Interval = TimeSpan.FromMilliseconds(300);
             songtimer.Tick += Songtimer_Tick;
             this.Unloaded += (sender, e) => songtimer.Stop();
@@ -49,6 +51,7 @@ namespace JacobC.Xiami.Controls
                 if (e.NewValue == MediaPlayerState.Playing || e.NewValue == MediaPlayerState.Buffering)
                 {
                     VisualStateManager.GoToState(this, "Playing", true);
+                    IsDownloadBarDisabled = true;
                     songtimer.Start();
                 }
                 else

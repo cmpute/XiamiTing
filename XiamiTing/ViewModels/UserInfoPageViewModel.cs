@@ -34,6 +34,7 @@ namespace JacobC.Xiami.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            Current = LoginHelper.UserId > 0 ? UserModel.GetNew(LoginHelper.UserId) : UserModel.Null;
             if (!LoginHelper.IsLoggedIn)
             {
                 var modal = Window.Current.Content as ModalDialog;
@@ -41,9 +42,9 @@ namespace JacobC.Xiami.ViewModels
                 modal.ModalBackground = new SolidColorBrush(Color.FromArgb(150, 255, 255, 255));
                 modal.IsModal = true;
             }
-            await Task.CompletedTask;
+            else if (Current.CheckWhetherNeedInfo() && Current != UserModel.Null)
+                await Net.WebApi.Instance.GetUserInfo(Current);
         }
-
 
         UserModel _Current = UserModel.Null;
         /// <summary>

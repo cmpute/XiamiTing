@@ -283,6 +283,7 @@ namespace JacobC.Xiami.Services
         /// <returns>是否成功开始播放</returns>
         private bool PlayTrackInternal(SongModel song)
         {
+            PlaybackOperated?.Invoke(song, null);
             // Start the background task if it wasn't running
             //if (!IsBackgroundTaskRunning || MediaPlayerState.Closed == CurrentPlayer.CurrentState)
             if (!IsBackgroundTaskRunning)
@@ -315,6 +316,7 @@ namespace JacobC.Xiami.Services
             //TODO:判断播放模式
             //TODO:判断暂停状态
             //TODO:判断是播放列表还是电台
+            PlaybackOperated?.Invoke(null, null);
             if (_isPlayingRadio)
             {
                 await radio.PlayNext();
@@ -336,6 +338,7 @@ namespace JacobC.Xiami.Services
         {
             if(_isPlayingRadio)
                 throw new InvalidOperationException("电台不支持上一首功能");
+            PlaybackOperated?.Invoke(null, null);
             var list = PlaylistService.Instance;
             if (list.CurrentIndex == 0)
                 PlayTrack(list.Count - 1);
@@ -352,6 +355,7 @@ namespace JacobC.Xiami.Services
         /// <param name="model"></param>
         public void PlayModel(object model)
         {
+            PlaybackOperated?.Invoke(model, null);
             if (model == null)
                 return;
             if (model is AlbumModel)
@@ -372,6 +376,10 @@ namespace JacobC.Xiami.Services
         }
         #endregion
 
+        /// <summary>
+        /// 在Playback相关操作进行时发生
+        /// </summary>
+        public event EventHandler PlaybackOperated;
         
     }
 }

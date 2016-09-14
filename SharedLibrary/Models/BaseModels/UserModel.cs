@@ -75,5 +75,58 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public bool IsVIP { get { return _IsVIP; } set { Set(ref _IsVIP, value); } }
 
+        UserRadioModel _UserRadio = default(UserRadioModel);
+        /// <summary>
+        /// 获取或设置用户电台属性
+        /// </summary>
+        public UserRadioModel UserRadio { get { return _UserRadio; } set { Set(ref _UserRadio, value); } }
+
+        PageItemsCollection<ListenLogModel> _RecentTracks = default(PageItemsCollection<ListenLogModel>);
+        /// <summary>
+        /// 获取或设置最近播放的歌曲属性
+        /// </summary>
+        public PageItemsCollection<ListenLogModel> RecentTracks { get { return _RecentTracks; } set { Set(ref _RecentTracks, value); } }
+
+        string _PersonalDescription = default(string);
+        /// <summary>
+        /// 获取或设置年龄、星座和性别
+        /// </summary>
+        public string PersonalDescription { get { return _PersonalDescription; } set { Set(ref _PersonalDescription, value); } }
+
+        string _JoinDate = default(string);
+        /// <summary>
+        /// 获取或设置加入时间
+        /// </summary>
+        public string JoinDate { get { return _JoinDate; } set { Set(ref _JoinDate, value); } }
+
+        string _Level = default(string);
+        /// <summary>
+        /// 获取或设置用户等级
+        /// </summary>
+        public string Level { get { return _Level; } set { Set(ref _Level, value); } }
+
+        int _FollowerCount = default(int);
+        /// <summary>
+        /// 获取或设置粉丝数属性
+        /// </summary>
+        public int FollowerCount { get { return _FollowerCount; } set { Set(ref _FollowerCount, value); } }
+
+        int _FollowingCount = default(int);
+        /// <summary>
+        /// 获取或设置关注数属性
+        /// </summary>
+        public int FollowingCount { get { return _FollowingCount; } set { Set(ref _FollowingCount, value); } }
+
+        int _VisitedCount = default(int);
+        /// <summary>
+        /// 获取或设置被访问次数属性
+        /// </summary>
+        public int VisitedCount { get { return _VisitedCount; } set { Set(ref _VisitedCount, value); } }
+
+
+        public override bool CheckWhetherNeedInfo()
+        {
+            return UserRadio == null;
+        }
     }
 }

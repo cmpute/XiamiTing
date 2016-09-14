@@ -51,5 +51,13 @@ namespace JacobC.Xiami.Models
         {
             return base.Set<string>(ref storage, WebUtility.HtmlDecode(value), propertyName);
         }
+
+        /// <summary>
+        /// 判断模型信息是否未获取
+        /// </summary>
+        public virtual bool CheckWhetherNeedInfo()
+        {
+            return Name == null;
+        }
     }
 }

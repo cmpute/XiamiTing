@@ -1,2 +1,2 @@
-MainPackage=D:\编程\GitHub\XiamiTing\XiamiTing\bin\x64\Release\Upload\XiamiTing_0.1.3.0_x64.appx
-SymbolPackage=D:\编程\GitHub\XiamiTing\XiamiTing\AppPackages\XiamiTing_0.1.3.0\XiamiTing_0.1.3.0_x64.appxsym
+MainPackage=D:\编程\GitHub\XiamiTing\XiamiTing\bin\x64\Release\Upload\XiamiTing_0.1.11.0_x64.appx
+SymbolPackage=D:\编程\GitHub\XiamiTing\XiamiTing\AppPackages\XiamiTing_0.1.11.0\XiamiTing_0.1.11.0_x64.appxsym
