@@ -21,6 +21,7 @@ namespace JacobC.Xiami.ViewModels
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
             {
+                Current = UserModel.Null;
                 //DesignData
             }
             LoginHelper.UserChanged += LoginHelper_UserChanged;
@@ -34,6 +35,9 @@ namespace JacobC.Xiami.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+#if DEBUG
+            Current = UserModel.GetNew(6069765u);
+#else
             Current = LoginHelper.UserId > 0 ? UserModel.GetNew(LoginHelper.UserId) : UserModel.Null;
             if (!LoginHelper.IsLoggedIn)
             {
@@ -42,8 +46,9 @@ namespace JacobC.Xiami.ViewModels
                 modal.ModalBackground = new SolidColorBrush(Color.FromArgb(150, 255, 255, 255));
                 modal.IsModal = true;
             }
-            else if (Current.CheckWhetherNeedInfo() && Current != UserModel.Null)
-                await Net.WebApi.Instance.GetUserInfo(Current);
+#endif
+            if (Current.CheckWhetherNeedInfo() && Current != UserModel.Null)
+                await WebApi.Instance.GetUserInfo(Current);
         }
 
         UserModel _Current = UserModel.Null;

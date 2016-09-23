@@ -22,7 +22,7 @@ namespace JacobC.Xiami.Controls
         public Playlist()
         {
             this.InitializeComponent();
-            PlaylistService.Instance.CurrentIndexChanged += Instance_CurrentIndexChanged;
+            Loaded += (sender, e) => PlaylistService.Instance.CurrentIndexChanged += Instance_CurrentIndexChanged;
             Songlist.SelectionChanged += (sender, e) => SelectionUpdated?.Invoke(sender, e);
         }
 

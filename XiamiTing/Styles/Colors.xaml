@@ -27,6 +27,7 @@
     </LinearGradientBrush>
     <SolidColorBrush x:Key="ThemeColorBrush" Color="{StaticResource ThemeColor}" />
     <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{StaticResource ThemeBackgroundColor}" />
+    <SolidColorBrush x:Key="InactiveThemeColorBrush" Color="{StaticResource InactiveThemeColor}" />
     <!--<SolidColorBrush x:Key="LightDarkThemeColorBrush" Color="{StaticResource LightDarkThemeColor}" />-->
     <SolidColorBrush x:Key="DarkThemeColorBrush" Color="{StaticResource DarkThemeColor}" />
     <SolidColorBrush x:Key="LightDarkColorBrush" Color="{StaticResource LightDarkColor}" />

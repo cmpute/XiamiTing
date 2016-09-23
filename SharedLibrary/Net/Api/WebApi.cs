@@ -2,18 +2,18 @@
 using JacobC.Xiami.Models;
 using JacobC.Xiami.Services;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Serialization;
+using Windows.Data.Xml.Dom;
 using Windows.Foundation;
 using Windows.Web.Http;
 using static System.Runtime.InteropServices.WindowsRuntime.AsyncInfo;
-using System.Text.RegularExpressions;
-using Windows.Data.Xml.Dom;
-using System.Xml.Linq;
-using System.Runtime.Serialization;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace JacobC.Xiami.Net
 {
@@ -54,7 +54,7 @@ namespace JacobC.Xiami.Net
                     else
                         song.Name = item.InnerText;
                 }
-                else
+                else 
                 {
                     string t = item.InnerText.Trim();
                     if (t.Length > 0)
@@ -208,7 +208,7 @@ namespace JacobC.Xiami.Net
         public IAsyncAction GetAlbumInfo(AlbumModel album, bool cover = true)
         {
             if (album.XiamiID == 0)
-                throw new ArgumentException("SongModel未设置ID");
+                throw new ArgumentException("AlbumModel未设置ID");
             return Run(async token =>
             {
                 try
@@ -363,7 +363,7 @@ namespace JacobC.Xiami.Net
         public IAsyncAction GetArtistInfo(ArtistModel artist, bool cover = true)
         {
             if (artist.XiamiID == 0)
-                throw new ArgumentException("SongModel未设置ID");
+                throw new ArgumentException("ArtistModel未设置ID");
             return Run(async token =>
             {
                 try
@@ -642,7 +642,7 @@ namespace JacobC.Xiami.Net
         public IAsyncOperation<Tuple<RadioType,uint>> GetRadioType(uint radioid)
         {
             if (radioid == 0)
-                throw new ArgumentException("SongModel未设置ID");
+                throw new ArgumentException("RadioModel未设置ID");
             return Run(async token =>
             {
                 try
@@ -720,12 +720,13 @@ namespace JacobC.Xiami.Net
         public IAsyncAction GetUserInfo(UserModel user)
         {
             if (user.XiamiID == 0)
-                throw new ArgumentException("SongModel未设置ID");
+                throw new ArgumentException("UserModel未设置ID");
             return Run(async token =>
             {
                 try
                 {
                     LogService.DebugWrite($"Get info of User {user.XiamiID}", nameof(WebApi));
+                    //System.Diagnostics.Debugger.Break();
 
                     var gettask = HttpHelper.GetAsync($"http://www.xiami.com/u/{user.XiamiID}");
                     token.Register(() => gettask.Cancel());
@@ -748,7 +749,6 @@ namespace JacobC.Xiami.Net
                         radio.ArtFull = new Uri(radioimg.Replace("_1", ""));
                         radio.Description = radionode.SelectSingleNode(".//p[@class='des']").InnerText;
                     }
-                    System.Diagnostics.Debugger.Break();
                     user.Description = mainpaneldivs.SelectSingleNode(".//p[@class='tweeting_full']").InnerHtml;
                     user.RecentTracks = new PageItemsCollection<ListenLogModel>(50,
                         ParseLogSong(mainpaneldivs.SelectSingleNode("./div[@id='p_tracks']")),
@@ -780,7 +780,7 @@ namespace JacobC.Xiami.Net
                     var counts = details.Element("ul").SelectNodes("./li/a/span");
                     user.FollowingCount = int.Parse(counts[0].InnerText);
                     user.FollowerCount = int.Parse(counts[1].InnerText);
-
+                    
                     //其他的PageLoad集合：收藏的歌曲、专辑、艺人
 
                     LogService.DebugWrite($"Finish Getting info of User {user.XiamiID}", nameof(WebApi));
@@ -807,7 +807,35 @@ namespace JacobC.Xiami.Net
                 yield return new ListenLogModel(song, device, tr.SelectSingleNode("./td[@class='track_time']").InnerText);
             }
         }
-        
+
+        #endregion
+        #region 搜索
+        private IAsyncOperation<SearchResultBase> SearchBrief(string keyword)
+        {
+            if (keyword == null)
+                throw new ArgumentException("搜索内容不能为空");
+            return Run(async token =>
+            {
+                try
+                {
+                    LogService.DebugWrite($"Search key {keyword}", nameof(WebApi));
+                    //System.Diagnostics.Debugger.Break();
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/ajax/search-index?key={System.Net.WebUtility.UrlEncode(keyword)}&_={ParamHelper.GetTimestamp()}");
+                    token.Register(() => gettask.Cancel());
+                    var content = await gettask;
+                    LogService.DebugWrite($"Finish Searching {keyword}", nameof(WebApi));
+
+                    SearchResultBase result = new SearchResultBase();
+                    return result;
+                    
+                }
+                catch (Exception e)
+                {
+                    LogService.ErrorWrite(e, nameof(WebApi));
+                    throw e;
+                }
+            });
+        }
         #endregion
     }
 }
@@ -820,10 +848,11 @@ namespace JacobC.Xiami.Net
                 try
                 {
                     LogService.DebugWrite($"Get info of Song {song.XiamiID}", nameof(WebApi));
-
+                    //System.Diagnostics.Debugger.Break();
                     var gettask = HttpHelper.GetAsync($"http://www.xiami.com/song/{song.XiamiID}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
+                    
                     LogService.DebugWrite($"Finish Getting info of Song {song.XiamiID}", nameof(WebApi));
                 }
                 catch (Exception e)

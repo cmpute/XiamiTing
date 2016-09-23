@@ -84,6 +84,12 @@ namespace JacobC.Xiami
             return Template10.Services.SerializationService.SerializationService.Json.Deserialize<T>(e.Parameter?.ToString());
         }
 
+        /// <summary>
+        /// 获取指定名称的子节点
+        /// </summary>
+        /// <param name="node">父节点</param>
+        /// <param name="name">子节点名称</param>
+        /// <returns>第一个匹配指定名称的子节点</returns>
         public static IXmlNode Element(this IXmlNode node, string name)
         {
             foreach (var item in node.ChildNodes)
@@ -93,7 +99,19 @@ namespace JacobC.Xiami
             }
             return null;
         }
+        /// <summary>
+        /// 获取指定名称子节点的InnerText
+        /// </summary>
+        /// <param name="node">父节点</param>
+        /// <param name="name">子节点名称</param>
+        /// <returns></returns>
         public static string ElementText(this IXmlNode node, string name) => Element(node, name).InnerText;
+        /// <summary>
+        /// 获取指定名称所有的子节点
+        /// </summary>
+        /// <param name="node">父节点</param>
+        /// <param name="name">子节点名称</param>
+        /// <returns></returns>
         public static IEnumerable<IXmlNode> Elements(this IXmlNode node,string name)
         {
             foreach (var item in node.ChildNodes)

@@ -30,6 +30,13 @@ namespace JacobC.Xiami
             ShowShellBackButton = _settings.UseShellBackButton;
 
             #endregion
+
+            UnhandledException += App_UnhandledException;
+        }
+
+        private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Services.LogService.ErrorWrite(e.Exception, sender.ToString());
         }
 
         public override async Task OnInitializeAsync(IActivatedEventArgs args)

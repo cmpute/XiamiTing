@@ -14,12 +14,59 @@
         <vm:UserInfoPageViewModel x:Name="VM"/>
     </Page.DataContext>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <controls:PageHeader Text="{x:Bind VM.Current.Name}"/>
-        <TextBlock Grid.Row="1" x:Name="info" FontSize="48" Text="{x:Bind VM.Current.Name}"/>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+          MaxWidth="{StaticResource ContentMaxWidth}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <!--<controls:PageHeader Text="{x:Bind VM.Current.Name}"/>-->
+        <Border Grid.RowSpan="2" Margin="16,20,16,0"
+                Background="White"
+                BorderBrush="{StaticResource DarkColorBrush}"
+                BorderThickness="1 "
+                Width="200"
+                VerticalAlignment="Top">
+            <!--<Rectangle Fill="Green"/>-->
+            <c:ImageEx Source="{x:Bind VM.Current.ArtFull}"
+                       Stretch="Uniform"
+                       />
+        </Border>
+        <Grid Margin="0,4,0,4" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <RelativePanel Padding="4"
+                           BorderBrush="{StaticResource ThemeColorBrush}" BorderThickness="0,0,0,1">
+                <StackPanel RelativePanel.AlignLeftWithPanel="True">
+                    <TextBlock FontSize="28" FontWeight="SemiBold" Text="{x:Bind VM.Current.Name}"/>
+                    <TextBlock Text="{x:Bind VM.Current.PersonalDescription}" TextWrapping="WrapWholeWords"/>
+                </StackPanel>
+            </RelativePanel>
+            <Pivot Grid.Row="1">
+                <PivotItem Header="基本信息">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border Margin="0,0,0,8"
+                                Padding="8" Background="{StaticResource InactiveThemeColorBrush}">
+                            <TextBlock Text="{x:Bind VM.Current.Description}" TextWrapping="WrapWholeWords"/>
+                        </Border>
+                        <!--电台图标-->
+                        <Grid Grid.Row="1" Background="{StaticResource ContrastColorBrush}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <c:ImageEx Source="{x:Bind VM.Current.UserRadio.Art}"
+                                       Height="60" Width="60"/>
+                        </Grid>
+                    </Grid>
+                </PivotItem>
+            </Pivot>
+        </Grid>
     </Grid>
 </Page>
