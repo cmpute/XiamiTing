@@ -234,4 +234,12 @@
   <data name="LicenseTab.Header" xml:space="preserve">
     <value>许可</value>
   </data>
+  <data name="UserAlbumCollectTab.Header" xml:space="preserve">
+    <value>收藏的专辑</value>
+    <comment>UserInfo页</comment>
+  </data>
+  <data name="UserInfoTab.Header" xml:space="preserve">
+    <value>基本信息</value>
+    <comment>UserInfo页</comment>
+  </data>
 </root>

@@ -23,6 +23,7 @@ namespace JacobC.Xiami.Views
 
             JacobC.Xiami.Services.SettingsService.Instance.AppThemeChanged += (value) =>
                 HamburgerMenu.RefreshStyles(value);
+            CurrentUser = LoginHelper.UserId == 0 ? UserModel.Null : UserModel.GetNew(LoginHelper.UserId);
             LoginHelper.UserChanged += (sender, e) =>
                 CurrentUser = e.NewValue == 0 ? UserModel.Null : UserModel.GetNew(e.NewValue);
         }

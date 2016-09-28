@@ -56,7 +56,7 @@ namespace JacobC.Xiami.Controls
         public bool IsDownloadBarDisabled
         {
             get { return (bool)GetValue(IsDownloadBarDisabledProperty); }
-            set { SetValue(IsDownloadBarDisabledProperty, value); }
+            set { SetValue(IsDownloadBarDisabledProperty, value); }// TODO: 更改这个属性的UI线程不对，操作产生Exception
         }
         /// <summary>
         /// 标识<see cref="IsDownloadBarDisabled"/>依赖属性

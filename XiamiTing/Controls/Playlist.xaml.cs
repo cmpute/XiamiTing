@@ -41,6 +41,7 @@ namespace JacobC.Xiami.Controls
                 {
                     t = Songlist.ContainerFromIndex(e.NewValue) as ListViewItem;
                     VisualStateManager.GoToState((t.Tag as SongItem), "Playing", true);
+                    //TODO: 增加新专辑的时候会存在Item不为空但是container为空的情况
                 }
             }
             else

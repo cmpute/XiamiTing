@@ -1,6 +1,6 @@
 ﻿{
   "dependencies": {
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.1",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "Template10": "1.1.12-preview-160922"
   },
   "frameworks": {

@@ -74,6 +74,7 @@ namespace JacobC.Xiami.Net
         {
             if(IsLoggedIn)
                 await HttpHelper.GetAsync("http://www.xiami.com/member/logout");
+            IsLoggedIn = CheckMemberAuth();
         }
         public static async Task<LoginResult> CheckNeedTaobaoLogin(string useremail)
         {
@@ -203,8 +204,28 @@ namespace JacobC.Xiami.Net
                 }
             }
         }
+        /// <summary>
+        /// 用户更改后发生
+        /// </summary>
         public static event EventHandler<ChangedEventArgs<uint>> UserChanged;
-        public static bool IsLoggedIn { get; private set; } = false;
+        /// <summary>
+        /// 用户登录状态发生改变时发生
+        /// </summary>
+        public static event EventHandler<ChangedEventArgs<bool>> LogStateChanged;
+        static bool _logged = false;
+        public static bool IsLoggedIn
+        {
+            get { return _logged; }
+            private set
+            {
+                if (_logged != value)
+                {
+                    var e = new ChangedEventArgs<bool>(_logged, value);
+                    _logged = value;
+                    LogStateChanged?.Invoke(null, e);
+                }
+            }
+        }
 
         public static void SaveAccountInfo()
         {

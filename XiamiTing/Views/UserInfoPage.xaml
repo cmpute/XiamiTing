@@ -11,12 +11,22 @@
     xmlns:c="using:JacobC.Xiami.Controls"
     mc:Ignorable="d">
     <Page.DataContext>
-        <vm:UserInfoPageViewModel x:Name="VM"/>
+        <vm:UserInfoPageViewModel x:Name="VM" View="{x:Bind}"/>
     </Page.DataContext>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
           MaxWidth="{StaticResource ContentMaxWidth}">
-        <Grid.ColumnDefinitions>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LoginAvalibility">
+                <VisualState x:Name="NotLoggedIn"/>
+                <VisualState x:Name="LoggedIn">
+                    <VisualState.Setters>
+                        <Setter Target="LoginButton.Content" Value="退出登录"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+            <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
@@ -43,9 +53,17 @@
                     <TextBlock FontSize="28" FontWeight="SemiBold" Text="{x:Bind VM.Current.Name}"/>
                     <TextBlock Text="{x:Bind VM.Current.PersonalDescription}" TextWrapping="WrapWholeWords"/>
                 </StackPanel>
+                <StackPanel RelativePanel.AlignRightWithPanel="True"
+                            RelativePanel.AlignVerticalCenterWithPanel="True"
+                            Orientation="Horizontal">
+                    <Button x:Name="LoginButton"
+                            Content="登录"
+                            Command="{x:Bind VM.LogoutCommand}"
+                            Background="{StaticResource ThemeColorBrush}"/>
+                </StackPanel>
             </RelativePanel>
             <Pivot Grid.Row="1">
-                <PivotItem Header="基本信息">
+                <PivotItem x:Uid="UserInfoTab" Header="基本信息">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -53,7 +71,7 @@
                         </Grid.RowDefinitions>
                         <Border Margin="0,0,0,8"
                                 Padding="8" Background="{StaticResource InactiveThemeColorBrush}">
-                            <TextBlock Text="{x:Bind VM.Current.Description}" TextWrapping="WrapWholeWords"/>
+                            <TextBlock c:RichTextExtended.Document="{x:Bind VM.Current.Description}" TextWrapping="WrapWholeWords"/>
                         </Border>
                         <!--电台图标-->
                         <Grid Grid.Row="1" Background="{StaticResource ContrastColorBrush}">
@@ -63,8 +81,13 @@
                             </Grid.ColumnDefinitions>
                             <c:ImageEx Source="{x:Bind VM.Current.UserRadio.Art}"
                                        Height="60" Width="60"/>
+                            <TextBlock Grid.Column="1" Margin="8,0"
+                                       c:RichTextExtended.Document="{x:Bind VM.Current.UserRadio.Description, Mode=OneWay}" TextWrapping="WrapWholeWords"/>
                         </Grid>
                     </Grid>
+                </PivotItem>
+                <PivotItem x:Uid="UserAlbumCollectTab" Header="专辑收藏">
+                    
                 </PivotItem>
             </Pivot>
         </Grid>

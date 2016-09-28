@@ -741,13 +741,14 @@ namespace JacobC.Xiami.Net
                         user.IsVIP = true;
                     var mainpaneldivs = body.SelectSingleNode(".//div[@class='proMain_left_inner']");
                     var radionode = mainpaneldivs.SelectSingleNode("./div[@id='p_radio']");
-                    if(user.UserRadio == null)
+                    if (user.UserRadio == null)
                     {
                         UserRadioModel radio = RadioModel.GetFromUser(user);
                         var radioimg = radionode.SelectSingleNode(".//img").GetAttributeValue("src", UserRadioModel.LargeDefaultUri);
                         radio.Art = new Uri(radioimg);
                         radio.ArtFull = new Uri(radioimg.Replace("_1", ""));
                         radio.Description = radionode.SelectSingleNode(".//p[@class='des']").InnerText;
+                        user.UserRadio = radio;
                     }
                     user.Description = mainpaneldivs.SelectSingleNode(".//p[@class='tweeting_full']").InnerHtml;
                     user.RecentTracks = new PageItemsCollection<ListenLogModel>(50,
@@ -780,7 +781,7 @@ namespace JacobC.Xiami.Net
                     var counts = details.Element("ul").SelectNodes("./li/a/span");
                     user.FollowingCount = int.Parse(counts[0].InnerText);
                     user.FollowerCount = int.Parse(counts[1].InnerText);
-                    
+
                     //其他的PageLoad集合：收藏的歌曲、专辑、艺人
 
                     LogService.DebugWrite($"Finish Getting info of User {user.XiamiID}", nameof(WebApi));

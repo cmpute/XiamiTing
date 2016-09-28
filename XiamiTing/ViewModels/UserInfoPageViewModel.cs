@@ -25,13 +25,19 @@ namespace JacobC.Xiami.ViewModels
                 //DesignData
             }
             LoginHelper.UserChanged += LoginHelper_UserChanged;
-
+            LoginHelper.LogStateChanged += LoginHelper_LogStateChanged;
         }
 
+        private void LoginHelper_LogStateChanged(object sender, Template10.Common.ChangedEventArgs<bool> e)
+        {
+            VisualStateManager.GoToState(View, e.NewValue ? "LoggedIn" : "NotLoggedIn", true);
+        }
         private void LoginHelper_UserChanged(object sender, Template10.Common.ChangedEventArgs<uint> e)
         {
             Current = e.NewValue > 0 ? UserModel.GetNew(e.NewValue) : UserModel.Null;
         }
+
+        public UserInfoPage View { get; set; }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
@@ -40,12 +46,7 @@ namespace JacobC.Xiami.ViewModels
 #else
             Current = LoginHelper.UserId > 0 ? UserModel.GetNew(LoginHelper.UserId) : UserModel.Null;
             if (!LoginHelper.IsLoggedIn)
-            {
-                var modal = Window.Current.Content as ModalDialog;
-                modal.ModalContent = new LoginDialog();
-                modal.ModalBackground = new SolidColorBrush(Color.FromArgb(150, 255, 255, 255));
-                modal.IsModal = true;
-            }
+                await ShowLoginModal();
 #endif
             if (Current.CheckWhetherNeedInfo() && Current != UserModel.Null)
                 await WebApi.Instance.GetUserInfo(Current);
@@ -57,5 +58,26 @@ namespace JacobC.Xiami.ViewModels
         /// </summary>
         public UserModel Current { get { return _Current; } set { Set(ref _Current, value); } }
 
+        private DelegateCommand<object> _LogoutCommand;
+        public DelegateCommand<object> LogoutCommand => _LogoutCommand ?? (_LogoutCommand = new DelegateCommand<object>( async (model) =>
+        {
+            if (LoginHelper.IsLoggedIn)
+                await LoginHelper.Logout();
+            else
+                await ShowLoginModal();
+
+        }));
+
+        async Task ShowLoginModal()
+        {
+            await Dispatcher.DispatchAsync(()=>
+                {
+                    var modal = Window.Current.Content as ModalDialog;
+                    modal.ModalContent = new LoginDialog();
+                    modal.ModalBackground = new SolidColorBrush(Color.FromArgb(150, 255, 255, 255));
+                    modal.IsModal = true;
+                }
+            );
+        }
     }
 }
