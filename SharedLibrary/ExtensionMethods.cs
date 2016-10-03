@@ -118,6 +118,19 @@ namespace JacobC.Xiami
                 if (item.LocalName?.ToString() == name)
                     yield return item;
         }
+        public static HtmlNode Descendant(this HtmlNode mnode, string name) => InnerDescendant(mnode, name.ToLowerInvariant());
+        private static HtmlNode InnerDescendant(HtmlNode mnode, string name)
+        {
+            foreach (HtmlNode node in mnode.ChildNodes)
+                if (node.Name.Equals(name))
+                    return node;
+                else
+                {
+                    var res = InnerDescendant(node, name);
+                    if (res != null) return res;
+                }
+            return null;
+        }
 
         /// <summary>
         /// 将字典对象转化成Html的Query格式字符串

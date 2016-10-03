@@ -46,6 +46,12 @@ namespace JacobC.Xiami.Models
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Name { get { return _Name; } set { Set(ref _Name, WebUtility.HtmlDecode(value)); } }
 
+        string _NameHtml = default(string);
+        /// <summary>
+        /// 获取或设置Html形式的名称（用于搜索）
+        /// </summary>
+        public string NameHtml { get { return _NameHtml; } set { Set(ref _NameHtml, value); } }
+
         //对string的设置默认decode一遍
         public bool Set(ref string storage, string value, [CallerMemberName] string propertyName = null)
         {

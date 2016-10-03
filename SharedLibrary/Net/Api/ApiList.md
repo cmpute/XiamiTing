@@ -109,3 +109,4 @@
 |http://www.xiami.com/search/collect?key={keyword}|搜索精选集|h|
 |http://www.xiami.com/song/tag/{tag}|搜索对应标签的歌曲|h|
 |http://www.xiami.com/search?key={keyword}|完整搜索页面,可选参数artist={artist}|h|
+|http://www.xiami.com/search/radio?key={keyword}|搜索电台|h|

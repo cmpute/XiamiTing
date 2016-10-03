@@ -11,15 +11,16 @@ namespace JacobC.Xiami.Models
     /// </summary>
     public class SearchResultBase
     {
-        public PageItemsCollection<SongModel> Songs;
-        public PageItemsCollection<AlbumModel> Albums;
-        public PageItemsCollection<ArtistModel> Artist;
+        public IList<SongModel> Songs;
+        public IList<AlbumModel> Albums;
+        public IList<ArtistModel> Artists;
     }
     /// <summary>
-    /// 
+    /// 完整搜索结果，IList的实现会实现IIncrementalLoading
     /// </summary>
     public class SearchResult : SearchResultBase
     {
-        
+        public XiamiModelBase BestMatch;
+        public IList<CollectionModel> Collections;
     }
 }

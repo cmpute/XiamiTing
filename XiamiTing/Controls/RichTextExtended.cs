@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -12,6 +13,7 @@ using JacobC.Xiami.Models;
 using Template10.Services.NavigationService;
 using System.Windows.Input;
 using JacobC.Xiami.Views;
+using Windows.UI.Xaml.Media;
 
 namespace JacobC.Xiami.Controls
 {
@@ -92,6 +94,16 @@ namespace JacobC.Xiami.Controls
                     case "div":
                     case "p":
                         break;
+                    case "b":
+                        //TODO: 设置属性，是否要加红搜索显示结果
+                        if(node.GetAttributeValue("class","") == "red")
+                        {
+                            Span p = new Span();
+                            p.Foreground = new SolidColorBrush(Colors.Red);
+                            Analyse(item, container, style);
+                            continue;
+                        }
+                        else break;
                     //非文本
                     case "button":
                         continue;
