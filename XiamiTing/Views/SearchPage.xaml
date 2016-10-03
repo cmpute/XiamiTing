@@ -6,11 +6,21 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:JacobC.Xiami.ViewModels"
+    xmlns:t10c="using:Template10.Controls"
     mc:Ignorable="d">
     <Page.DataContext>
         <vm:SearchPageViewModel x:Name="VM"/>
     </Page.DataContext>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <t10c:PageHeader Text="搜索"/>
+        <Grid Grid.Row="1" Margin="16,0">
+            <AutoSuggestBox PlaceholderText="请输入关键词" QueryIcon="Find"
+                            TextChanged="{x:Bind VM.AutoSuggestBox_TextChanged}"
+                            SuggestionChosen="{x:Bind VM.AutoSuggestBox_SuggestionChosen}"/>
+        </Grid>
     </Grid>
 </Page>

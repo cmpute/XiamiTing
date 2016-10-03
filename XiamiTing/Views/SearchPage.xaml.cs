@@ -26,5 +26,6 @@ namespace JacobC.Xiami.Views
         {
             this.InitializeComponent();
         }
+
     }
 }

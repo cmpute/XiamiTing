@@ -72,7 +72,7 @@ namespace JacobC.Xiami.Net
                     if (!match.Success)
                     {
 #if DEBUG
-                        System.Diagnostics.Debugger.Break();
+                        System.Diagnostics.Debugger.Break(); // TODO: 部分不支持播放的歌曲会在这报错
 #endif
                         throw new Exception("获取下载地址出错");
                     }

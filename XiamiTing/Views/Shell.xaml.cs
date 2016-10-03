@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using JacobC.Xiami.Net;
 using JacobC.Xiami.Models;
+using Windows.UI.Xaml.Media;
 
 namespace JacobC.Xiami.Views
 {

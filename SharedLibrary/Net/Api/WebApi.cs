@@ -815,51 +815,65 @@ namespace JacobC.Xiami.Net
                 try
                 {
                     LogService.DebugWrite($"Search key {keyword} briefly", nameof(WebApi));
-                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/ajax/search-index?key={System.Net.WebUtility.UrlEncode(keyword)}&_={ParamHelper.GetTimestamp()}");
+                    var gettask = HttpHelper.GetAsync($"http://www.xiami.com/ajax/search-index?key={System.Net.WebUtility.UrlEncode(keyword.Replace(' ','+'))}&_={ParamHelper.GetTimestamp()}");
                     token.Register(() => gettask.Cancel());
                     var content = await gettask;
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
                     var categories = doc.DocumentNode.SelectNodes(".//tr");
-                    var artists = categories[1].SelectNodes(".//li");
-                    var ams = artists.Select((node) =>
+                    List<ArtistModel> ams = null;
+                    List<AlbumModel> abms = null;
+                    List<SongModel> sms = null;
+                    foreach (var item in categories)
                     {
-                        var linknode = node.Element("a");
-                        var linkt = linknode.GetAttributeValue("href", "/0?");
-                        var artist = ArtistModel.GetNew(ParseXiamiID(linkt));
-                        artist.Art = new Uri(linknode.Descendant("img").GetAttributeValue("src", ArtistModel.LargeDefaultUri));
-                        artist.NameHtml = linknode.Descendant("strong").InnerHtml;
-                        return artist;
-                    }).ToList();
-                    var songs = categories[2].SelectNodes(".//li");
-                    var sms = songs.Select((node) =>
-                    {
-                        var linknode = node.Element("a");
-                        var linkt = linknode.GetAttributeValue("href", "/0?");
-                        var song = SongModel.GetNew(ParseXiamiID(linkt));
-                        song.TrackArtist = linknode.LastChild.InnerHtml;
-                        song.NameHtml = linknode.InnerHtml.Substring(0, linknode.InnerHtml.IndexOf("- <span>"));
-                        //System.Diagnostics.Debugger.Break();
-                        return song;
-                    }).ToList();
-                    var albums = categories[3].SelectNodes(".//li");
-                    var abms = albums.Select((node) =>
-                    {
-                        var linknode = node.Element("a");
-                        var linkt = linknode.GetAttributeValue("href", "/0?");
-                        var album = AlbumModel.GetNew(ParseXiamiID(linkt));
-                        if (album.Art.Host == "")
+                        var lis = item.Descendants("li");
+                        switch(item.Descendant("h3")?.InnerText)
                         {
-                            var art = linknode.Descendant("img").GetAttributeValue("src", AlbumModel.LargeDefaultUri);
-                            album.Art = new Uri(art.Replace("_3", "_2"));
-                            album.ArtFull = new Uri(art.Replace("_3", ""));
+                            case "歌曲":
+                                sms = lis.Select((node) =>
+                                {
+                                    var linknode = node.Element("a");
+                                    var linkt = linknode.GetAttributeValue("href", "/0?");
+                                    var song = SongModel.GetNew(ParseXiamiID(linkt));
+                                    song.TrackArtist = linknode.LastChild.InnerHtml;
+                                    song.NameHtml = linknode.InnerHtml.Substring(0, linknode.InnerHtml.IndexOf("- <span>"));
+                                    //System.Diagnostics.Debugger.Break();
+                                    return song;
+                                }).ToList();
+                                break;
+                            case "专辑":
+                                abms = lis.Select((node) =>
+                                {
+                                    var linknode = node.Element("a");
+                                    var linkt = linknode.GetAttributeValue("href", "/0?");
+                                    var album = AlbumModel.GetNew(ParseXiamiID(linkt));
+                                    if (album.Art.Host == "")
+                                    {
+                                        var art = linknode.Descendant("img").GetAttributeValue("src", AlbumModel.LargeDefaultUri);
+                                        album.Art = new Uri(art.Replace("_3", "_2"));
+                                        album.ArtFull = new Uri(art.Replace("_3", ""));
+                                    }
+                                    var snode = linknode.Descendant("strong");
+                                    album.NameHtml = snode.InnerHtml;
+                                    //album.ArtistName = snode.ParentNode.ChildNodes.Last().InnerText;
+                                    return album;
+                                }).ToList();
+                                break;
+                            case "艺人":
+                                ams = lis.Select((node) =>
+                                {
+                                    var linknode = node.Element("a");
+                                    var linkt = linknode.GetAttributeValue("href", "/0?");
+                                    var artist = ArtistModel.GetNew(ParseXiamiID(linkt));
+                                    artist.Art = new Uri(linknode.Descendant("img").GetAttributeValue("src", ArtistModel.LargeDefaultUri));
+                                    artist.NameHtml = linknode.Descendant("strong").InnerHtml;
+                                    return artist;
+                                }).ToList();
+                                break;
+                            default:
+                                break;
                         }
-                        var snode = linknode.Descendant("strong");
-                        album.NameHtml = snode.InnerHtml;
-                        //album.ArtistName = snode.ParentNode.ChildNodes.Last().InnerText;
-                        return album;
-                    }).ToList();
-
+                    }
                     SearchResultBase result = new SearchResultBase() { Songs = sms, Artists = ams, Albums = abms };
                     LogService.DebugWrite($"Finish Searching {keyword}", nameof(WebApi));
                     return result;
@@ -876,6 +890,7 @@ namespace JacobC.Xiami.Net
         {
             if (keyword == null || keyword?.Length == 0)
                 throw new ArgumentException("搜索内容不能为空");
+            keyword = keyword.Replace(' ', '+');
             return Run(async token =>
             {
                 try
@@ -905,7 +920,7 @@ namespace JacobC.Xiami.Net
                             var pdoc = new HtmlDocument();
                             pdoc.LoadHtml(pcontent);
                             return pdoc.DocumentNode.SelectSingleNode(".//table[@class='track_list']")
-                                .Descendant("tbody").Elements("tr").Select((node) => ParseSearchedSong(node));
+                                .Descendant("tbody").Elements("tr").Select((node) => ParseSearchedSong(node));// 会有多个tbody，TODO：处理tbody分组（取第一个？）
                         });
                     var albums = results[1];
                     //System.Diagnostics.Debugger.Break();

@@ -27,12 +27,12 @@
                         <TextBlock x:Uid="DiscoveryNavText" Margin="12,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Controls:HamburgerButtonInfo>
-                <Controls:HamburgerButtonInfo PageType="views:SearchPage" ButtonType="Literal">
-                    <Grid>
-                        <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Width="48" Height="48" Symbol="Find"/>
-                        </StackPanel>
-                    </Grid>
+                <Controls:HamburgerButtonInfo PageType="views:SearchPage">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon x:Name="SearchSymbol" Width="48" Height="48" Symbol="Find"
+                                    HorizontalAlignment="Left"/>
+                        <TextBlock x:Uid="SearchNavText" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
                 </Controls:HamburgerButtonInfo>
                 <Controls:HamburgerButtonInfo PageType="views:LibraryPage">
                     <StackPanel Orientation="Horizontal">

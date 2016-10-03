@@ -242,4 +242,8 @@
     <value>基本信息</value>
     <comment>UserInfo页</comment>
   </data>
+  <data name="SearchNavText.Text" xml:space="preserve">
+    <value>搜索</value>
+    <comment>SearchPage导航栏按钮文字</comment>
+  </data>
 </root>
