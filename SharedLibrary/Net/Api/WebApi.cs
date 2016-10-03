@@ -888,8 +888,6 @@ namespace JacobC.Xiami.Net
                     var doc = new HtmlDocument();
                     doc.LoadHtml(content);
                     var root = doc.DocumentNode.SelectSingleNode("html/body/div[@id='page']");
-                    System.Diagnostics.Debugger.Break();
-                    //song\album\collection\artist都用pageloadcollection
                     var results = root.SelectSingleNode(".//div[@class='search_result']").Elements("div").ToList();
                     var match = results[0];//最佳匹配内容
                     if (match.GetAttributeValue("class", "") == "top_box")
@@ -910,6 +908,7 @@ namespace JacobC.Xiami.Net
                                 .Descendant("tbody").Elements("tr").Select((node) => ParseSearchedSong(node));
                         });
                     var albums = results[1];
+                    //System.Diagnostics.Debugger.Break();
                     res.Albums = new PageItemsCollection<AlbumModel>(30, albums.Descendant("ul").Elements("li").Select((node) => ParseSearchedAlbum(node)),
                         async (page, ptoken) =>
                         {
@@ -922,6 +921,7 @@ namespace JacobC.Xiami.Net
                                 .Elements("li").Select((node) => ParseSearchedAlbum(node));
                         });
                     var artists = results[2];
+                    //System.Diagnostics.Debugger.Break();
                     res.Artists = new PageItemsCollection<ArtistModel>(30, artists.Descendant("ul").Elements("li").Select((node) => ParseSearchedArtist(node)),
                         async (page, ptoken) =>
                         {
@@ -933,8 +933,11 @@ namespace JacobC.Xiami.Net
                             return pdoc.DocumentNode.SelectSingleNode(".//div[@class='artistBlock_list']").Element("ul")
                                 .Elements("li").Select((node) => ParseSearchedArtist(node));
                         });
-                    var collects = results[3];
-                    //TODO: 完成collection的搜索部分
+                    if (results.Count > 3)
+                    {
+                        var collects = results[3];
+                        //TODO: 完成collection的搜索部分
+                    }
 
                     LogService.DebugWrite($"Finish Searching {keyword}", nameof(WebApi));
                     return res;
@@ -965,6 +968,8 @@ namespace JacobC.Xiami.Net
         }
         internal AlbumModel ParseSearchedAlbum(HtmlNode li)
         {
+            LogService.DebugWrite(li.OuterHtml);
+            //System.Diagnostics.Debugger.Break();
             var ips = li.SelectNodes("./div/p");
             var albumlink = ips[1].Element("a");
             var artistlink = ips[1].Elements("a").Last();
@@ -977,9 +982,13 @@ namespace JacobC.Xiami.Net
                 album.Art = new Uri(art.Replace("_1", "_2"));
                 album.ArtFull = new Uri(art.Replace("_1", ""));
             }
-            album.Artist = ArtistModel.GetNew(ParseXiamiID(artistlink));
-            album.Name = artistlink.GetAttributeValue("title", default(string));
-            album.Artist.NameHtml = artistlink.InnerHtml;
+            try
+            {
+                album.Artist = ArtistModel.GetNew(ParseXiamiID(artistlink));
+                album.Artist.Name = artistlink.GetAttributeValue("title", default(string));
+                album.Artist.NameHtml = artistlink.InnerHtml;
+            }
+            catch (Exception e) { LogService.ErrorWrite(e); album.Artist = ArtistModel.Null; }
             album.Rating = ips[2].Descendant("em").InnerText;
             album.ReleaseDate = ips[3].InnerText;
             return album;
@@ -988,6 +997,7 @@ namespace JacobC.Xiami.Net
         {
             var ips = li.SelectNodes("./div/p");
             var artistlink = ips[1].Element("a");
+            //System.Diagnostics.Debugger.Break();
             ArtistModel artist = ArtistModel.GetNew(ParseXiamiID(artistlink));
             if(artist.Art.Host == "")
             {
@@ -996,7 +1006,7 @@ namespace JacobC.Xiami.Net
                 artist.ArtFull = new Uri(art.Replace("_1", ""));
             }
             artist.NameHtml = artistlink.InnerHtml;
-            artist.Area = ips[1].Element("span").InnerText;
+            artist.Area = ips[1].Element("span")?.InnerText;
             return artist;
         }
         internal CollectionModel ParseSearchedCollection(HtmlNode li)

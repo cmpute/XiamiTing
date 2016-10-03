@@ -19,6 +19,7 @@ namespace JacobC.Xiami.Models
         public const string SmallDefaultUri = @"ms-appx:///Assets/Pictures/usr100.gif";
         public const string LargeDefaultUri = @"ms-appx:///Assets/Pictures/usr100.gif";
 
+        public static ArtistModel Null = new ArtistModel() { Name = "未知歌手", NameHtml = "未知歌手" };
         static Dictionary<uint, ArtistModel> _dict = new Dictionary<uint, ArtistModel>();
         /// <summary>
         /// 获取一个新的<see cref="ArtistModel"/>实例，如果已经创建过则返回这个实例

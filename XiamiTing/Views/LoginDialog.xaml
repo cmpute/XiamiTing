@@ -242,7 +242,7 @@
                         </StackPanel.Resources>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="帐号："/>
-                            <TextBox x:Name="UserName" Width="160"/>
+                            <TextBox x:Name="UserName" Width="160" InputScope="EmailNameOrAddress"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Padding="0,0,0,8" BorderBrush="{StaticResource DarkColorBrush}" BorderThickness="0,0,0,1">
                             <TextBlock Text="密码："/>
@@ -251,7 +251,7 @@
                         <TextBlock FontSize="12" Foreground="DarkGray">或者可以选择不登陆使用哦~输入用户ID即可~</TextBlock>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="uID："/>
-                            <TextBox x:Name="uid" Margin="8,0"  Width="160"/>
+                            <TextBox x:Name="uid" Margin="8,0"  Width="160" InputScope="Number"/>
                         </StackPanel>
                         <Button x:Name="LoginButton" Content="登录" Margin="4,4" HorizontalAlignment="Stretch" Click="LoginButton_Click"/>
                     </StackPanel>
