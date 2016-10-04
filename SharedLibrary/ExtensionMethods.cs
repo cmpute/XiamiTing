@@ -112,7 +112,7 @@ namespace JacobC.Xiami
         /// <param name="node">父节点</param>
         /// <param name="name">子节点名称</param>
         /// <returns></returns>
-        public static IEnumerable<IXmlNode> Elements(this IXmlNode node,string name)
+        public static IEnumerable<IXmlNode> Elements(this IXmlNode node, string name)
         {
             foreach (var item in node.ChildNodes)
                 if (item.LocalName?.ToString() == name)
@@ -135,7 +135,7 @@ namespace JacobC.Xiami
         /// <summary>
         /// 将字典对象转化成Html的Query格式字符串
         /// </summary>
-        public static string ToQueryString(this Dictionary<string,string> dic, bool encode = true)
+        public static string ToQueryString(this Dictionary<string, string> dic, bool encode = true)
         {
             bool isfirst = true;
             StringBuilder res = new StringBuilder();
@@ -150,6 +150,11 @@ namespace JacobC.Xiami
                 res.Append(encode ? WebUtility.UrlEncode(item.Value) : item.Value);
             }
             return res.ToString();
+        }
+
+        public static IEnumerable<T> ToEnumerable<T>(this T target)
+        {
+            yield return target;
         }
     }
 }

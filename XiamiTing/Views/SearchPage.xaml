@@ -51,7 +51,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <t10c:PageHeader Text="搜索"/>
+        <t10c:PageHeader x:Name="Header" Text="搜索"/>
         <AutoSuggestBox Grid.Row="1" Margin="16,8"
                         PlaceholderText="请输入关键词" QueryIcon="Find"
                         TextChanged="{x:Bind VM.AutoSuggestBox_TextChanged}"

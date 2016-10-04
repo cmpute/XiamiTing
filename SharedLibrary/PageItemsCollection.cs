@@ -25,11 +25,11 @@ namespace JacobC.Xiami
         /// <summary>
         /// 根据已有的完整第一页内容获取一个<see cref="PageItemsCollection{T}"/>对象
         /// </summary>
-        /// <param name="firstpage">第一页的内容</param>
+        /// <param name="firstpage">完整的第一页的内容，请确保之后的数目与该页数目一致</param>
         /// <param name="fetchPage">获取某一页的方法</param>
         public PageItemsCollection(IEnumerable<T> firstpage, FetchPageDelegate fetchPage) : base(firstpage)
         {
-            AddRange(firstpage);
+            //AddRange(firstpage); //已在base(firstpage中实现)
             PageCapacity = (uint)Count;
             _fetchPage = fetchPage;
         }
@@ -50,19 +50,19 @@ namespace JacobC.Xiami
         /// <param name="capacity">每一页项目数量</param>
         /// <param name="firstpart">第一页的部分内容</param>
         /// <param name="fetchpage">获取某一页的方法</param>
-        public PageItemsCollection(uint capacity, IEnumerable<T> firstpart, FetchPageDelegate fetchpage)
+        public PageItemsCollection(uint capacity, IEnumerable<T> firstpart, FetchPageDelegate fetchpage):base(firstpart)
         {
+            //AddRange(firstpart);
             PageCapacity = capacity;
             _fetchPage = fetchpage;
-            AddRange(firstpart);
         }
         /// <summary>
         /// 获取固定大小的<see cref="PageItemsCollection{T}"/>
         /// </summary>
         /// <param name="items"></param>
-        public PageItemsCollection(IEnumerable<T> items)
+        public PageItemsCollection(IEnumerable<T> items):base(items)
         {
-            AddRange(items);
+            //AddRange(items);
             PageCapacity = (uint)Count;
             _hasMore = false;
             _fetchPage = (a, b) => null;
@@ -112,19 +112,24 @@ namespace JacobC.Xiami
             }
             uint pages = count / PageCapacity + _current;
             if (count % PageCapacity != 0) pages++;
-            for (uint i = _current + 1; i <= pages; i++)
+            for (uint i = _current + 1; i <= pages && _hasMore; i++)
             {
                 var r = await _fetchPage(i, c);//为了保证顺序，不使用并发.TODO: 考虑并发后排序？
-                returnlist.AddRange(r);
-                if (i == pages)
-                    if (r == null)
-                        _hasMore = false;
-                    else if (r.Count() < PageCapacity)
+                //if (i == pages)
+                if (r == null)
+                    _hasMore = false;
+                else
+                {
+                    returnlist.AddRange(r);
+                    if (r.Count() < PageCapacity)
                         _hasMore = false;
                     else
+                    {
                         _hasMore = true;
+                        _current = i;
+                    }
+                }
             }
-            _current = pages;
             return returnlist;
         }
     }

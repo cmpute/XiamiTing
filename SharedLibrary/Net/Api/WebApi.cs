@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -37,6 +38,7 @@ namespace JacobC.Xiami.Net
             }
         }
 
+        internal bool CheckNeedLogin(string html) => html.Contains("id=\"login\"");
         internal void ParsePlayListSong(SongModel song, HtmlNode tr)
         {
             var name = tr.SelectSingleNode("./td[@class='song_name']");
@@ -904,50 +906,69 @@ namespace JacobC.Xiami.Net
                     doc.LoadHtml(content);
                     var root = doc.DocumentNode.SelectSingleNode("html/body/div[@id='page']");
                     var results = root.SelectSingleNode(".//div[@class='search_result']").Elements("div").ToList();
+
                     var match = results[0];//最佳匹配内容
-                    if (match.GetAttributeValue("class", "") == "top_box")
+                    if (match.GetAttributeValue("class", "").Contains("top_box"))
                     {
                         results.Remove(match);
                         // TODO: 处理最佳匹配
                     }
+
                     var songs = results[0];
-                    res.Songs = new PageItemsCollection<SongModel>(songs.Descendant("tbody").Elements("tr").Select((node) => ParseSearchedSong(node)),
-                        async (page, ptoken) =>
-                        {
-                            var pgettask = HttpHelper.GetAsync($"http://www.xiami.com/search/song/page/{page}?key={keyword}");
-                            ptoken.Register(() => pgettask.Cancel());
-                            var pcontent = await pgettask;
-                            var pdoc = new HtmlDocument();
-                            pdoc.LoadHtml(pcontent);
-                            return pdoc.DocumentNode.SelectSingleNode(".//table[@class='track_list']")
-                                .Descendant("tbody").Elements("tr").Select((node) => ParseSearchedSong(node));// 会有多个tbody，TODO：处理tbody分组（取第一个？）
-                        });
+                    var songres = ParseSearchedSongTable(songs.Descendant("table"));
+                    //System.Diagnostics.Debugger.Break();
+                    if (songs.Element("span") != null)
+                        res.Songs = new PageItemsCollection<SongModel>(songres,
+                            async (page, ptoken) =>
+                            {
+                                var pgettask = HttpHelper.GetAsync($"http://www.xiami.com/search/song/page/{page}?key={keyword}");
+                                ptoken.Register(() => pgettask.Cancel());
+                                var pcontent = await pgettask;
+                                if (CheckNeedLogin(pcontent)) return null; // 需要登录才能看5页以后的内容
+                                var pdoc = new HtmlDocument();
+                                pdoc.LoadHtml(pcontent);
+                                return ParseSearchedSongTable(pdoc.DocumentNode.SelectSingleNode(".//table[@class='track_list']"));
+                            });
+                    else
+                        res.Songs = songres;
+
                     var albums = results[1];
+                    var albumres = albums.Descendant("ul").Elements("li").Select((node) => ParseSearchedAlbum(node));
                     //System.Diagnostics.Debugger.Break();
-                    res.Albums = new PageItemsCollection<AlbumModel>(30, albums.Descendant("ul").Elements("li").Select((node) => ParseSearchedAlbum(node)),
-                        async (page, ptoken) =>
-                        {
-                            var pgettask = HttpHelper.GetAsync($"http://www.xiami.com/search/album/page/{page}?key={keyword}");
-                            ptoken.Register(() => pgettask.Cancel());
-                            var pcontent = await pgettask;
-                            var pdoc = new HtmlDocument();
-                            pdoc.LoadHtml(pcontent);
-                            return pdoc.DocumentNode.SelectSingleNode(".//ul[@class='clearfix']")
-                                .Elements("li").Select((node) => ParseSearchedAlbum(node));
-                        });
+                    if (albums.Element("span") != null)
+                        res.Albums = new PageItemsCollection<AlbumModel>(30, albumres,
+                            async (page, ptoken) =>
+                            {
+                                var pgettask = HttpHelper.GetAsync($"http://www.xiami.com/search/album/page/{page}?key={keyword}");
+                                ptoken.Register(() => pgettask.Cancel());
+                                var pcontent = await pgettask;
+                                if (CheckNeedLogin(pcontent)) return null;
+                                var pdoc = new HtmlDocument();
+                                pdoc.LoadHtml(pcontent);
+                                return pdoc.DocumentNode.SelectSingleNode(".//ul[@class='clearfix']")
+                                    .Elements("li").Select((node) => ParseSearchedAlbum(node));
+                            });
+                    else
+                        res.Albums = albumres.ToList();
+
                     var artists = results[2];
+                    var artistres = artists.Descendant("ul").Elements("li").Select((node) => ParseSearchedArtist(node));
                     //System.Diagnostics.Debugger.Break();
-                    res.Artists = new PageItemsCollection<ArtistModel>(30, artists.Descendant("ul").Elements("li").Select((node) => ParseSearchedArtist(node)),
-                        async (page, ptoken) =>
-                        {
-                            var pgettask = HttpHelper.GetAsync($"http://www.xiami.com/search/artist/page/{page}?key={keyword}");
-                            ptoken.Register(() => pgettask.Cancel());
-                            var pcontent = await pgettask;
-                            var pdoc = new HtmlDocument();
-                            pdoc.LoadHtml(pcontent);
-                            return pdoc.DocumentNode.SelectSingleNode(".//div[@class='artistBlock_list']").Element("ul")
-                                .Elements("li").Select((node) => ParseSearchedArtist(node));
-                        });
+                    if (artists.Element("span") != null)
+                        res.Artists = new PageItemsCollection<ArtistModel>(30, artistres,
+                            async (page, ptoken) =>
+                            {
+                                var pgettask = HttpHelper.GetAsync($"http://www.xiami.com/search/artist/page/{page}?key={keyword}");
+                                ptoken.Register(() => pgettask.Cancel());
+                                var pcontent = await pgettask;
+                                if (CheckNeedLogin(pcontent)) return null;
+                                var pdoc = new HtmlDocument();
+                                pdoc.LoadHtml(pcontent);
+                                return pdoc.DocumentNode.SelectSingleNode(".//div[@class='artistBlock_list ']").Element("ul")
+                                    .Elements("li").Select((node) => ParseSearchedArtist(node));
+                            });
+                    else
+                        res.Artists = artistres.ToList();
                     if (results.Count > 3)
                     {
                         var collects = results[3];
@@ -965,13 +986,43 @@ namespace JacobC.Xiami.Net
             });
         }
 
+        internal List<SongModel> ParseSearchedSongTable(HtmlNode table)
+        {
+            string temp = table.InnerHtml;
+            foreach(Match m in Regex.Matches(temp, @"(<tbody\s)[\s\S]+?(/tbody>)"))
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("</tbody>");
+                sb.Append(m.Value);
+                sb.Append("<tbody>");
+                temp = temp.Replace(m.Value, sb.ToString());
+            }
+            table.InnerHtml = temp;
+            List<SongModel> res = new List<SongModel>();
+            foreach(var node in table.Elements("tbody"))
+            {
+                if (node.GetAttributeValue("class", "").Contains("same_song_group"))
+                    res.AddRange(node.Elements("tr").Select((tr) =>
+                    {
+                        var song = ParseSearchedSong(tr);
+                        song.DuplicateOf = res[res.Count - 1];
+                        return song;
+                    })); // 不全部返回的话会造成歌曲数目不够，PageItem加载时会产生Exception
+                else
+                    res.AddRange(node.Elements("tr").Select((tr) => ParseSearchedSong(tr)));
+            };
+            return res;
+        }
         internal SongModel ParseSearchedSong(HtmlNode tr)
         {
+            //System.Diagnostics.Debugger.Break();
             var tds = tr.Elements("td").ToList();
             var checkbox = tds[0].Descendant("input");
             SongModel song = SongModel.GetNew(uint.Parse(checkbox.GetAttributeValue("value", "0")));
             song.Available = checkbox.GetAttributeValue("checked", "") == "checked";
-            song.NameHtml = tds[1].Element("a").InnerHtml;
+            var links = tds[1].SelectNodes("./a[@target='_blank']");
+            song.NameHtml = links[0].InnerHtml;
+            if (links.Count > 1) song.MV = MVModel.GetNew(ParseXiamiIDString(links[1].GetAttributeValue("href", "/0")));
             var anode = tds[3].Element("a");
             var album = AlbumModel.GetNew(ParseXiamiID(anode.GetAttributeValue("href", "/0")));
             album.NameHtml = anode.InnerHtml.Replace("《", "").Replace("》", "");
@@ -983,7 +1034,6 @@ namespace JacobC.Xiami.Net
         }
         internal AlbumModel ParseSearchedAlbum(HtmlNode li)
         {
-            LogService.DebugWrite(li.OuterHtml);
             //System.Diagnostics.Debugger.Break();
             var ips = li.SelectNodes("./div/p");
             var albumlink = ips[1].Element("a");

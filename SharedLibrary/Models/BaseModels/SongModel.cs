@@ -141,6 +141,10 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public IList<SongModel> RelateHotSongs { get { return _RelateHotSongs; } set { Set(ref _RelateHotSongs, value); } }
 
+        /// <summary>
+        /// 获取和设置歌曲与某一首歌是同一首
+        /// </summary>
+        public SongModel DuplicateOf { get; set; }
 
         public override string ToString()
         {

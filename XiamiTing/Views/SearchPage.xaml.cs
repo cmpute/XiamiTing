@@ -25,6 +25,7 @@ namespace JacobC.Xiami.Views
         public SearchPage()
         {
             this.InitializeComponent();
+            if (!Net.LoginHelper.IsLoggedIn) Header.Text += "(未登录，搜索受限)";
         }
 
         public void ResultList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -34,6 +35,7 @@ namespace JacobC.Xiami.Views
 
         private void VM_SearchingFinished(object sender, Models.SearchResult e)
         {
+            //更新List
             SongResults.ItemsSource = e.Songs;
             AlbumResults.ItemsSource = e.Albums;
             ArtistResults.ItemsSource = e.Artists;
