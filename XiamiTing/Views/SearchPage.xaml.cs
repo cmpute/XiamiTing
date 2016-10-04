@@ -27,5 +27,17 @@ namespace JacobC.Xiami.Views
             this.InitializeComponent();
         }
 
+        public void ResultList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void VM_SearchingFinished(object sender, Models.SearchResult e)
+        {
+            SongResults.ItemsSource = e.Songs;
+            AlbumResults.ItemsSource = e.Albums;
+            ArtistResults.ItemsSource = e.Artists;
+            ResultList.Visibility = Visibility.Visible;
+        }
     }
 }

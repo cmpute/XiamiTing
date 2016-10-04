@@ -239,10 +239,12 @@ namespace JacobC.Xiami.Services
         /// 播放指定歌曲
         /// </summary>
         /// <param name="song">需要播放的歌曲，如果不在列表中的话将加入列表</param>
-        public void PlayTrack(SongModel song)
+        public async void PlayTrack(SongModel song)
         {
             if (_isPlayingRadio)
                 throw new InvalidOperationException("在播放歌曲前应停止电台播放");
+            if (string.IsNullOrEmpty(song.Album?.Art?.Host))
+                await Net.WebApi.Instance.GetSongInfo(song);
             if (!PlaylistService.Instance.Contains(song))
             {
                 PlaylistService.Instance.Add(song);

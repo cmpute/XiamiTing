@@ -6,21 +6,83 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:JacobC.Xiami.ViewModels"
+    xmlns:m="using:JacobC.Xiami.Models"
     xmlns:t10c="using:Template10.Controls"
+    xmlns:c="using:JacobC.Xiami.Controls"
     mc:Ignorable="d">
     <Page.DataContext>
-        <vm:SearchPageViewModel x:Name="VM"/>
+        <vm:SearchPageViewModel x:Name="VM" SearchingFinished="VM_SearchingFinished"/>
     </Page.DataContext>
+    <Page.Resources>
+        <DataTemplate x:DataType="m:SongModel" x:Key="SongTemplate">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock c:RichTextExtended.Document="{x:Bind NameHtml}"/>
+                <TextBlock Text="/" Margin="4,0"/>
+                <TextBlock c:RichTextExtended.Document="{x:Bind TrackArtist}"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:DataType="m:AlbumModel" x:Key="AlbumTemplate">
+            <StackPanel Orientation="Horizontal">
+                <c:ImageEx Width="48" Height="48" Source="{x:Bind Art}"/>
+                <c:WrapPanel Margin="8,0" Orientation="Horizontal">
+                    <TextBlock c:RichTextExtended.Document="{x:Bind NameHtml}" TextWrapping="WrapWholeWords"/>
+                    <TextBlock Text="/" Margin="4,0"/>
+                    <TextBlock c:RichTextExtended.Document="{x:Bind ArtistHtml}"/>
+                </c:WrapPanel>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:DataType="m:ArtistModel" x:Key="ArtistTemplate">
+            <StackPanel Orientation="Horizontal">
+                <c:ImageEx Width="48" Height="48" Source="{x:Bind Art}"/>
+                <StackPanel Margin="8,0">
+                    <TextBlock c:RichTextExtended.Document="{x:Bind NameHtml}" TextWrapping="WrapWholeWords"/>
+                    <TextBlock c:RichTextExtended.Document="{x:Bind Area}"/>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="SeparatorTemplate">
+            <SymbolIcon Symbol="Audio" Foreground="{StaticResource ThemeColorBrush}" HorizontalAlignment="Center"/>
+        </DataTemplate>
+    </Page.Resources>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <t10c:PageHeader Text="搜索"/>
-        <Grid Grid.Row="1" Margin="16,0">
-            <AutoSuggestBox PlaceholderText="请输入关键词" QueryIcon="Find"
-                            TextChanged="{x:Bind VM.AutoSuggestBox_TextChanged}"
-                            SuggestionChosen="{x:Bind VM.AutoSuggestBox_SuggestionChosen}"/>
-        </Grid>
+        <AutoSuggestBox Grid.Row="1" Margin="16,8"
+                        PlaceholderText="请输入关键词" QueryIcon="Find"
+                        TextChanged="{x:Bind VM.AutoSuggestBox_TextChanged}"
+                        SuggestionChosen="{x:Bind VM.AutoSuggestBox_SuggestionChosen}"
+                        QuerySubmitted="{x:Bind VM.AutoSuggestBox_QuerySubmitted}"
+                        HorizontalContentAlignment="Stretch">
+            <AutoSuggestBox.ItemTemplateSelector>
+                <vm:SearchResultSelector SongTemplate="{StaticResource SongTemplate}"
+                                         AlbumTemplate="{StaticResource AlbumTemplate}"
+                                         ArtistTemplate="{StaticResource ArtistTemplate}"
+                                         SeparatorTemplate="{StaticResource SeparatorTemplate}"/>
+            </AutoSuggestBox.ItemTemplateSelector>
+        </AutoSuggestBox>
+        <Pivot x:Name="ResultList" Grid.Row="2" Visibility="Collapsed"
+               SelectionChanged="ResultList_SelectionChanged">
+            <PivotItem Header="歌曲">
+                <ListView x:Name="SongResults">
+                    
+                </ListView>
+            </PivotItem>
+            <PivotItem Header="专辑">
+                <GridView x:Name="AlbumResults"></GridView>
+            </PivotItem>
+            <PivotItem Header="艺人">
+                <GridView x:Name="ArtistResults"></GridView>
+            </PivotItem>
+            <PivotItem Header="精选集">
+                
+            </PivotItem>
+            <PivotItem Header="用户"/>
+            <PivotItem Header="标签"/>
+        </Pivot>
     </Grid>
 </Page>

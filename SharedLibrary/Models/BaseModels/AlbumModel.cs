@@ -112,6 +112,12 @@ namespace JacobC.Xiami.Models
         /// </summary>
         public string Rating { get { return _Rating; } set { Set(ref _Rating, value); } }
 
+        string _ArtistHtml = null;
+        /// <summary>
+        /// 获取或设置专辑的艺术家名字的HTML形式
+        /// </summary>
+        public string ArtistHtml { get { return _ArtistHtml; } set { Set(ref _ArtistHtml, value); } }
+
         int[] _RatingDetail = new int[5] { -1, -1, -1, -1, -1 };
         /// <summary>
         /// 获取或设置专辑的详细评分

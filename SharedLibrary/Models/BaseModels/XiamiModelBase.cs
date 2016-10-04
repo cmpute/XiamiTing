@@ -6,6 +6,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
+using HtmlAgilityPack;
+using System.Text.RegularExpressions;
 
 namespace JacobC.Xiami.Models
 {
@@ -50,12 +52,25 @@ namespace JacobC.Xiami.Models
         /// <summary>
         /// 获取或设置Html形式的名称（用于搜索）
         /// </summary>
-        public string NameHtml { get { return _NameHtml; } set { Set(ref _NameHtml, value); } }
+        public string NameHtml
+        {
+            get { return _NameHtml; }
+            set
+            {
+                Set(ref _NameHtml, value);
+                if (Name == null)
+                {
+                    foreach (Match item in Regex.Matches(value, "<.+?>"))
+                        value = value.Replace(item.Value, "");
+                    Name = value;
+                }
+            }
+        }
 
         //对string的设置默认decode一遍
         public bool Set(ref string storage, string value, [CallerMemberName] string propertyName = null)
         {
-            return base.Set<string>(ref storage, WebUtility.HtmlDecode(value), propertyName);
+            return base.Set<string>(ref storage, WebUtility.HtmlDecode(value?.Trim()), propertyName);
         }
 
         /// <summary>

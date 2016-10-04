@@ -855,7 +855,7 @@ namespace JacobC.Xiami.Net
                                     }
                                     var snode = linknode.Descendant("strong");
                                     album.NameHtml = snode.InnerHtml;
-                                    //album.ArtistName = snode.ParentNode.ChildNodes.Last().InnerText;
+                                    album.ArtistHtml = snode.ParentNode.ChildNodes.Last().InnerHtml.Trim();
                                     return album;
                                 }).ToList();
                                 break;
@@ -1014,14 +1014,15 @@ namespace JacobC.Xiami.Net
             var artistlink = ips[1].Element("a");
             //System.Diagnostics.Debugger.Break();
             ArtistModel artist = ArtistModel.GetNew(ParseXiamiID(artistlink));
-            if(artist.Art.Host == "")
+            if (artist.Art.Host == "")
             {
                 var art = ips[0].Descendant("img").GetAttributeValue("src", AlbumModel.LargeDefaultUri);
                 artist.Art = new Uri(art.Replace("_1", "_2"));
                 artist.ArtFull = new Uri(art.Replace("_1", ""));
             }
             artist.NameHtml = artistlink.InnerHtml;
-            artist.Area = ips[1].Element("span")?.InnerText;
+            if (ips.Count > 1)
+                artist.Area = ips[1].Element("span")?.InnerText;
             return artist;
         }
         internal CollectionModel ParseSearchedCollection(HtmlNode li)

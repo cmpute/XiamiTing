@@ -66,7 +66,7 @@ namespace JacobC.Xiami.Controls
                 {
                     //文本
                     case "#text":
-                        container.Add(new Run() { Text = item.InnerText.Trim() });
+                        container.Add(new Run() { Text = item.InnerText });
                         continue;
                     case "strong":
                         style = style | ParsingStyle.Bold;
@@ -96,7 +96,7 @@ namespace JacobC.Xiami.Controls
                         break;
                     case "b":
                         //TODO: 设置属性，是否要加红搜索显示结果
-                        if(node.GetAttributeValue("class","") == "red")
+                        if(node.GetAttributeValue("class","") == "key_red")
                         {
                             Span p = new Span();
                             p.Foreground = new SolidColorBrush(Colors.Red);

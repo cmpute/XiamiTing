@@ -123,6 +123,7 @@
     <Compile Include="Controls\MusicController.xaml.cs">
       <DependentUpon>MusicController.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\OrientedSize.cs" />
     <Compile Include="Controls\Playlist.xaml.cs">
       <DependentUpon>Playlist.xaml</DependentUpon>
     </Compile>
@@ -131,6 +132,7 @@
       <DependentUpon>SongItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TimeSpanConverter.cs" />
+    <Compile Include="Controls\WrapPanel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
@@ -167,6 +169,7 @@
     <Compile Include="Views\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\SearchResultSelector.cs" />
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
